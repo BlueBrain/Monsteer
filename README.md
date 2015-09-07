@@ -1,6 +1,4 @@
-[TOC]
-
-# Introduction
+# Monsteer
 
 Monsteer is a library for Interactive Supercomputing in the neuroscience domain.
 Monsteer facilitates the coupling of running simulations (currently NEST) with
@@ -45,10 +43,20 @@ cmake ..
 make
 ~~~
 
-## Detailed documentation
+## Known Bugs
 
-- [User guide](@ref User_Guide)
-- [Technical overview](@ref Technical_Overview)
+The following bugs were known at release time. Please file a
+[Bug Report](https://github.com/BlueBrain/Monsteer/issues) if you find
+any other issue with this release
+
+## About
+
+The [API documentation](http://bluebrain.github.io/Monsteer-0.2/index.html)
+can be found on [bluebrain.github.io](http://bluebrain.github.io/).
+
+The following platforms and build environments are tested:
+
+* Linux: Ubuntu 14.04, RHEL 6.5 (Makefile, x64)
 
 Contact: ahmet.bilgili@epfl.ch
          jafet.villafrancadiaz@epfl.ch

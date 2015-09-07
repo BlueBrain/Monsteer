@@ -1,0 +1,15 @@
+// Copyright (c) 2015, EPFL/Blue Brain Project
+//                     Jafet Villafranca Diaz <jafet.villafrancadiaz@epfl.ch>
+//
+namespace monsteer.steering;
+
+table StimulusInjection
+{
+  messageID:string;
+  eventType:string;
+  cells:[uint];
+  params:string;
+  multiple:bool;
+}
+
+root_type StimulusInjection;

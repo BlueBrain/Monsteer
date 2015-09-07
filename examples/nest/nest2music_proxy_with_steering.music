@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2011-2015,  Juan Hernando <jhernando@fi.upm.es>
+#
+# This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
+#
+
+# Usage:
+
+# Usage:
+# - With mpirun, form this directory do:
+#   $ mpirun -np 2 `which music` nest2music_proxy_with_steering.music
+# - With srun
+#   srun -n 2 `which music` nest2music_proxy_with_steering.music
+
+stoptime=10000000
+
+[from]
+  binary=./minimal_steered.py
+  np=1
+
+[to]
+  # This binary is expected to be in the path
+  binary=music_proxy
+  args=--steering
+  np=1
+
+from.spikes_out -> to.spikesPort [1000]
+to.steeringPort -> from.steering_input [0]

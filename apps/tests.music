@@ -1,0 +1,12 @@
+stoptime=1000
+
+[from]
+  np=4
+  binary=./music_spike_writer
+
+[to]
+  np=1
+  binary=./music_proxy
+  args=out.dat
+
+from.outSpikes -> to.inSpikes [ 1000 ]

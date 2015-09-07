@@ -1,0 +1,5 @@
+# -*- mode: cmake -*-
+git_subproject(Brion https://github.com/BlueBrain/Brion.git 3ab8c62)
+git_subproject(vmmlib https://github.com/Eyescale/vmmlib.git 2bec113)
+git_subproject(Lunchbox https://github.com/Eyescale/Lunchbox.git f48795e)
+git_subproject(zeq https://github.com/HBPVis/zeq.git 350be6e)

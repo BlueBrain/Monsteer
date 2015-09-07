@@ -1,0 +1,13 @@
+CMakeLists.txt.user*
+Makefile
+.travis.yml
+CMake/common/
+BBPSDK/
+Brion/
+FlatBuffers/
+Lunchbox/
+Servus/
+ZeroBuf/
+build/
+vmmlib/
+zeq/

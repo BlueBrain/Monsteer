@@ -1,0 +1,12 @@
+// Copyright (c) 2015, EPFL/Blue Brain Project
+//                     Jafet Villafranca Diaz <jafet.villafrancadiaz@epfl.ch>
+//
+namespace monsteer.steering;
+
+table PlaybackState
+{
+  messageID:string;
+  state:uint;
+}
+
+root_type PlaybackState;

@@ -15,7 +15,7 @@
 duration = 100000
 cell_count = 1000
 
-from isc.Nesteer import Nesteer
+from monsteer.Nesteer import Nesteer
 from nest import *
 
 neurons = Create("iaf_neuron", cell_count)

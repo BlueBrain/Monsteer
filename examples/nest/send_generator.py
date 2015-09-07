@@ -11,12 +11,12 @@
 # The function send_stimulus can be invoked to send the predefined stimulus
 # injection.
 
-import isc.Nesteer
+import monsteer.Nesteer
 import bbp
 import nest
 import numpy
 
-simulator = isc.Nesteer.Simulator('isc-nesteer://')
+simulator = isc.Nesteer.Simulator('monsteer-nesteer://')
 
 params = nest.GetDefaults('poisson_generator')
 params['rate'] = 50000.0

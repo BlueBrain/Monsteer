@@ -44,8 +44,9 @@ NESTSimulator::NESTSimulator( const monsteer::SimulatorPluginInitData& pluginDat
 
 bool NESTSimulator::handles( const monsteer::SimulatorPluginInitData& pluginData )
 {
-    return !pluginData.subscriber.getScheme().compare( 0, 3, "monsteer" ) &&
-           !pluginData.publisher.getScheme().compare( 0, 3, "monsteer" );
+    const std::string url = "monsteer";
+    return !pluginData.subscriber.getScheme().compare( 0, url.size(), url ) &&
+           !pluginData.publisher.getScheme().compare( 0, url.size(), url );
 }
 
 void NESTSimulator::injectStimulus( const std::string& jsonParameters,

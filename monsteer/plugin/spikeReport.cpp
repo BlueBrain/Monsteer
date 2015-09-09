@@ -50,18 +50,18 @@ const uint32_t INTERNAL_TIMEOUT = 500;
 }
 
 SpikeReport::SpikeReport( const brion::SpikeReportInitData& pluginData )
-    : _lastEndTime( 0 )
+    : _uri( pluginData.getURI( ))
+    , _lastEndTime( 0 )
     , _lastTimeStamp( -1 )
     , _closed( false )
 {
     const int accessMode = pluginData.getAccessMode();
-    const lunchbox::URI& uri = pluginData.getURI();
 
     switch( accessMode )
     {
     case brion::MODE_READ:
     {
-        _subscriber.reset( new zeq::Subscriber( uri ));
+        _subscriber.reset( new zeq::Subscriber( _uri ));
         _subscriber->registerHandler(
             EVENT_SPIKES,
             boost::bind( &SpikeReport::_onSpikes, this, _1 ));
@@ -73,7 +73,7 @@ SpikeReport::SpikeReport( const brion::SpikeReportInitData& pluginData )
     case brion::MODE_WRITE:
     case brion::MODE_OVERWRITE:
     {
-        _publisher.reset( new zeq::Publisher( uri ));
+        _publisher.reset( new zeq::Publisher( _uri ));
         break;
     }
     default:
@@ -86,6 +86,14 @@ SpikeReport::SpikeReport( const brion::SpikeReportInitData& pluginData )
 bool SpikeReport::handles( const brion::SpikeReportInitData& pluginData )
 {
     return pluginData.getURI().getScheme() == "monsteer";
+}
+
+const lunchbox::URI& SpikeReport::getURI() const
+{
+    if( _publisher )
+        return _publisher->getURI();
+
+    return _uri;
 }
 
 float SpikeReport::getStartTime() const

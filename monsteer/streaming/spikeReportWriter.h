@@ -42,7 +42,7 @@ class SpikeReportWriter : public boost::noncopyable
 {
 public:
     /**
-     * Construct a new writer for the given uri.
+     * Construct a new writer for the given URI.
      * @param uri URI to spike report
      * @param accessMode Access mode
      * @version 0.2
@@ -60,13 +60,25 @@ public:
      * Writes the spike times and cell GIDs.
      *
      * @param spikes Spikes to write.
-     * @version 0.2 */
+     * @version 0.2
+     */
     void writeSpikes( const Spikes& spikes );
+
+    /**
+     * Get the URI where the writer is publishing. It could be same as the one
+     * used as input for the construction, or a different one (more
+     * complete) once the publisher is bound to it.
+     *
+     * @return the fully-qualified URI that the writer uses to publish spikes
+     * @version 0.3
+     */
+    const lunchbox::URI& getURI() const;
 
     /**
      * Closes the report. ( It is implicitly called on destruction ).
      *
-     * @version 0.2 */
+     * @version 0.2
+     */
     void close();
 
 private:

@@ -1,3 +1,16 @@
+##
+## Monsteer
+## This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
+##
+## contact: ahmet.bilgili@epfl.ch
+##          jafet.villafrancadiaz@epfl.ch
+##          jhernando@fi.upm.es
+
+import sys as _sys
+
+if _sys.version_info[0] != ${USE_PYTHON_VERSION}:
+    raise ImportError("Invalid Python version")
+
 from ._monsteer import *
 
 # Monkey patching Simulator.injectStimulus and Stimulus.injectMultipleStimuli

@@ -22,13 +22,13 @@
 #define MONSTEER_PLUGIN_SPIKEREPORT_H
 
 #include <monsteer/types.h>
+
 #include <brion/spikeReportPlugin.h>
-#include <lunchbox/uri.h>
 #include <boost/scoped_ptr.hpp>
 
 namespace monsteer
 {
-namespace streaming
+namespace plugin
 {
 
 /** A ZeroEQ streaming spike report reader/writer. Class is not thread safe. */
@@ -49,20 +49,19 @@ public:
 
     const brion::Spikes& getSpikes() const final;
 
-    bool waitUntil(const float timeStamp, const uint32_t timeout) final;
+    bool waitUntil( float timeStamp, uint32_t timeout ) final;
 
     float getNextSpikeTime() final;
 
     float getLatestSpikeTime() final;
 
-    void clear(const float startTime, const float endTime);
+    void clear( float startTime, float endTime );
 
     brion::SpikeReport::ReadMode getReadMode() const final;
 
     void close() final;
 
 private:
-
     brion::Spikes _incoming;
     brion::Spikes _spikes;
 
@@ -74,7 +73,7 @@ private:
 
     bool _closed;
 
-    void _onSpikes(const zeq::Event& event );
+    void _onSpikes( const zeq::Event& event );
     void _onEOS( const zeq::Event& event );
 
     void _receiveBufferedMessages();
@@ -82,4 +81,4 @@ private:
 
 }
 }
-#endif //MONSTEER_PLUGIN_SPIKEREPORTNEST_H
+#endif

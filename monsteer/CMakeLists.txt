@@ -18,5 +18,5 @@ set(MONSTEER_LINK_LIBRARIES PUBLIC Brion Lunchbox zeq)
 
 common_library(Monsteer)
 
+add_subdirectory(plugin)
 add_subdirectory(python)
-

@@ -16,14 +16,21 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+
 #include <monsteer/monsteer.h>
+#include <monsteer/streaming/spikeReportReader.h>
+#include <monsteer/streaming/spikeReportWriter.h>
+
 #include <BBP/TestDatasets.h>
 
 #include <lunchbox/sleep.h>
 #include <lunchbox/uint128_t.h>
 
+#include <brion/types.h>
+
 #define BOOST_TEST_MODULE SpikeReportReader
 #include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/thread/thread.hpp>
 

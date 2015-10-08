@@ -19,11 +19,11 @@
 
 #include "vocabulary.h"
 
-#include "spikes_generated.h"
+#include "plugin/spikes_generated.h"
 
 namespace monsteer
 {
-namespace streaming
+namespace plugin
 {
 
 zeq::Event serializeSpikes( const SpikeMap& spikes )

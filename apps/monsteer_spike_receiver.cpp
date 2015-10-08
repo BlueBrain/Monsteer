@@ -19,35 +19,30 @@
 
 #define MUSIC_TIMESTEP 0.01f //seconds
 
-#include <monsteer/monsteer.h>
-#include <monsteer/streaming/plugin/spikeReport.h>
-
 #include <brion/brion.h>
 
-#include <lunchbox/lunchbox.h>
+#include <boost/foreach.hpp>
 #include <algorithm>
-
-lunchbox::PluginRegisterer< monsteer::streaming::SpikeReport > registerer;
 
 class CommandLineOptions
 {
 public:
-    brion::URI outputURI;
+    brion::URI inputURI;
 
     CommandLineOptions( int32_t argc, char* argv[] )
-        : outputURI( "monsteer://" )
+        : inputURI( "monsteer://" )
     {
         if ( argc > 1 )
-            outputURI = brion::URI( argv[1] );
+            inputURI = brion::URI( argv[1] );
     }
 };
 
-class SpikeReader
+class SpikeReceiver
 {
 public:
-    SpikeReader( int32_t argc, char* argv[] )
-       : _options( argc, argv ),
-         _reader( _options.outputURI, brion::MODE_READ )
+    SpikeReceiver( int32_t argc, char* argv[] )
+       : _options( argc, argv )
+       , _reader( _options.inputURI, brion::MODE_READ )
     {
     }
 
@@ -60,7 +55,7 @@ public:
             BOOST_FOREACH( const brion::Spike& spike, spikes )
                 std::cout << spike.first << " " << spike.second << std::endl;
 
-            _reader.clear(0, time);
+            _reader.clear( 0, time );
             time = time + MUSIC_TIMESTEP;
         }
         /* Printing the last window received */
@@ -69,13 +64,14 @@ public:
             std::cout << spike.first << " " << spike.second << std::endl;
     }
 
+private:
     CommandLineOptions _options;
     brion::SpikeReport _reader;
 };
 
 int32_t main( int32_t argc, char* argv[] )
 {
-    SpikeReader reader( argc, argv );
-    reader.run();
+    SpikeReceiver receiver( argc, argv );
+    receiver.run();
     return EXIT_SUCCESS;
 }

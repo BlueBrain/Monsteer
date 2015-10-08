@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2015, EPFL/Blue Brain Project
 //                          Juan Hernando <jhernando@fi.upm.es>
 //
-namespace monsteer.streaming;
+namespace monsteer.plugin;
 
 struct Spike
 {

@@ -17,10 +17,9 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-#include "../vocabulary.h"
-#include "spikeReport.h"
 
-#include <brion/spikeReportPlugin.h>
+#include "spikeReport.h"
+#include "vocabulary.h"
 
 #include <zeq/subscriber.h>
 #include <zeq/publisher.h>
@@ -28,23 +27,26 @@
 #include <zeq/event.h>
 
 #include <lunchbox/clock.h>
-#include <lunchbox/clock.h>
 #include <lunchbox/pluginRegisterer.h>
 #include <lunchbox/uri.h>
 
-#include <boost/thread/thread.hpp>
+#include <brion/version.h>
+
+extern "C" int LunchboxPluginGetVersion() { return BRION_VERSION_ABI; }
+extern "C" bool LunchboxPluginRegister()
+{
+    lunchbox::PluginRegisterer< monsteer::plugin::SpikeReport > registerer;
+    return true;
+}
 
 namespace monsteer
 {
-namespace streaming
+namespace plugin
 {
 
 namespace
 {
-
 const uint32_t INTERNAL_TIMEOUT = 500;
-lunchbox::PluginRegisterer< SpikeReport > registerer;
-
 }
 
 SpikeReport::SpikeReport( const brion::SpikeReportInitData& pluginData )

@@ -19,21 +19,19 @@
 
 #define MUSIC_TIMESTEP 0.001f //seconds
 
-#include <monsteer/monsteer.h>
-#include <brion/brion.h>
-
 #include <lunchbox/lunchbox.h>
+
 #include <mpi.h>
 #include <music.hh>
 
 #include <boost/scoped_ptr.hpp>
 #include <algorithm>
 
-namespace monsteer
+namespace
 {
-
 const std::string eventPortName = "outSpikes";
 const float cellFirePercentage = 0.05f;
+}
 
 class MusicSpikeWriter : public boost::noncopyable
 {
@@ -42,11 +40,6 @@ public:
         : _musicSetup( argc, argv )
     {
         _setUpMusic();
-    }
-
-    ~MusicSpikeWriter()
-    {
-        delete _runtime;
     }
 
     void run()
@@ -70,7 +63,7 @@ public:
 
 private:
     MUSIC::Setup _musicSetup;
-    MUSIC::Runtime* _runtime;
+    boost::scoped_ptr< MUSIC::Runtime > _runtime;
     MUSIC::EventOutputPort* _eventPort;
     std::vector< uint32_t > _cellShuffle;
     boost::scoped_ptr< MUSIC::IndexMap > _indexMap;
@@ -118,15 +111,13 @@ private:
         _musicSetup.config( "stoptime", &_stoptime );
 
         LBINFO << "Starting MUSIC runtime" << std::endl;
-        _runtime = new MUSIC::Runtime( &_musicSetup, MUSIC_TIMESTEP );
+        _runtime.reset( new MUSIC::Runtime( &_musicSetup, MUSIC_TIMESTEP ));
     }
 };
 
-}
-
 int32_t main( int32_t argc, char *argv[] )
 {
-    monsteer::MusicSpikeWriter writer( argc, argv );
+    MusicSpikeWriter writer( argc, argv );
     writer.run();
     return EXIT_SUCCESS;
 }

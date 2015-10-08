@@ -19,7 +19,7 @@ macro(add_music DESTINATION)
 endmacro()
 
 set(MUSIC_SPIKE_WRITER_SOURCES music_spike_writer.cpp)
-set(MUSIC_SPIKE_WRITER_LINK_LIBRARIES Monsteer ${MPI_CXX_LIBRARIES})
+set(MUSIC_SPIKE_WRITER_LINK_LIBRARIES Lunchbox ${MPI_CXX_LIBRARIES})
 add_music(MUSIC_SPIKE_WRITER)
 common_application(music_spike_writer)
 
@@ -30,5 +30,5 @@ add_music(MUSIC_PROXY)
 common_application(music_proxy)
 
 set(MONSTEER_SPIKE_RECEIVER_SOURCES monsteer_spike_receiver.cpp)
-set(MONSTEER_SPIKE_RECEIVER_LINK_LIBRARIES Monsteer)
+set(MONSTEER_SPIKE_RECEIVER_LINK_LIBRARIES Brion)
 common_application(monsteer_spike_receiver)

@@ -18,9 +18,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <monsteer/streaming/plugin/spikeReport.h>
-
 #include <monsteer/monsteer.h>
+#include <monsteer/streaming/spikeReportReader.h>
+#include <monsteer/streaming/spikeReportWriter.h>
+#include <monsteer/plugin/spikeReport.h>
+
 #include <BBP/TestDatasets.h>
 
 #include <brion/brion.h>
@@ -45,7 +47,9 @@ const unsigned short port = (lunchbox::RNG().get<uint16_t>() % 60000) + 1024;
 const std::string& portStr = boost::lexical_cast< std::string >( port );
 const lunchbox::URI uri( "monsteer://127.0.0.1:" + portStr );
 
-lunchbox::PluginRegisterer< monsteer::streaming::SpikeReport > registerer;
+// Explicit registration required because the folder of the brion plugin is not
+// in the LD_LIBRARY_PATH of the test executable.
+lunchbox::PluginRegisterer< monsteer::plugin::SpikeReport > registerer;
 
 void spike_writer( brion::SpikeReport* writer )
 {

@@ -21,11 +21,10 @@
 #include "monsteer/playbackState_generated.h"
 #include "monsteer/steering/vocabulary.h"
 #include "monsteer/stimulus_generated.h"
-#include "monsteer/streaming/plugin/spikeReport.h"
 
 #include <brion/spikeReport.h>
-
-#include <lunchbox/pluginRegisterer.h>
+#include <lunchbox/debug.h>
+#include <lunchbox/log.h>
 
 #include <zeq/subscriber.h>
 #include <zeq/publisher.h>
@@ -33,13 +32,12 @@
 
 #include <music.hh>
 
+#include <boost/bind.hpp>
 #include <boost/program_options.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 
 namespace po = boost::program_options;
-
-lunchbox::PluginRegisterer< monsteer::streaming::SpikeReport > registerer;
 
 class SpikesHandler : public MUSIC::EventHandlerGlobalIndex
 {

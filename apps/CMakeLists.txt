@@ -4,6 +4,10 @@
 # This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
 #
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+
+add_subdirectory(monsteerGUI)
+
 if(NOT MUSIC_FOUND OR NOT MPI_FOUND)
   return()
 endif()

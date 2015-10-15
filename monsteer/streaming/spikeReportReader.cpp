@@ -82,7 +82,7 @@ Spikes SpikeReportReader::getSpikes()
         }
         else
         {
-            // Othersise fetch all the spikes with time < last spike received.
+            // Otherwise fetch all the spikes with time < last spike received.
             // Spikes with time == last time are left in the cache on
             // purpose. This ensures that the snapshot for [start, last time)
             // is complete.

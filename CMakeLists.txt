@@ -17,10 +17,12 @@ set(VERSION_MINOR "2")
 set(VERSION_PATCH "0")
 set(VERSION_ABI 2)
 
-set(MONSTEER_namespace monsteer)
 set(MONSTEER_ISSUES_URL "https://github.com/BlueBrain/Monsteer/issues")
-set(MONSTEER_DESCRIPTION "Interactive Supercomputing")
-
+set(MONSTEER_DESCRIPTION
+  "Interactive Supercomputing: Monitoring and Steering for NEST simulations")
+set(MONSTEER_MAINTAINER
+  "BBP Visualization Team <bbp-open-source@googlegroups.com>")
+set(MONSTEER_LICENSE LGPL)
 include(Common)
 
 common_package(BBPTestData)
@@ -53,4 +55,3 @@ set(COMMON_PROJECT_DOMAIN ch.epfl.bluebrain)
 set(DOXYGEN_MAINPAGE_MD README.md)
 set(DOXYGEN_EXTRA_INPUT ${PROJECT_SOURCE_DIR}/README.md)
 include(DoxygenRule)
-

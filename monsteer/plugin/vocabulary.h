@@ -17,19 +17,19 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MONSTEER_STREAMING_VOCABULARY_H
-#define MONSTEER_STREAMING_VOCABULARY_H
+#ifndef MONSTEER_PLUGIN_VOCABULARY_H
+#define MONSTEER_PLUGIN_VOCABULARY_H
+
+#include "plugin/spikes_zeq_generated.h"
 
 #include <zeq/types.h>
 #include <zeq/event.h>
-
-#include <monsteer/spikes_zeq_generated.h>
 
 #include <map>
 
 namespace monsteer
 {
-namespace streaming
+namespace plugin
 {
 
 static const zeq::uint128_t EVENT_EOS(

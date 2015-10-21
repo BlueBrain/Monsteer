@@ -23,6 +23,8 @@
 
 #include <monsteer/types.h>
 
+#include <lunchbox/uri.h>
+
 #include <boost/noncopyable.hpp>
 
 namespace monsteer

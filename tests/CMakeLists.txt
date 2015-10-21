@@ -9,7 +9,12 @@ if(NOT BBPTESTDATA_FOUND)
   return()
 endif()
 
-set(TEST_LIBRARIES ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} Monsteer BBPTestData)
+set(TEST_LIBRARIES
+  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  BBPTestData
+  Monsteer
+  BrionMonsteerSpikeReport
+)
 
 if(NOT MONSTEER_FOUND)
   set(EXCLUDE_FROM_TESTS monsteer.cpp)

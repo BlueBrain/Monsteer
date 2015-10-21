@@ -3,7 +3,7 @@
 Monsteer is a library for Interactive Supercomputing in the neuroscience
 domain. Monsteer facilitates the coupling of running simulations
 (currently NEST) with interactive visualization and analysis
-applications. Monsteer support streaming of simulation data to clients
+applications. Monsteer supports streaming of simulation data to clients
 (currenty only spikes) as well as control of the simulator from the
 clients (also kown as computational steering). Monsteer's main
 components are a C++ library, a MUSIC-based application and Python

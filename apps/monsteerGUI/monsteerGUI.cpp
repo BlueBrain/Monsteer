@@ -1,5 +1,8 @@
-/* Copyright (c) 2006-2015, Ahmet Bilgili <ahmet.bilgili@epfl.ch>
- *                          Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2011-2015, EPFL/Blue Brain Project
+ *                          Jafet Villafranca <jafet.villafrancadiaz@epfl.ch>
+ *                          Ahmet Bilgili <ahmet.bilgili@epfl.ch>
+ *                          Maxim Makhinya <maxmah@gmail.com>
+ *                          Stefan.Eilemann@epfl.ch
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
  *
@@ -17,36 +20,23 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MONSTEER_TYPES_H
-#define MONSTEER_TYPES_H
+#include <monsteer/qt/SteeringWidget.h>
 
-#include <lunchbox/log.h>
+#include <QApplication>
 
-#include <lunchbox/types.h>
-#include <brion/types.h>
-
-namespace zeq
+namespace
 {
-class Subscriber;
-class Publisher;
-class Event;
+static const servus::URI LIVRE_ZEQ_SCHEMA( "hbp://" );
+static const servus::URI NEST_ZEQ_SCHEMA( "monsteer-nesteer://" );
 }
 
-/** @namespace monsteer MONSTEER types */
-namespace monsteer
+int main( int argc, char *argv[] )
 {
-using brion::URI;
+    QApplication app( argc, argv );
 
-class Simulator;
-class Spikes;
-class SpikeReportReader;
-class SpikeReportWriter;
+    std::unique_ptr< QWidget > widget(
+        new monsteer::qt::SteeringWidget( LIVRE_ZEQ_SCHEMA, NEST_ZEQ_SCHEMA ));
+    widget->show();
 
-typedef std::vector< std::string > Strings;
-
-typedef boost::shared_ptr< Simulator > SimulatorPtr;
-typedef boost::shared_ptr< SpikeReportReader > SpikeReportReaderPtr;
-typedef boost::shared_ptr< SpikeReportWriter > SpikeReportWriterPtr;
+    return app.exec();
 }
-
-#endif

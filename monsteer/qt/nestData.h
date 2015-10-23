@@ -1,5 +1,5 @@
-/* Copyright (c) 2006-2015, Ahmet Bilgili <ahmet.bilgili@epfl.ch>
- *                          Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2011-2015, EPFL/Blue Brain Project
+ *                          Ahmet Bilgili <ahmet.bilgili@epfl.ch>
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
  *
@@ -17,36 +17,35 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MONSTEER_TYPES_H
-#define MONSTEER_TYPES_H
+#ifndef MONSTEER_QT_NESTDATA_H
+#define MONSTEER_QT_NESTDATA_H
 
-#include <lunchbox/log.h>
+#include <monsteer/types.h>
+#include <monsteer/qt/types.h>
 
-#include <lunchbox/types.h>
-#include <brion/types.h>
-
-namespace zeq
-{
-class Subscriber;
-class Publisher;
-class Event;
-}
-
-/** @namespace monsteer MONSTEER types */
 namespace monsteer
 {
-using brion::URI;
+namespace qt
+{
 
-class Simulator;
-class Spikes;
-class SpikeReportReader;
-class SpikeReportWriter;
+/**
+ * @return Returns list of NEST generators
+ */
+const Strings& getGenerators();
 
-typedef std::vector< std::string > Strings;
+/**
+ * @param generator NEST generator
+ * @return Returns the properties for the given NEST generator
+ */
+const PropertyList& getGeneratorProperties( const std::string& generator );
 
-typedef boost::shared_ptr< Simulator > SimulatorPtr;
-typedef boost::shared_ptr< SpikeReportReader > SpikeReportReaderPtr;
-typedef boost::shared_ptr< SpikeReportWriter > SpikeReportWriterPtr;
+/**
+ * @param list NEST generator properties
+ * @return JSON text for given properties
+ */
+std::string getJSON( const PropertyList& list );
+
+}
 }
 
 #endif

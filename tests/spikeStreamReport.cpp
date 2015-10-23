@@ -43,9 +43,7 @@
 
 #define STARTUP_DELAY 250
 
-const unsigned short port = (lunchbox::RNG().get<uint16_t>() % 60000) + 1024;
-const std::string& portStr = boost::lexical_cast< std::string >( port );
-const lunchbox::URI uri( "monsteer://127.0.0.1:" + portStr );
+const lunchbox::URI uri( "monsteer://127.0.0.1" );
 
 // Explicit registration required because the folder of the brion plugin is not
 // in the LD_LIBRARY_PATH of the test executable.
@@ -116,6 +114,7 @@ void stream_clear_reader( brion::SpikeReport* reader )
     BOOST_CHECK_EQUAL( reader->getEndTime(), brion::UNDEFINED_TIMESTAMP );
     BOOST_CHECK( reader->getSpikes().empty( ));
 }
+
 void stream_read_all( brion::SpikeReport* reader )
 {
     reader->waitUntil( brion::UNDEFINED_TIMESTAMP );
@@ -163,8 +162,8 @@ void stream_get_next_spike_time( brion::SpikeReport* reader )
 BOOST_AUTO_TEST_CASE( test_read_chunks )
 {
     std::cout << "Running test_read_chunks" << std::endl;
-    brion::SpikeReport reader( uri, brion::MODE_READ );
     brion::SpikeReport writer( uri, brion::MODE_WRITE );
+    brion::SpikeReport reader( writer.getURI(), brion::MODE_READ );
     lunchbox::sleep( 250 );
     boost::thread readerThread( boost::bind( &read_chunks, &reader ));
     boost::thread writerThread( boost::bind( &spike_writer, &writer ));
@@ -175,8 +174,8 @@ BOOST_AUTO_TEST_CASE( test_read_chunks )
 BOOST_AUTO_TEST_CASE( test_stream_clear )
 {
     std::cout << "Running test_stream_clear" << std::endl;
-    brion::SpikeReport reader( uri, brion::MODE_READ );
     brion::SpikeReport writer( uri, brion::MODE_WRITE );
+    brion::SpikeReport reader( writer.getURI(), brion::MODE_READ );
     lunchbox::sleep( STARTUP_DELAY );
     boost::thread readerThread( boost::bind( &stream_clear_reader, &reader ));
     boost::thread writerThread( boost::bind( &spike_writer, &writer ));
@@ -187,8 +186,8 @@ BOOST_AUTO_TEST_CASE( test_stream_clear )
 BOOST_AUTO_TEST_CASE( test_stream_read_all )
 {
     std::cout << "Running test_stream_read_all" << std::endl;
-    brion::SpikeReport reader( uri, brion::MODE_READ );
     brion::SpikeReport writer( uri, brion::MODE_WRITE );
+    brion::SpikeReport reader( writer.getURI(), brion::MODE_READ );
     lunchbox::sleep( STARTUP_DELAY );
     boost::thread readerThread( boost::bind( &stream_read_all, &reader ));
     boost::thread writerThread( boost::bind( &spike_writer, &writer ));
@@ -208,8 +207,8 @@ BOOST_AUTO_TEST_CASE( test_stream_read_close )
 BOOST_AUTO_TEST_CASE( test_stream_read_timeout )
 {
     std::cout << "Running test_stream_read_timeout" << std::endl;
-    brion::SpikeReport reader( uri, brion::MODE_READ );
     brion::SpikeReport writer( uri, brion::MODE_WRITE );
+    brion::SpikeReport reader( writer.getURI(), brion::MODE_READ );
     lunchbox::sleep( STARTUP_DELAY );
     boost::thread readerThread( boost::bind( &stream_read_timeout, &reader ));
     boost::thread writerThread( boost::bind( &spike_writer, &writer ));
@@ -220,8 +219,8 @@ BOOST_AUTO_TEST_CASE( test_stream_read_timeout )
 BOOST_AUTO_TEST_CASE( test_stream_read_by_chunks_with_timeout )
 {
     std::cout << "Running test_stream_read_by_chunks_with_timeout" << std::endl;
-    brion::SpikeReport reader( uri, brion::MODE_READ );
     brion::SpikeReport writer( uri, brion::MODE_WRITE );
+    brion::SpikeReport reader( writer.getURI(), brion::MODE_READ );
     lunchbox::sleep( STARTUP_DELAY );
     boost::thread readerThread(
         boost::bind( &stream_read_by_chunks_with_timeout, &reader ));
@@ -233,8 +232,8 @@ BOOST_AUTO_TEST_CASE( test_stream_read_by_chunks_with_timeout )
 BOOST_AUTO_TEST_CASE( test_stream_get_next_spike_time )
 {
     std::cout << "Running test_stream_get_next_spike_time" << std::endl;
-    brion::SpikeReport reader( uri, brion::MODE_READ );
     brion::SpikeReport writer( uri, brion::MODE_WRITE );
+    brion::SpikeReport reader( writer.getURI(), brion::MODE_READ );
     lunchbox::sleep( STARTUP_DELAY );
     boost::thread readerThread( boost::bind( &stream_get_next_spike_time,
                                              &reader ));
@@ -275,8 +274,8 @@ void spike_timewindowed_reader( monsteer::SpikeReportReader* reader )
 
 BOOST_AUTO_TEST_CASE( test_spike_report_read_write )
 {
-    monsteer::SpikeReportReader reader( uri );
     monsteer::SpikeReportWriter writer( uri );
+    monsteer::SpikeReportReader reader( writer.getURI( ));
     lunchbox::sleep( STARTUP_DELAY );
     boost::thread readerThread( boost::bind( &spike_report_reader, &reader ));
     boost::thread writerThread( boost::bind( &spike_report_writer, &writer ));
@@ -286,8 +285,8 @@ BOOST_AUTO_TEST_CASE( test_spike_report_read_write )
 
 BOOST_AUTO_TEST_CASE( monsteer_spikes_time_windowed_read_write )
 {
-    monsteer::SpikeReportReader reader( uri );
     monsteer::SpikeReportWriter writer( uri );
+    monsteer::SpikeReportReader reader( writer.getURI( ));
     lunchbox::sleep( STARTUP_DELAY );
     boost::thread readerThread(
         boost::bind( &spike_timewindowed_reader, &reader ));

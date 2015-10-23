@@ -59,9 +59,12 @@ public:
 
     brion::SpikeReport::ReadMode getReadMode() const final;
 
+    const lunchbox::URI& getURI() const final;
+
     void close() final;
 
 private:
+    const URI _uri;
     brion::Spikes _incoming;
     brion::Spikes _spikes;
 

@@ -52,7 +52,7 @@ any other issue with this release
 
 ## About
 
-The [API documentation](http://bluebrain.github.io/Monsteer-0.2/index.html)
+The [API documentation](http://bluebrain.github.io/Monsteer-0.3/index.html)
 can be found on [bluebrain.github.io](http://bluebrain.github.io/).
 
 The following platforms and build environments are tested:

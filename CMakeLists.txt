@@ -19,7 +19,7 @@ set(VERSION_ABI 3)
 
 set(MONSTEER_ISSUES_URL "https://github.com/BlueBrain/Monsteer/issues")
 set(MONSTEER_DESCRIPTION
-  "Interactive Supercomputing: Monitoring and Steering for NEST simulations")
+  "Interactive Supercomputing - Monitoring and Steering for NEST simulations")
 set(MONSTEER_MAINTAINER
   "BBP Visualization Team <bbp-open-source@googlegroups.com>")
 set(MONSTEER_LICENSE LGPL)

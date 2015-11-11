@@ -53,6 +53,7 @@ struct SteeringWidget::Impl
         , _simulationZeqSchema( simulationZeqSchema )
     {
         _ui.setupUi( steeringWidget );
+        _ui.tblGeneratorProperties->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
 
         connectHBP();
         connectISC();

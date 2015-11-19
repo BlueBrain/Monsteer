@@ -35,6 +35,11 @@
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 
+namespace
+{
+const monsteer::URI nestSimulatorURI( "nestSimulator://" );
+}
+
 namespace monsteer
 {
 namespace qt
@@ -42,15 +47,12 @@ namespace qt
 
 struct SteeringWidget::Impl
 {
-    Impl( SteeringWidget* steeringWidget,
-          const servus::URI& selectionZeqSchema,
-          const servus::URI& simulationZeqSchema )
+    Impl( SteeringWidget* steeringWidget )
         : _simulator( 0 )
-        , _selectionSubscriber( new zeq::Subscriber( selectionZeqSchema ))
+        , _selectionSubscriber( new zeq::Subscriber( ))
         , _playing( true )
         , _isRegistered( false )
         , _steeringWidget( steeringWidget )
-        , _simulationZeqSchema( simulationZeqSchema )
     {
         _ui.setupUi( steeringWidget );
         _ui.tblGeneratorProperties->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
@@ -136,7 +138,7 @@ struct SteeringWidget::Impl
     {
         try
         {
-            _simulator = new monsteer::Simulator( _simulationZeqSchema );
+            _simulator = new monsteer::Simulator( nestSimulatorURI );
             _ui.btnPlayPauseSimulation->setEnabled( true );
         }
         catch( const std::exception& error )
@@ -218,20 +220,16 @@ public:
     bool _isRegistered;
     Ui_steeringWidget _ui;
     SteeringWidget* _steeringWidget;
-    servus::URI _simulationZeqSchema;
 
     QTimer _receiveTimer;
     std::vector<uint32_t> _selectedIds;
 };
 
-SteeringWidget::SteeringWidget( const servus::URI& selectionZeqSchema,
-                                const servus::URI& simulationZeqSchema,
-                                QWidget* parentWgt )
+SteeringWidget::SteeringWidget( QWidget* parentWgt )
     : QWidget( parentWgt )
-    , _impl( new SteeringWidget::Impl( this, selectionZeqSchema,
-                                       simulationZeqSchema ))
+    , _impl( new SteeringWidget::Impl( this ))
 {
-    qRegisterMetaType< std::vector<uint32_t> >("std::vector<uint32_t>");
+    qRegisterMetaType< std::vector<uint32_t> >( "std::vector<uint32_t>" );
 
     _impl->_ui.txtCellIds->setReadOnly( true );
     GeneratorModel* generatorModel =

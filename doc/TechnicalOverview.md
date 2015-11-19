@@ -77,8 +77,8 @@ a fully qualified URL.
 Monsteer extends the spike reader and writer interfaces defined in the Brion plugin
 API. When a library is linked against the Monsteer library, those plugins are
 automatically instantiated. Here Monsteer library provides schema starting with
-"Monsteer" keyword, such as "monsteer://" for spike streaming and "MONSTEER_steer://" for
-steering.
+"Monsteer" keyword, such as "monsteer://" for spike streaming and
+"nestSimulator://" for steering.
 
 # Brion Spikes {#Brion_Spikes}
 
@@ -149,8 +149,7 @@ spikes are transferred from one end to another. Both ends, publishers and
 subscribers, connect through a given URL schema.  In the case of spike
 streaming, the URL schema is "monsteer://". If auto-dIscovery is enabled giving
 this schema is sufficient for both ends to connect, otherwise it is also
-possible to hardcode the host and
-its port for the connection.
+possible to hardcode the host and its port for the connection.
 
 ## Steering Handler {#Music_Proxy_Steering_Handler}
 

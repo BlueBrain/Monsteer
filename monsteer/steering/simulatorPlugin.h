@@ -25,19 +25,16 @@ namespace monsteer
 {
 
 /** Init data for SimulatorPlugin
- * version 0.2
+ * @version 0.4
  */
 class SimulatorPluginInitData
 {
 public:
-    explicit SimulatorPluginInitData( const URI& subscriber_,
-                                      const URI& publisher_ )
+    explicit SimulatorPluginInitData( const URI& subscriber_ )
         : subscriber( subscriber_ )
-        , publisher( publisher_ )
     {}
 
     const URI subscriber;
-    const URI publisher;
 };
 
 /** Base interface for simulator steering plugins
@@ -77,8 +74,7 @@ namespace boost
 template<> inline
 std::string lexical_cast( const monsteer::SimulatorPluginInitData& data )
 {
-    return "(" + lexical_cast< std::string >( data.subscriber ) +
-        ", " + lexical_cast< std::string >( data.publisher ) + ")";
+    return lexical_cast< std::string >( data.subscriber );
 }
 }
 

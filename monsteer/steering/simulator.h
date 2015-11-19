@@ -22,7 +22,6 @@
 
 namespace monsteer
 {
-namespace detail { class Simulator; }
 
 /** Steering interface to the simulator of an experiment.
  *
@@ -112,7 +111,8 @@ public:
     void pause();
 
 private:
-    detail::Simulator* _impl;
+    class Impl;
+    Impl* _impl;
 };
 
 }

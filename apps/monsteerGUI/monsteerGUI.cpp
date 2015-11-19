@@ -24,18 +24,11 @@
 
 #include <QApplication>
 
-namespace
-{
-static const servus::URI LIVRE_ZEQ_SCHEMA( "hbp://" );
-static const servus::URI NEST_ZEQ_SCHEMA( "monsteer-nesteer://" );
-}
-
 int main( int argc, char *argv[] )
 {
     QApplication app( argc, argv );
 
-    std::unique_ptr< QWidget > widget(
-        new monsteer::qt::SteeringWidget( LIVRE_ZEQ_SCHEMA, NEST_ZEQ_SCHEMA ));
+    std::unique_ptr< QWidget > widget( new monsteer::qt::SteeringWidget( ));
     widget->show();
 
     return app.exec();

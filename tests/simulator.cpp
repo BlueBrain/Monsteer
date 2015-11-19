@@ -34,7 +34,6 @@ struct SimulatorData
     };
 
     monsteer::URI subscriber;
-    monsteer::URI publisher;
     brion::uint32_ts cells;
     std::string stimulusString;
     PlaybackState playbackState;
@@ -48,13 +47,11 @@ public:
     explicit DummySimulator( const monsteer::SimulatorPluginInitData& pluginData )
     {
         globalData.subscriber = pluginData.subscriber;
-        globalData.publisher = pluginData.publisher;
     }
 
     static bool handles( const monsteer::SimulatorPluginInitData& pluginData )
     {
-        return (pluginData.subscriber.getScheme() == "dummy" &&
-                pluginData.publisher.getScheme() == "dummy");
+        return pluginData.subscriber.getScheme() == "dummy";
     }
 
     void injectStimulus( const std::string& jsonParameters,
@@ -92,7 +89,6 @@ BOOST_AUTO_TEST_CASE( test_create_handled_simulator )
     monsteer::Simulator simulator( uri );
 
     BOOST_CHECK_EQUAL( globalData.subscriber, uri );
-    BOOST_CHECK_EQUAL( globalData.publisher, uri );
 }
 
 BOOST_AUTO_TEST_CASE( test_create_unhandled )

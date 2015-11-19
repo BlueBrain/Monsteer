@@ -26,15 +26,14 @@
 
 namespace monsteer
 {
-namespace detail
-{
-class Simulator
+
+class Simulator::Impl
 {
 public:
     typedef lunchbox::PluginFactory<
         SimulatorPlugin, SimulatorPluginInitData > SimulatorPluginFactory;
 
-    explicit Simulator( const SimulatorPluginInitData& initData )
+    explicit Impl( const SimulatorPluginInitData& initData )
         : plugin( SimulatorPluginFactory::getInstance().create( initData ))
     {
     }
@@ -42,14 +41,10 @@ public:
     boost::scoped_ptr< SimulatorPlugin > plugin;
 };
 
-}
-
 Simulator::Simulator( const URI& uri )
     // The publisher URI is the scheme part of the subscriber URI for the
     // moment.
-    : _impl( new detail::Simulator(
-                 SimulatorPluginInitData( uri,
-                                          URI( uri.getScheme( ) + "://" ))))
+    : _impl( new Simulator::Impl( SimulatorPluginInitData( uri )))
 {
 }
 

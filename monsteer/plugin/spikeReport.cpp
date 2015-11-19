@@ -25,6 +25,7 @@
 #include <zeq/publisher.h>
 #include <zeq/vocabulary.h>
 #include <zeq/event.h>
+#include <zeq/uri.h>
 
 #include <lunchbox/clock.h>
 #include <lunchbox/pluginRegisterer.h>
@@ -49,19 +50,26 @@ namespace
 const uint32_t INTERNAL_TIMEOUT = 500;
 }
 
+URI toHostAndPort( const URI& uri )
+{
+    URI out;
+    out.setHost( uri.getHost( ));
+    out.setPort( uri.getPort( ));
+    return out;
+}
+
 SpikeReport::SpikeReport( const brion::SpikeReportInitData& pluginData )
-    : _uri( pluginData.getURI( ))
+    : _uri( toHostAndPort( pluginData.getURI( )))
     , _lastEndTime( 0 )
     , _lastTimeStamp( -1 )
     , _closed( false )
 {
-    const int accessMode = pluginData.getAccessMode();
-
-    switch( accessMode )
+    switch( pluginData.getAccessMode( ))
     {
     case brion::MODE_READ:
     {
-        _subscriber.reset( new zeq::Subscriber( _uri ));
+        _subscriber.reset( new zeq::Subscriber( zeq::URI( _uri ),
+                                                zeq::DEFAULT_SESSION ));
         _subscriber->registerHandler(
             EVENT_SPIKES,
             boost::bind( &SpikeReport::_onSpikes, this, _1 ));
@@ -73,7 +81,7 @@ SpikeReport::SpikeReport( const brion::SpikeReportInitData& pluginData )
     case brion::MODE_WRITE:
     case brion::MODE_OVERWRITE:
     {
-        _publisher.reset( new zeq::Publisher( _uri ));
+        _publisher.reset( new zeq::Publisher( zeq::URI( _uri )));
         break;
     }
     default:

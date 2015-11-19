@@ -24,16 +24,21 @@
 #include <boost/foreach.hpp>
 #include <algorithm>
 
+namespace
+{
+const std::string brionMonsteerSpikesPluginURI( "monsteer://" );
+}
+
 class CommandLineOptions
 {
 public:
     brion::URI inputURI;
 
     CommandLineOptions( int32_t argc, char* argv[] )
-        : inputURI( "monsteer://" )
+        : inputURI( brionMonsteerSpikesPluginURI )
     {
-        if ( argc > 1 )
-            inputURI = brion::URI( argv[1] );
+        if( argc > 1 )
+            inputURI = brion::URI( brionMonsteerSpikesPluginURI + argv[1] );
     }
 };
 
@@ -46,7 +51,7 @@ public:
     {
     }
 
-    void run( )
+    void run()
     {
         float time = 0;
         while( _reader.waitUntil( time ))

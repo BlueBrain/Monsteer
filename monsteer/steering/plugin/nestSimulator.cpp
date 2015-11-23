@@ -18,10 +18,13 @@
  */
 
 #include "nestSimulator.h"
+
+#include <monsteer/types.h>
 #include <monsteer/steering/vocabulary.h>
 
 #include <zeq/subscriber.h>
 #include <zeq/publisher.h>
+#include <zeq/uri.h>
 
 #include <lunchbox/debug.h>
 #include <lunchbox/pluginRegisterer.h>
@@ -36,17 +39,17 @@ namespace
 lunchbox::PluginRegisterer< NESTSimulator > registerer;
 }
 
-NESTSimulator::NESTSimulator( const monsteer::SimulatorPluginInitData& pluginData )
+NESTSimulator::NESTSimulator( const SimulatorPluginInitData& pluginData )
+    : _replySubscriber( new zeq::Subscriber( zeq::URI( pluginData.subscriber ),
+                                             zeq::DEFAULT_SESSION ))
+    , _requestPublisher( new zeq::Publisher( ))
 {
-    _replySubscriber.reset( new zeq::Subscriber( pluginData.subscriber ));
-    _requestPublisher.reset( new zeq::Publisher( pluginData.publisher ));
 }
 
-bool NESTSimulator::handles( const monsteer::SimulatorPluginInitData& pluginData )
+bool NESTSimulator::handles( const SimulatorPluginInitData& pluginData )
 {
-    const std::string url = "monsteer";
-    return !pluginData.subscriber.getScheme().compare( 0, url.size(), url ) &&
-           !pluginData.publisher.getScheme().compare( 0, url.size(), url );
+    return pluginData.subscriber.getScheme() ==
+                      MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME;
 }
 
 void NESTSimulator::injectStimulus( const std::string& jsonParameters,

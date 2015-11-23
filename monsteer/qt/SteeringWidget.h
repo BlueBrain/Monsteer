@@ -40,15 +40,10 @@ class SteeringWidget : public QWidget
 public:
 
     /**
-     * @param selectionZeqSchema the ZeroEQ schema used for receiving selection
-     *        events.
-     * @param simulationZeqSchema the ZeroEQ schema used for sending stimuli to
-     *        the simulation.
+     * Constructor
      * @param parentWgt Parent widget.
      */
-    SteeringWidget( const servus::URI& selectionZeqSchema,
-                    const servus::URI& simulationZeqSchema,
-                    QWidget *parentWgt = 0 );
+    SteeringWidget( QWidget *parentWgt = 0 );
     ~SteeringWidget();
 
 signals:

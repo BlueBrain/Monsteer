@@ -20,9 +20,15 @@
 #define MUSIC_TIMESTEP 0.01f //seconds
 
 #include <brion/brion.h>
+#include <monsteer/types.h>
 
 #include <boost/foreach.hpp>
 #include <algorithm>
+
+namespace
+{
+const std::string pluginScheme( MONSTEER_BRION_SPIKES_PLUGIN_SCHEME + "://" );
+}
 
 class CommandLineOptions
 {
@@ -30,10 +36,10 @@ public:
     brion::URI inputURI;
 
     CommandLineOptions( int32_t argc, char* argv[] )
-        : inputURI( "monsteer://" )
+        : inputURI( pluginScheme )
     {
-        if ( argc > 1 )
-            inputURI = brion::URI( argv[1] );
+        if( argc > 1 )
+            inputURI = brion::URI( pluginScheme + argv[1] );
     }
 };
 
@@ -46,7 +52,7 @@ public:
     {
     }
 
-    void run( )
+    void run()
     {
         float time = 0;
         while( _reader.waitUntil( time ))

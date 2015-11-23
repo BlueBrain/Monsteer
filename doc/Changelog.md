@@ -3,6 +3,12 @@ Changelog {#Changelog}
 
 # git master {master)
 
+* [13](https://github.com/BlueBrain/Monsteer/pull/13):
+   Adapted Monsteer to the new Zeq sessions mechanism introduced in
+   [105](https://github.com/HBPVIS/zeq/pull/105).
+* [13](https://github.com/BlueBrain/Monsteer/pull/13):
+  Adjusted doxygen documentation.
+
 # Release 0.3.0 (09-11-2015) {#release_003000}
 
 * [6](https://github.com/BlueBrain/Monsteer/pull/6):

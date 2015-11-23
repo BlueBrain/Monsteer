@@ -5,8 +5,8 @@ Technical Overview {#Technical_Overview}
 
 # Technical Overview {#Technical_Overview}
 
-The Interactive Supercomputing library helps users to construct loosely
-coupled simulation-observer/controller pairs in an easy manner. After the
+The Monsteer library helps users setting up loosely coupled
+simulation-observer/controller pairs in an easy manner. After the
 integration of all the components, users can interact with a simulation both
 for streaming events from it and steering any of its parameters.
 
@@ -14,20 +14,20 @@ To accomplish this task, Monsteer provides: Brion plugins for spike data streami
 a Python interface to steer the simulator and a bridging application between
 the user and the simulator.
 
-At the moment, Monsteer only offers support for the \ref NEST_Simulator which is
+At the moment, Monsteer only offers support for the \ref NEST simulator which is
 mainly used by the Neurobotics group in the BlueBrain project. Despite this
 limitation, all the Monsteer components were developed thinking on their
 reusability with other simulators such as Neuron.
 
 For example, Monsteer is based on the plugin mechanism provided by Brion, where the
-interface of spike streaming is defined. By using different schemas,
+interface of spike streaming is defined. By using different schemes,
 developers have the ability of implementing different spike
 readers/writers. These are all interfaced through the BBPSDK API, where the
 exposed interface is common for all the spike stream processes. As a result,
 for users it is transparent to use different spike sources where they only
 have to provide different spike readers or writers. These mechanisms are
 already used to stream and read file data from NEST and Neuron simulators by
-just using different schemas.
+just using different schemes.
 
 A general overview of the Monsteer project can be seen below.
 
@@ -71,14 +71,12 @@ extensible to make the coupling with other libraries.
 Brion provides many additional plugins and plugin interfaces for accessing
 BlueBrain project data. This data includes neuron structures, neuron
 placements, simulation results, meshes, etc. The plugins in this library are
-activated by a schema, where a schema can also be a file extension rather than
+activated by a scheme, where a scheme can also be a file extension rather than
 a fully qualified URL.
 
-Monsteer extends the spike reader and writer interfaces defined in the Brion plugin
-API. When a library is linked against the Monsteer library, those plugins are
-automatically instantiated. Here Monsteer library provides schema starting with
-"Monsteer" keyword, such as "monsteer://" for spike streaming and "MONSTEER_steer://" for
-steering.
+Monsteer provides a standalone spike reader and writer plugin for Brion. This
+plugin is automatically registered by Brion at runtime and can be instanciated
+by passing a "monsteer://" URI to the brion::SpikeReport constructor.
 
 # Brion Spikes {#Brion_Spikes}
 
@@ -89,30 +87,30 @@ neuron passes a certain voltage threshold. This spike event can be represented
 as a timestamp and a neuron identifier. In Brion and Monsteer, there is support
 for internal BBP data formats, NEST file formats and streaming formats.
 
-# Zeq ZeroEq: Auto-dIscovery and Event Based Data Sharing Library
+# Zeq ZeroEq: Auto-discovery and Event Based Data Sharing Library
 
-The ZeroEQ library is used for auto-dIscovery of services, data transport and
-event based messaging. The auto-dIscovery and data transport are done
-through the ZeroMQ library, where in lack of auto-dIscovery, it is also possible
-to target a host with a given port. The messages are based on FLATBuffers schema
+The ZeroEQ library is used for auto-discovery of services, data transport and
+event based messaging. The auto-discovery and data transport are done
+through the ZeroMQ library, where in lack of auto-discovery, it is also possible
+to target a host with a given port. The messages are based on FLATBuffers scheme
 which enforces the messages to be well-defined.  On top of these libraries,
-ZeroEQ provides an URI-based auto-dIscovery, event listening and event
-registration layers. In ZeroEQ the events form a vocabulary for a given schema
+ZeroEQ provides an URI-based auto-discovery, event listening and event
+registration layers. In ZeroEQ the events form a vocabulary for a given scheme
 and can easily be extended.
 
 Two ends of the connection in ZeroEQ is a publisher and subscriber pair. When
-auto-dIscovery is possible, a publisher announces its schema to the outer world
-in the network and subscribers interested with this schema can connect to this
+auto-discovery is possible, a publisher announces its scheme to the outer world
+in the network and subscribers interested with this scheme can connect to this
 publisher.
 
-When auto-dIscovery is not available or is not requested by the subscriber, it
-is also possible to provide a specific host and port in the schema. This way,
+When auto-discovery is not available or is not requested by the subscriber, it
+is also possible to provide a specific host and port in the scheme. This way,
 a connection to a known publisher can be established.
 
 In Monsteer, ZeroEQ is used for: sending spike events from Music Proxy to the
 steering application, sending steering messages from the steering application
 and sending information messages from the simulator. Each item introduces a
-schema, its own vocabulary and consequently its own events.
+scheme, its own vocabulary and consequently its own events.
 
 # Music Proxy {#Music_Proxy}
 
@@ -144,13 +142,13 @@ The spike event reader and writer interfaces are declared in Brion. The
 necessary structures for reading/writing files and streaming spikes are
 developed within the Brion and Monsteer libraries.
 
-Monsteer provides the spike streaming plugins. Based on the ZeroEQ library, the
-spikes are transferred from one end to another. Both ends, publishers and
-subscribers, connect through a given URL schema.  In the case of spike
-streaming, the URL schema is "monsteer://". If auto-dIscovery is enabled giving
-this schema is sufficient for both ends to connect, otherwise it is also
-possible to hardcode the host and
-its port for the connection.
+Monsteer provides a spike streaming plugin based on the ZeroEQ library to
+transfer events from one end to another. Both endpoints, the publisher and
+the subscriber, can generally rely on ZeroEQ's auto-discovery mechanism to
+automatically connect to each other. Otherwise, it is also possible to pass a
+specific host and port to the brion::SpikeReport plugin constructor. Please
+refer to the ZeroEQ documentation if you want to learn more about the
+connection mechanism and its filtering options.
 
 ## Steering Handler {#Music_Proxy_Steering_Handler}
 
@@ -170,9 +168,9 @@ BBPSDK is a basic library for accessing the BlueBrain data. It can read spike
 reports, compartment reports, meshes, neuron structures, their placements,
 etc. It provides a complete user API and their Python wrappings where the
 implementations are generally plugins. The right plugin is selected based on a
-given schema. These plugins are generally located in Brion library and can
+given scheme. These plugins are generally located in Brion library and can
 easily be extended by 3rd party libraries. Monsteer library is one of the libraries
-that provides plugins for the Monsteer schema.
+that provides plugins for the Monsteer scheme.
 
 For users to steer a simulation easily, a new functionality was added in the
 BBPSDK library. The functionality is abstracted from the underlying simulator

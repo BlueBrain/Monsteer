@@ -13,9 +13,9 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
 include(GitExternal)
 
 set(VERSION_MAJOR "0")
-set(VERSION_MINOR "3")
+set(VERSION_MINOR "4")
 set(VERSION_PATCH "0")
-set(VERSION_ABI 3)
+set(VERSION_ABI 4)
 
 set(MONSTEER_ISSUES_URL "https://github.com/BlueBrain/Monsteer/issues")
 set(MONSTEER_DESCRIPTION

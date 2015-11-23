@@ -25,6 +25,9 @@
 #include <lunchbox/types.h>
 #include <brion/types.h>
 
+#define MONSTEER_BRION_SPIKES_PLUGIN_SCHEME    std::string( "monsteer" )
+#define MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME  std::string( "nest" )
+
 namespace zeq
 {
 class Subscriber;

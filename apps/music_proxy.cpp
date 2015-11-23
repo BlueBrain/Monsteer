@@ -39,13 +39,17 @@
 
 namespace po = boost::program_options;
 
+namespace
+{
+const double defaultMusicTimestep = 0.0001;
+const brion::URI pluginURI( MONSTEER_BRION_SPIKES_PLUGIN_SCHEME + "://" );
+}
+
 class SpikesHandler : public MUSIC::EventHandlerGlobalIndex
 {
 public:
-    SpikesHandler( MUSIC::Setup* setup,
-                   const brion::URI& uri,
-                   const std::string& spikesPort )
-        : _spikeReport( uri, brion::MODE_OVERWRITE )
+    SpikesHandler( MUSIC::Setup* setup, const std::string& spikesPort )
+        : _spikeReport( pluginURI, brion::MODE_OVERWRITE )
     {
         LBINFO << "Initializing Spikes Handler" << std::endl;
 
@@ -103,9 +107,6 @@ private:
 class CommandLineOptions
 {
 public:
-    std::string outputURI;
-    std::string steeringURI;
-
     std::string spikesPort;
     std::string steeringPort;
 
@@ -114,8 +115,8 @@ public:
     double musicTimestep;
 
     CommandLineOptions( int32_t argc, char* argv[] )
-        : enableSteering(false),
-          musicTimestep(0.0001)
+        : enableSteering( false )
+        , musicTimestep( defaultMusicTimestep )
     {
         bool showHelp;
 
@@ -126,22 +127,14 @@ public:
               "produce help message" )
             ( "timestep",
               po::value< double >(
-                  &musicTimestep )->default_value( 0.0001 ),
+                  &musicTimestep )->default_value( defaultMusicTimestep ),
               "MUSIC library tick time steps" )
 
-            ( "streaming-uri",
-              po::value< std::string >(
-                  &outputURI )->default_value( "monsteer://" ),
-              "URI for zeq streaming pusblisher" )
             ( "music-streaming-port",
               po::value< std::string >(
                   &spikesPort )->default_value( "spikesPort" ),
               "MUSIC streaming port" )
 
-            ( "steering-uri",
-              po::value< std::string >(
-                  &steeringURI )->default_value( "monsteer-nesteer://" ),
-              "URI for zeq steering subscriber" )
             ( "music-steering-port",
               po::value< std::string >(
                   &steeringPort )->default_value( "steeringPort" ),
@@ -183,13 +176,9 @@ class SteeringHandler
 {
 public:
 
-    SteeringHandler( MUSIC::Setup* setup,
-                     const brion::URI& uri,
-                     const std::string& steeringPort )
-        : _subscriber( uri ),
-          _state( monsteer::steering::SimulationPlaybackState::PLAY )
+    SteeringHandler( MUSIC::Setup* setup, const std::string& steeringPort )
+        : _state( monsteer::steering::SimulationPlaybackState::PLAY )
     {
-
         LBINFO << "Initializing Steering Handler" << std::endl;
 
         _steeringOutput = setup->publishMessageOutput( steeringPort );
@@ -242,8 +231,7 @@ private:
     void _onStimulusInjection( const zeq::Event& event )
     {
         LBASSERT( event.getType() == monsteer::steering::EVENT_STIMULUSINJECTION )
-        const std::string& json =
-             zeq::vocabulary::deserializeJSON( event );
+        const std::string& json = zeq::vocabulary::deserializeJSON( event );
         // Although music library internally "does not" touch the sent data,
         // the Music "insertMessage" function accepts only non-const data.
         // Not to have a second copy, the below const_cast is applied.
@@ -279,17 +267,12 @@ public:
         , _communicator( _setup->communicator( ))
         , _rank( _communicator.Get_rank( ))
         , _options( argc, argv )
-        , _spikesHandler( _setup,
-                          brion::URI( _options.outputURI ),
-                          _options.spikesPort )
+        , _spikesHandler( _setup, _options.spikesPort )
     {
         if( _options.enableSteering )
         {
-            brion::URI uri( _options.steeringURI );
             _steeringHandler.reset(
-                        new SteeringHandler( _setup,
-                                             uri,
-                                             _options.steeringPort ));
+                        new SteeringHandler( _setup, _options.steeringPort ));
         }
 
         _setup->config( "stoptime", &_stoptime );

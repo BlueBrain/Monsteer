@@ -37,7 +37,7 @@
 
 namespace
 {
-const monsteer::URI nestSimulatorURI( "nestSimulator://" );
+const monsteer::URI pluginURI( MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME + "://" );
 }
 
 namespace monsteer
@@ -138,7 +138,7 @@ struct SteeringWidget::Impl
     {
         try
         {
-            _simulator = new monsteer::Simulator( nestSimulatorURI );
+            _simulator = new monsteer::Simulator( pluginURI );
             _ui.btnPlayPauseSimulation->setEnabled( true );
         }
         catch( const std::exception& error )

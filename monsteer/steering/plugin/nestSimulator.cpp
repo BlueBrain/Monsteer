@@ -18,6 +18,8 @@
  */
 
 #include "nestSimulator.h"
+
+#include <monsteer/types.h>
 #include <monsteer/steering/vocabulary.h>
 
 #include <zeq/subscriber.h>
@@ -34,8 +36,6 @@ namespace steering
 
 namespace
 {
-const std::string nestSimulatorScheme = "nestSimulator";
-
 lunchbox::PluginRegisterer< NESTSimulator > registerer;
 }
 
@@ -48,7 +48,8 @@ NESTSimulator::NESTSimulator( const SimulatorPluginInitData& pluginData )
 
 bool NESTSimulator::handles( const SimulatorPluginInitData& pluginData )
 {
-    return pluginData.subscriber.getScheme() == nestSimulatorScheme;
+    return pluginData.subscriber.getScheme() ==
+                      MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME;
 }
 
 void NESTSimulator::injectStimulus( const std::string& jsonParameters,

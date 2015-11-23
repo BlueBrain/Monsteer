@@ -42,14 +42,14 @@ namespace po = boost::program_options;
 namespace
 {
 const double defaultMusicTimestep = 0.0001;
-const brion::URI brionMonsteerSpikesPluginURI( "monsteer://" );
+const brion::URI pluginURI( MONSTEER_BRION_SPIKES_PLUGIN_SCHEME + "://" );
 }
 
 class SpikesHandler : public MUSIC::EventHandlerGlobalIndex
 {
 public:
     SpikesHandler( MUSIC::Setup* setup, const std::string& spikesPort )
-        : _spikeReport( brionMonsteerSpikesPluginURI, brion::MODE_OVERWRITE )
+        : _spikeReport( pluginURI, brion::MODE_OVERWRITE )
     {
         LBINFO << "Initializing Spikes Handler" << std::endl;
 

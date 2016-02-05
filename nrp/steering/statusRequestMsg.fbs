@@ -1,0 +1,14 @@
+// Copyright (c) 2015, EPFL/Blue Brain Project
+//                     Jafet Villafranca Diaz <jafet.villafrancadiaz@epfl.ch>
+//
+// Copyright (c) 2015, FZI/Human Brain Project
+//                     Martin Asghar Schulze <schulze@fzi.de>
+//
+namespace monsteer.steering;
+
+table StatusRequestMsg 
+{
+  messageID:string;
+}
+
+root_type StatusRequestMsg;

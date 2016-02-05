@@ -24,5 +24,5 @@ stoptime=10000000
   args=--steering
   np=1
 
-from.spikes_out -> to.spikesPort [1000]
+from.spikes_out -> to.spikesPort [10000000]
 to.steeringPort -> from.steering_input [0]

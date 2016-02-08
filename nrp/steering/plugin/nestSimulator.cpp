@@ -44,8 +44,8 @@ lunchbox::PluginRegisterer< NESTSimulator > registerer;
 }
 
 NESTSimulator::NESTSimulator( const SimulatorPluginInitData& pluginData )
-    : _replySubscriber( new zeq::Subscriber(  zeq::DEFAULT_SESSION ) )
-    , _requestPublisher( new zeq::Publisher(  zeq::DEFAULT_SESSION ) )
+    : _replySubscriber( new zeq::Subscriber( zeq::URI("nrp-downstream") ))
+    , _requestPublisher( new zeq::Publisher(  zeq::URI("nrp-upstream" )) )
                                             
 {
       _replySubscriber->registerHandler(EVENT_PROXYSTATUSMSG, boost::bind( &NESTSimulator::_onProxyStatusUpdate, this, _1 )); 

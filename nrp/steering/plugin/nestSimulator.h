@@ -62,7 +62,7 @@ private:
     boost::scoped_ptr< zeq::Subscriber > _replySubscriber;
     boost::scoped_ptr< zeq::Publisher > _requestPublisher;
     monsteer::steering::ProxyStatus::State _proxyState;
-    uint32_t _lastRequestID = 1;
+    uint32_t _lastReceivedStatusID = 0;
     uint32_t _lastAcknowledgeID = 0;
 
     /** @copydoc monsteer::Simulator::_onProxyStatusUpdate */

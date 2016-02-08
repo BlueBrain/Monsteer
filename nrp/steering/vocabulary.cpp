@@ -21,7 +21,6 @@
 #include "../monsteer/steering/vocabulary.h"
 
 #include <monsteer/stimulus_generated.h>
-#include <monsteer/playbackState_generated.h>
 #include "runSimTrigger_generated.h"
 #include "statusRequestMsg_generated.h"
 #include "proxyStatusMsg_generated.h"
@@ -80,26 +79,6 @@ Stimulus deserializeStimulus( const zeq::Event& event )
     return stimulus;
 }
 
-zeq::Event serializePlaybackState( const std::string& messageID,
-                                   const SimulationPlaybackState::State state )
-{
-    zeq::Event event( EVENT_PLAYBACKSTATE );
-    flatbuffers::FlatBufferBuilder& fbb = event.getFBB();
-    auto fbMessageID = fbb.CreateString( messageID );
-    fbb.Finish( CreatePlaybackState( fbb, fbMessageID, state ));
-    return event;
-}
-
-SimulationPlaybackState deserializePlaybackState( const zeq::Event &event )
-{
-    auto data = GetPlaybackState( event.getData( ));
-
-    SimulationPlaybackState state;
-    state.messageID = data->messageID()->c_str();
-    state.state = (SimulationPlaybackState::State)data->state();
-
-    return state;
-}
 
 zeq::Event serializeSimulationRunTrigger( const std::string& messageID,
                                        const double duration )

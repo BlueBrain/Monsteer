@@ -18,9 +18,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "nrp/playbackState_generated.h"
 #include "nrp/steering/vocabulary.h"
-#include "nrp/stimulus_generated.h"
+#include "monsteer/stimulus_generated.h"
 
 #include <brion/spikeReport.h>
 #include <lunchbox/debug.h>
@@ -176,8 +175,8 @@ public:
 
     SteeringHandler( MUSIC::Setup* setup, const std::string& steeringPort, std::string session_name)
         : _proxyState( monsteer::steering::ProxyStatus::READY )
-        , _subscriber( new zeq::Subscriber(std::string("nrp-upstream")) )
-        , _publisher( new zeq::Publisher( std::string("nrp-downstream") ) )
+        , _subscriber( new zeq::Subscriber(zeq::DEFAULT_SESSION) )
+        , _publisher( new zeq::Publisher( zeq::DEFAULT_SESSION ) )
     {
         LBINFO << "Initializing Steering Handler" << std::endl;
 
@@ -243,6 +242,7 @@ private:
 
     void _onStimulusInjection( const zeq::Event& event )
     {
+        LBINFO << "Got injection" << std::endl;
         LBASSERT( event.getType() == monsteer::steering::EVENT_STIMULUSINJECTION )
         const std::string& json = zeq::vocabulary::deserializeJSON( event );
         // Although music library internally "does not" touch the sent data,
@@ -266,18 +266,10 @@ private:
         _requestedSimTime = trigger.duration / 1000;
     }
 
-    void _onPlaybackStateChange( const zeq::Event& event )
-    {
-        LBASSERT( event.getType() == monsteer::steering::EVENT_PLAYBACKSTATE )
-        const monsteer::steering::SimulationPlaybackState& state =
-                monsteer::steering::deserializePlaybackState( event );
-
-        // DO NOTHING
-        //_state = state.state;
-    }
 
     void _onStatusRequest( const zeq::Event& event )
     {
+        LBINFO << "Got status request" << std::endl;
         LBASSERT( event.getType() == monsteer::steering::EVENT_STATUSREQUESTMSG )
             const monsteer::steering::StatusRequest& request = 
                 monsteer::steering::deserializeStatusRequest( event );

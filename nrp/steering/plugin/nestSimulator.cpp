@@ -31,7 +31,6 @@
 #include <lunchbox/pluginRegisterer.h>
 
 #include <iostream>
-
 #include <chrono>
 
 namespace monsteer
@@ -45,10 +44,11 @@ lunchbox::PluginRegisterer< NESTSimulator > registerer;
 }
 
 NESTSimulator::NESTSimulator( const SimulatorPluginInitData& pluginData )
-    : _replySubscriber( new zeq::Subscriber( std::string("nrp-downstream") ) )
-    , _requestPublisher( new zeq::Publisher( std::string("nrp-upstream") ) )
+    : _replySubscriber( new zeq::Subscriber(  zeq::DEFAULT_SESSION ) )
+    , _requestPublisher( new zeq::Publisher(  zeq::DEFAULT_SESSION ) )
                                             
 {
+      _replySubscriber->registerHandler(EVENT_PROXYSTATUSMSG, boost::bind( &NESTSimulator::_onProxyStatusUpdate, this, _1 )); 
 }
 
 bool NESTSimulator::handles( const SimulatorPluginInitData& pluginData )
@@ -61,27 +61,37 @@ void NESTSimulator::barrier()
 {
     uint32_t attempt = 1;
     const uint32_t timeout = 1000;
-    const uint32_t max_attempts = 10;
+    const uint32_t max_attempts = 20;
+    uint32_t requestMsgID = 0;
+
     auto startTime = std::chrono::high_resolution_clock::now();
 
     while (_proxyState != monsteer::steering::ProxyStatus::State::READY)
     //_replySubscriber->receive(0);
     {
+        // Get messages
         while(_replySubscriber->receive(0));
+
         if ( attempt > max_attempts )
             throw std::runtime_error("Monsteer-steering had a timeout.");
+
+        // Get Time
         const auto endTime = std::chrono::high_resolution_clock::now();
         const uint32_t elapsed =
             std::chrono::nanoseconds( endTime - startTime ).count() /
             1000000;
+
         if( elapsed > timeout )
-            if(_proxyState != monsteer::steering::ProxyStatus::State::READY )
+        {
+            if(_lastReceivedStatusID <= requestMsgID )
             {
-                _requestPublisher->publish(
-                        serializeStatusRequest( std::to_string(++_lastRequestID) ));
-                startTime = std::chrono::high_resolution_clock::now();
                 attempt ++;
             }
+            requestMsgID = _lastReceivedStatusID;
+            _requestPublisher->publish(
+                    serializeStatusRequest( std::to_string(++requestMsgID)));
+            startTime = std::chrono::high_resolution_clock::now();
+        }
     }
 }
 
@@ -130,6 +140,7 @@ void NESTSimulator::_onProxyStatusUpdate( const zeq::Event& event )
     const monsteer::steering::ProxyStatus& state = 
         monsteer::steering::deserializeProxyStatus( event );
     _proxyState = state.state;
+    _lastReceivedStatusID = std::stoi( state.messageID );
 }
 
 

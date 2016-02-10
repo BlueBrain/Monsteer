@@ -113,11 +113,13 @@ void NESTSimulator::injectMultipleStimuli( const std::string& jsonParameters,
 
 void NESTSimulator::play()
 {
+    throw std::runtime_error("Not supported");
 }
 
 
 void NESTSimulator::pause()
 {
+    throw std::runtime_error("Not supported");
 }
 
 void NESTSimulator::simulate( const double duration)
@@ -128,6 +130,7 @@ void NESTSimulator::simulate( const double duration)
     
     barrier();
     _proxyState = monsteer::steering::ProxyStatus::State::BUSY;
+    std::cout << "Send SimulationTrigger" << std::endl;
     _requestPublisher->publish(
             serializeSimulationRunTrigger( "", duration ));
     barrier();

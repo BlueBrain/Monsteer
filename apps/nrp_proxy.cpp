@@ -207,15 +207,18 @@ public:
 
     void processTicks(MUSIC::Runtime & runtime)
     {
+        if (_requestedSimTime <= 0.0)
+            return;
+
         _currentTime = runtime.time();
+        runtime.tick();
+        _requestedSimTime -= runtime.time() - _currentTime;
+
         if (_requestedSimTime <= 0.0)
         {
             SteeringHandler::_setStatus(monsteer::steering::ProxyStatus::READY);
             _requestedSimTime = 0.0;
-            return;
         }
-        runtime.tick();
-        _requestedSimTime -= runtime.time() - _currentTime;
     }
     
 
@@ -225,6 +228,7 @@ public:
         _currentTime = musicTime;
         while( _subscriber.receive( 0 ))
          ;
+        LBINFO << "Processed messages" << std::endl;
 //        switch( _state )
 //        {
 //        case monsteer::steering::SimulationPlaybackState::PLAY:

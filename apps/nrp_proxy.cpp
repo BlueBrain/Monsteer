@@ -175,8 +175,8 @@ public:
 
     SteeringHandler( MUSIC::Setup* setup, const std::string& steeringPort, std::string session_name)
         : _proxyState( monsteer::steering::ProxyStatus::READY )
-        , _subscriber( new zeq::Subscriber(zeq::URI("nrp-upstream")) )
-        , _publisher( new zeq::Publisher( zeq::URI("nrp-downstream")) )
+        , _subscriber( new zeq::Subscriber("nrp"))
+        , _publisher( new zeq::Publisher( "nrp") )
     {
         LBINFO << "Initializing Steering Handler" << std::endl;
 

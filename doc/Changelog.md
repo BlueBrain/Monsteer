@@ -3,6 +3,8 @@ Changelog {#Changelog}
 
 # git master {master)
 
+# Release 0.4.0 (03-10-2016) {#release_004000}
+
 * [13](https://github.com/BlueBrain/Monsteer/pull/13):
    Adapted Monsteer to the new Zeq sessions mechanism introduced in
    [105](https://github.com/HBPVIS/zeq/pull/105).

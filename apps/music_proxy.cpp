@@ -128,7 +128,7 @@ public:
             ( "timestep",
               po::value< double >(
                   &musicTimestep )->default_value( defaultMusicTimestep ),
-              "MUSIC library tick time steps" )
+              "MUSIC library tick time steps in sec." )
 
             ( "music-streaming-port",
               po::value< std::string >(

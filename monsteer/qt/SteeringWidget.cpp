@@ -25,7 +25,7 @@
 #include <monsteer/qt/nestData.h>
 
 #include <monsteer/steering/simulator.h>
-#include <monsteer/ui_SteeringWidget.h>
+#include <monsteer/qt/ui_SteeringWidget.h>
 
 #include <zeroeq/subscriber.h>
 #include <zeroeq/hbp/vocabulary.h>

@@ -4,18 +4,15 @@
 # This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
 #
 
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-project(Monsteer)
+cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+project(Monsteer VERSION 0.4.0)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
   ${CMAKE_SOURCE_DIR}/CMake/common)
 
 include(GitExternal)
 
-set(VERSION_MAJOR "0")
-set(VERSION_MINOR "4")
-set(VERSION_PATCH "0")
-set(VERSION_ABI 4)
+set(Monsteer_VERSION_ABI 4)
 
 set(MONSTEER_ISSUES_URL "https://github.com/BlueBrain/Monsteer/issues")
 set(MONSTEER_DESCRIPTION
@@ -25,22 +22,22 @@ set(MONSTEER_MAINTAINER
 set(MONSTEER_LICENSE LGPL)
 include(Common)
 
-common_package(BBPTestData)
-common_package(Boost REQUIRED COMPONENTS filesystem serialization system
+common_find_package(BBPTestData)
+common_find_package(Boost REQUIRED COMPONENTS filesystem serialization system
                                          python${USE_BOOST_PYTHON_VERSION}
                                          program_options thread
                                          unit_test_framework)
-common_package(Brion REQUIRED)
-common_package(FlatBuffers REQUIRED)
-common_package(Lunchbox REQUIRED)
-common_package(MPI)
-common_package(MUSIC SYSTEM)
-common_package(Qt5Widgets)
-common_package(PythonInterp)
-common_package(PythonLibs)
-common_package(vmmlib REQUIRED)
-common_package(ZeroEQ REQUIRED)
-common_package_post()
+common_find_package(Brion REQUIRED)
+common_find_package(FlatBuffers REQUIRED)
+common_find_package(Lunchbox REQUIRED)
+common_find_package(MPI)
+common_find_package(MUSIC SYSTEM)
+common_find_package(Qt5Widgets)
+common_find_package(PythonInterp)
+common_find_package(PythonLibs)
+common_find_package(vmmlib REQUIRED)
+common_find_package(ZeroEQ REQUIRED)
+common_find_package_post()
 
 set(MONSTEER_DEPENDENT_LIBRARIES Lunchbox ZeroEQ)
 

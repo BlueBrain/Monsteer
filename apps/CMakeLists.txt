@@ -9,7 +9,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 add_subdirectory(monsteerGUI)
 
 set(MONSTEER_SPIKE_RECEIVER_SOURCES monsteer_spike_receiver.cpp)
-set(MONSTEER_SPIKE_RECEIVER_LINK_LIBRARIES Brion)
+set(MONSTEER_SPIKE_RECEIVER_LINK_LIBRARIES Brion Monsteer)
 common_application(monsteer_spike_receiver)
 
 if(NOT MUSIC_FOUND OR NOT MPI_FOUND)

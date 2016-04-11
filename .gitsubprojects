@@ -2,4 +2,4 @@
 git_subproject(Servus https://github.com/HBPVIS/Servus 0127375)
 git_subproject(Lunchbox https://github.com/Eyescale/Lunchbox.git 0652faa)
 git_subproject(Brion https://github.com/BlueBrain/Brion.git 6b7c94e)
-git_subproject(zeq https://github.com/HBPVis/zeq.git dbd4eaa)
+git_subproject(zeq https://github.com/HBPVis/zeq.git b5c27ca)

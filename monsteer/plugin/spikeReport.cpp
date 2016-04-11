@@ -99,7 +99,7 @@ bool SpikeReport::handles( const brion::SpikeReportInitData& pluginData )
 const lunchbox::URI& SpikeReport::getURI() const
 {
     if( _publisher )
-        return _publisher->getURI();
+        return _publisher->getURI().toServusURI();
 
     return _uri;
 }

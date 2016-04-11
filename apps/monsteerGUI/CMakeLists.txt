@@ -19,4 +19,4 @@ set(MONSTEERGUI_SOURCES
 
 set(MONSTEERGUI_LINK_LIBRARIES Monsteer MonsteerQt Qt5::Widgets zeqHBP)
 
-common_gui_application(monsteerGUI)
+common_application(monsteerGUI GUI)

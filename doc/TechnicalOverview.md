@@ -87,7 +87,7 @@ neuron passes a certain voltage threshold. This spike event can be represented
 as a timestamp and a neuron identifier. In Brion and Monsteer, there is support
 for internal BBP data formats, NEST file formats and streaming formats.
 
-# Zeq ZeroEq: Auto-discovery and Event Based Data Sharing Library
+# ZeroEQ: Auto-discovery and Event Based Data Sharing Library
 
 The ZeroEQ library is used for auto-discovery of services, data transport and
 event based messaging. The auto-discovery and data transport are done
@@ -154,7 +154,7 @@ connection mechanism and its filtering options.
 
 The steering handling is based on two main components. The first component
 forwards steering messages from the steering application to the NEST
-simulation. The receipt of steering messages is handled through the Zeq
+simulation. The receipt of steering messages is handled through the ZeroEQ
 library and the forwarded messages are sent through the MUSIC library.
 
 The second component receives messages from the NEST simulation and forwards

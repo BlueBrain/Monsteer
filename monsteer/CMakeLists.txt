@@ -15,7 +15,7 @@ include(streaming/files.cmake)
 include(steering/files.cmake)
 include(qt/files.cmake)
 
-set(MONSTEER_LINK_LIBRARIES PUBLIC Brion Lunchbox zeq)
+set(MONSTEER_LINK_LIBRARIES PUBLIC Brion Lunchbox ZeroEQ)
 
 common_library(Monsteer)
 

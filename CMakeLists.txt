@@ -39,10 +39,10 @@ common_package(Qt5Widgets)
 common_package(PythonInterp)
 common_package(PythonLibs)
 common_package(vmmlib REQUIRED)
-common_package(zeq REQUIRED)
+common_package(ZeroEQ REQUIRED)
 common_package_post()
 
-set(MONSTEER_DEPENDENT_LIBRARIES Lunchbox zeq)
+set(MONSTEER_DEPENDENT_LIBRARIES Lunchbox ZeroEQ)
 
 add_subdirectory(monsteer)
 add_subdirectory(apps)

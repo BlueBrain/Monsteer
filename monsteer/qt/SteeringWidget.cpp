@@ -27,8 +27,8 @@
 #include <monsteer/steering/simulator.h>
 #include <monsteer/ui_SteeringWidget.h>
 
-#include <zeq/subscriber.h>
-#include <zeq/hbp/vocabulary.h>
+#include <zeroeq/subscriber.h>
+#include <zeroeq/hbp/vocabulary.h>
 
 #include <QTimer>
 
@@ -49,7 +49,7 @@ struct SteeringWidget::Impl
 {
     Impl( SteeringWidget* steeringWidget )
         : _simulator( 0 )
-        , _selectionSubscriber( new zeq::Subscriber( ))
+        , _selectionSubscriber( new zeroeq::Subscriber( ))
         , _playing( true )
         , _isRegistered( false )
         , _steeringWidget( steeringWidget )
@@ -154,10 +154,10 @@ struct SteeringWidget::Impl
         delete _simulator;
     }
 
-    void onSelection( const ::zeq::Event& event_ )
+    void onSelection( const ::zeroeq::Event& event_ )
     {
         const std::vector<uint32_t>& selection
-                = zeq::hbp::deserializeSelectedIDs( event_ );
+                = zeroeq::hbp::deserializeSelectedIDs( event_ );
         emit _steeringWidget->updateCellIdsTextBox( selection );
     }
 
@@ -183,7 +183,7 @@ struct SteeringWidget::Impl
         try
         {
             _selectionSubscriber->registerHandler(
-                        zeq::hbp::EVENT_SELECTEDIDS,
+                        zeroeq::hbp::EVENT_SELECTEDIDS,
                         boost::bind( &SteeringWidget::Impl::onSelection,
                                      this, _1 ));
             _isRegistered = true;
@@ -197,7 +197,7 @@ struct SteeringWidget::Impl
 
     void disconnectHBP()
     {
-        _selectionSubscriber->deregisterHandler( zeq::hbp::EVENT_SELECTEDIDS );
+        _selectionSubscriber->deregisterHandler( zeroeq::hbp::EVENT_SELECTEDIDS );
         _isRegistered = false;
     }
 
@@ -215,7 +215,7 @@ struct SteeringWidget::Impl
 
 public:
     ::monsteer::Simulator* _simulator;
-    zeq::Subscriber* _selectionSubscriber;
+    zeroeq::Subscriber* _selectionSubscriber;
     bool _playing;
     bool _isRegistered;
     Ui_steeringWidget _ui;

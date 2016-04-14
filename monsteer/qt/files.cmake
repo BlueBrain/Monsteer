@@ -4,7 +4,7 @@
 # This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
 #
 
-if(NOT ZEQ_FOUND OR NOT QT5WIDGETS_FOUND)
+if(NOT ZEROEQ_FOUND OR NOT QT5WIDGETS_FOUND)
   return()
 endif()
 
@@ -33,7 +33,7 @@ set(MONSTEERQT_SOURCES
 
 set(MONSTEERQT_UI_FORMS qt/gui/SteeringWidget.ui)
 
-set(MONSTEERQT_LINK_LIBRARIES Monsteer Qt5::Widgets zeq zeqHBP)
+set(MONSTEERQT_LINK_LIBRARIES Monsteer Qt5::Widgets ZeroEQ ZeroEQHBP)
 set(MONSTEERQT_INCLUDE_NAME monsteer/qt)
 set(MONSTEERQT_NAMESPACE monsteerqt)
 

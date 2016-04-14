@@ -26,9 +26,9 @@
 #include <lunchbox/debug.h>
 #include <lunchbox/log.h>
 
-#include <zeq/subscriber.h>
-#include <zeq/publisher.h>
-#include <zeq/vocabulary.h>
+#include <zeroeq/subscriber.h>
+#include <zeroeq/publisher.h>
+#include <zeroeq/vocabulary.h>
 
 #include <music.hh>
 
@@ -142,8 +142,8 @@ public:
 
             ( "steering",
               po::bool_switch(&enableSteering)->default_value( false ),
-              "Enable steering. This creates the zeq subscriber and announces"
-              " the MUSIC message ports" );
+              "Enable steering. This creates the ZeroEQ subscriber and "
+              "announces the MUSIC message ports" );
 
         options.add_options();
 
@@ -228,10 +228,10 @@ public:
 
 private:
 
-    void _onStimulusInjection( const zeq::Event& event )
+    void _onStimulusInjection( const zeroeq::Event& event )
     {
         LBASSERT( event.getType() == monsteer::steering::EVENT_STIMULUSINJECTION )
-        const std::string& json = zeq::vocabulary::deserializeJSON( event );
+        const std::string& json = zeroeq::vocabulary::deserializeJSON( event );
         // Although music library internally "does not" touch the sent data,
         // the Music "insertMessage" function accepts only non-const data.
         // Not to have a second copy, the below const_cast is applied.
@@ -240,7 +240,7 @@ private:
                                         json.size());
     }
 
-    void _onPlaybackStateChange( const zeq::Event& event )
+    void _onPlaybackStateChange( const zeroeq::Event& event )
     {
         LBASSERT( event.getType() == monsteer::steering::EVENT_PLAYBACKSTATE )
         const monsteer::steering::SimulationPlaybackState& state =
@@ -249,7 +249,7 @@ private:
         _state = state.state;
     }
 
-    zeq::Subscriber _subscriber;
+    zeroeq::Subscriber _subscriber;
     MUSIC::MessageOutputPort* _steeringOutput;
     double _currentTime;
     monsteer::steering::SimulationPlaybackState::State _state;

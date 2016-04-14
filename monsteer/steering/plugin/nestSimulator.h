@@ -53,8 +53,8 @@ public:
     void pause() final;
 
 private:
-    boost::scoped_ptr< zeq::Subscriber > _replySubscriber;
-    boost::scoped_ptr< zeq::Publisher > _requestPublisher;
+    boost::scoped_ptr< zeroeq::Subscriber > _replySubscriber;
+    boost::scoped_ptr< zeroeq::Publisher > _requestPublisher;
 };
 
 }

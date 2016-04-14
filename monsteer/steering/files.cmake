@@ -13,7 +13,7 @@ list(APPEND MONSTEER_PUBLIC_HEADERS
    steering/simulatorPlugin.h)
 
 list(APPEND MONSTEER_HEADERS
-  ${STEERING_FB_ZEQ_OUTPUTS}
+  ${STEERING_FB_ZEROEQ_OUTPUTS}
   steering/vocabulary.h
   steering/plugin/nestSimulator.h)
 

@@ -71,13 +71,13 @@ private:
     float _lastEndTime;
     float _lastTimeStamp;
 
-    boost::scoped_ptr< zeq::Subscriber > _subscriber;
-    boost::scoped_ptr< zeq::Publisher > _publisher;
+    boost::scoped_ptr< zeroeq::Subscriber > _subscriber;
+    boost::scoped_ptr< zeroeq::Publisher > _publisher;
 
     bool _closed;
 
-    void _onSpikes( const zeq::Event& event );
-    void _onEOS( const zeq::Event& event );
+    void _onSpikes( const zeroeq::Event& event );
+    void _onEOS( const zeroeq::Event& event );
 
     void _receiveBufferedMessages();
 };

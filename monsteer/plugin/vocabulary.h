@@ -20,10 +20,10 @@
 #ifndef MONSTEER_PLUGIN_VOCABULARY_H
 #define MONSTEER_PLUGIN_VOCABULARY_H
 
-#include "plugin/spikes_zeq_generated.h"
+#include "plugin/spikes_zeroeq_generated.h"
 
-#include <zeq/types.h>
-#include <zeq/event.h>
+#include <zeroeq/types.h>
+#include <zeroeq/event.h>
 
 #include <map>
 
@@ -32,13 +32,13 @@ namespace monsteer
 namespace plugin
 {
 
-static const zeq::uint128_t EVENT_EOS(
-    zeq::make_uint128( "monsteer::streaming::EndOfStream" ));
+static const zeroeq::uint128_t EVENT_EOS(
+    zeroeq::make_uint128( "monsteer::streaming::EndOfStream" ));
 
 typedef std::multimap< float, uint32_t > SpikeMap;
 
-zeq::Event serializeSpikes( const SpikeMap& spikes );
-SpikeMap deserializeSpikes( const zeq::Event& event );
+zeroeq::Event serializeSpikes( const SpikeMap& spikes );
+SpikeMap deserializeSpikes( const zeroeq::Event& event );
 
 }
 }

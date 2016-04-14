@@ -21,11 +21,11 @@
 #include "spikeReport.h"
 #include "vocabulary.h"
 
-#include <zeq/subscriber.h>
-#include <zeq/publisher.h>
-#include <zeq/vocabulary.h>
-#include <zeq/event.h>
-#include <zeq/uri.h>
+#include <zeroeq/subscriber.h>
+#include <zeroeq/publisher.h>
+#include <zeroeq/vocabulary.h>
+#include <zeroeq/event.h>
+#include <zeroeq/uri.h>
 
 #include <lunchbox/clock.h>
 #include <lunchbox/pluginRegisterer.h>
@@ -68,8 +68,8 @@ SpikeReport::SpikeReport( const brion::SpikeReportInitData& pluginData )
     {
     case brion::MODE_READ:
     {
-        _subscriber.reset( new zeq::Subscriber( zeq::URI( _uri ),
-                                                zeq::DEFAULT_SESSION ));
+        _subscriber.reset( new zeroeq::Subscriber( zeroeq::URI( _uri ),
+                                                zeroeq::DEFAULT_SESSION ));
         _subscriber->registerHandler(
             EVENT_SPIKES,
             boost::bind( &SpikeReport::_onSpikes, this, _1 ));
@@ -81,11 +81,11 @@ SpikeReport::SpikeReport( const brion::SpikeReportInitData& pluginData )
     case brion::MODE_WRITE:
     case brion::MODE_OVERWRITE:
     {
-        _publisher.reset( new zeq::Publisher( zeq::URI( _uri )));
+        _publisher.reset( new zeroeq::Publisher( zeroeq::URI( _uri )));
         break;
     }
     default:
-         LBTHROW( std::runtime_error( "Access mode for Zeq streaming"
+         LBTHROW( std::runtime_error( "Access mode for ZeroEQ streaming "
                                       "plugin is not implemented" ));
          break;
     }
@@ -120,7 +120,7 @@ float SpikeReport::getEndTime() const
 
 void SpikeReport::writeSpikes( const brion::Spikes& spikes )
 {
-    const zeq::Event& event = serializeSpikes( spikes );
+    const zeroeq::Event& event = serializeSpikes( spikes );
     _publisher->publish( event );
 }
 
@@ -137,7 +137,7 @@ brion::SpikeReport::ReadMode SpikeReport::getReadMode() const
 void SpikeReport::close()
 {
     if( _publisher )
-        _publisher->publish( zeq::Event( EVENT_EOS ));
+        _publisher->publish( zeroeq::Event( EVENT_EOS ));
     if( _subscriber )
         _closed = true; // _lastTimeStamp is not reused to avoid race conditions
 }
@@ -248,7 +248,7 @@ void SpikeReport::clear( const float startTime, const float endTime )
                    _spikes.upper_bound( endTime ));
 }
 
-void SpikeReport::_onSpikes( const zeq::Event& event )
+void SpikeReport::_onSpikes( const zeroeq::Event& event )
 {
     LBASSERT( event.getType() == EVENT_SPIKES );
     const SpikeMap& spikes = deserializeSpikes( event );
@@ -258,7 +258,7 @@ void SpikeReport::_onSpikes( const zeq::Event& event )
 
 }
 
-void SpikeReport::_onEOS( const zeq::Event& event LB_UNUSED )
+void SpikeReport::_onEOS( const zeroeq::Event& event LB_UNUSED )
 {
     LBASSERT( event.getType() == EVENT_EOS );
     _lastTimeStamp = std::numeric_limits< float >::infinity();

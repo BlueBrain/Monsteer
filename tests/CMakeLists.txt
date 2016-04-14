@@ -20,7 +20,7 @@ if(NOT MONSTEER_FOUND)
   set(EXCLUDE_FROM_TESTS monsteer.cpp)
 endif()
 
-if(NOT ZEQ_FOUND)
+if(NOT ZEROEQ_FOUND)
   set(EXCLUDE_FROM_TESTS spikeStreamReport.cpp)
 endif()
 

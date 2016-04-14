@@ -3,11 +3,14 @@ Changelog {#Changelog}
 
 # git master
 
+* [#24](https://github.com/BlueBrain/Monsteer/pull/24):
+  Adapt to the renaming of zeq to ZeroEQ
+
 # Release 0.4.0 (05-04-2016)
 
 * [13](https://github.com/BlueBrain/Monsteer/pull/13):
-  Adapted Monsteer to the new Zeq sessions mechanism introduced in
-  [105](https://github.com/HBPVIS/zeq/pull/105).
+  Adapted Monsteer to the new ZeroEQ sessions mechanism introduced in
+  [105](https://github.com/HBPVIS/ZeroEQ/pull/105).
 * [13](https://github.com/BlueBrain/Monsteer/pull/13):
   Adjusted doxygen documentation.
 

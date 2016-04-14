@@ -26,12 +26,12 @@ namespace monsteer
 {
 namespace steering
 {
-zeq::Event serializeStimulus( const std::string& messageID,
-                              const brion::uint32_ts& cells,
-                              const std::string& params,
-                              const bool multiple )
+zeroeq::Event serializeStimulus( const std::string& messageID,
+                                 const brion::uint32_ts& cells,
+                                 const std::string& params,
+                                 const bool multiple )
 {
-    zeq::Event event( EVENT_STIMULUSINJECTION );
+    zeroeq::Event event( EVENT_STIMULUSINJECTION );
     flatbuffers::FlatBufferBuilder& fbb = event.getFBB();
 
     // This is required to make FlatBuffers aware of the event fields that
@@ -49,7 +49,7 @@ zeq::Event serializeStimulus( const std::string& messageID,
     return event;
 }
 
-zeq::Event serializeStimulus( const Stimulus& stimulus )
+zeroeq::Event serializeStimulus( const Stimulus& stimulus )
 {
     return serializeStimulus( stimulus.messageID,
                               stimulus.cells,
@@ -57,7 +57,7 @@ zeq::Event serializeStimulus( const Stimulus& stimulus )
                               stimulus.multiple );
 }
 
-Stimulus deserializeStimulus( const zeq::Event& event )
+Stimulus deserializeStimulus( const zeroeq::Event& event )
 {
     auto data = GetStimulusInjection( event.getData( ));
 
@@ -74,17 +74,17 @@ Stimulus deserializeStimulus( const zeq::Event& event )
     return stimulus;
 }
 
-zeq::Event serializePlaybackState( const std::string& messageID,
-                                   const SimulationPlaybackState::State state )
+zeroeq::Event serializePlaybackState( const std::string& messageID,
+                                    const SimulationPlaybackState::State state )
 {
-    zeq::Event event( EVENT_PLAYBACKSTATE );
+    zeroeq::Event event( EVENT_PLAYBACKSTATE );
     flatbuffers::FlatBufferBuilder& fbb = event.getFBB();
     auto fbMessageID = fbb.CreateString( messageID );
     fbb.Finish( CreatePlaybackState( fbb, fbMessageID, state ));
     return event;
 }
 
-SimulationPlaybackState deserializePlaybackState( const zeq::Event &event )
+SimulationPlaybackState deserializePlaybackState( const zeroeq::Event& event )
 {
     auto data = GetPlaybackState( event.getData( ));
 

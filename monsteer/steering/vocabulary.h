@@ -21,11 +21,11 @@
 #ifndef STEERING_VOCABULARY_H
 #define STEERING_VOCABULARY_H
 
-#include <zeq/types.h>
-#include <zeq/event.h>
+#include <zeroeq/types.h>
+#include <zeroeq/event.h>
 
-#include <monsteer/playbackState_zeq_generated.h>
-#include <monsteer/stimulus_zeq_generated.h>
+#include <monsteer/playbackState_zeroeq_generated.h>
+#include <monsteer/stimulus_zeroeq_generated.h>
 
 #include <monsteer/types.h>
 
@@ -61,18 +61,18 @@ struct SimulationPlaybackState
     State state;
 };
 
-zeq::Event serializeStimulus( const std::string& messageID,
-                              const brion::uint32_ts& cells,
-                              const std::string& params,
-                              const bool multiple );
-zeq::Event serializeStimulus( const Stimulus& stimulus );
+zeroeq::Event serializeStimulus( const std::string& messageID,
+                                 const brion::uint32_ts& cells,
+                                 const std::string& params,
+                                 const bool multiple );
+zeroeq::Event serializeStimulus( const Stimulus& stimulus );
 
-Stimulus deserializeStimulus( const zeq::Event& event );
+Stimulus deserializeStimulus( const zeroeq::Event& event );
 
-zeq::Event serializePlaybackState(  const std::string& messageID,
-                                    const SimulationPlaybackState::State state );
+zeroeq::Event serializePlaybackState(  const std::string& messageID,
+                                   const SimulationPlaybackState::State state );
 
-SimulationPlaybackState deserializePlaybackState( const zeq::Event& event );
+SimulationPlaybackState deserializePlaybackState( const zeroeq::Event& event );
 
 }
 }

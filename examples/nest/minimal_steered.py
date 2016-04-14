@@ -9,7 +9,7 @@
 # This script is a minimal simulation setup for showing computational steering
 # of NEST using music_proxy.
 # A blank simulation is started and connected through MUSIC ports to
-# music_proxy, which in turn uses zeq to send spikes out and receive the
+# music_proxy, which in turn uses ZeroEQ to send spikes out and receive the
 # steering events to create a stimulus generator to apply to the cells.
 
 duration = 100000

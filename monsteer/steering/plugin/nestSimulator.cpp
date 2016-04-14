@@ -22,9 +22,9 @@
 #include <monsteer/types.h>
 #include <monsteer/steering/vocabulary.h>
 
-#include <zeq/subscriber.h>
-#include <zeq/publisher.h>
-#include <zeq/uri.h>
+#include <zeroeq/subscriber.h>
+#include <zeroeq/publisher.h>
+#include <zeroeq/uri.h>
 
 #include <lunchbox/debug.h>
 #include <lunchbox/pluginRegisterer.h>
@@ -40,9 +40,10 @@ lunchbox::PluginRegisterer< NESTSimulator > registerer;
 }
 
 NESTSimulator::NESTSimulator( const SimulatorPluginInitData& pluginData )
-    : _replySubscriber( new zeq::Subscriber( zeq::URI( pluginData.subscriber ),
-                                             zeq::DEFAULT_SESSION ))
-    , _requestPublisher( new zeq::Publisher( ))
+    : _replySubscriber( new zeroeq::Subscriber( zeroeq::URI(
+                                                    pluginData.subscriber ),
+                                                zeroeq::DEFAULT_SESSION ))
+    , _requestPublisher( new zeroeq::Publisher( ))
 {
 }
 

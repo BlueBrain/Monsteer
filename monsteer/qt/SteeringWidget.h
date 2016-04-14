@@ -30,8 +30,8 @@ namespace qt
 {
 
 /**
- * Simulation controller widget that receives the cell ids through zeq
- * and can apply nest stimulation generators on selected cells using zeq.
+ * Simulation controller widget that receives the cell ids through ZeroEQ
+ * and can apply nest stimulation generators on selected cells using ZeroEQ.
  **/
 class SteeringWidget : public QWidget
 {

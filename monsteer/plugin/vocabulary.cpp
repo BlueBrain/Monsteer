@@ -26,9 +26,9 @@ namespace monsteer
 namespace plugin
 {
 
-zeq::Event serializeSpikes( const SpikeMap& spikes )
+zeroeq::Event serializeSpikes( const SpikeMap& spikes )
 {
-    zeq::Event event( EVENT_SPIKES );
+    zeroeq::Event event( EVENT_SPIKES );
 
     std::vector< Spike > spikeVector;
     spikeVector.reserve( spikes.size( ));
@@ -45,7 +45,7 @@ zeq::Event serializeSpikes( const SpikeMap& spikes )
     return event;
 }
 
-SpikeMap deserializeSpikes( const zeq::Event& event )
+SpikeMap deserializeSpikes( const zeroeq::Event& event )
 {
     auto data = GetSpikes( event.getData( ));
     SpikeMap spikes;

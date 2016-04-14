@@ -28,7 +28,7 @@
 #define MONSTEER_BRION_SPIKES_PLUGIN_SCHEME    std::string( "monsteer" )
 #define MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME  std::string( "nest" )
 
-namespace zeq
+namespace zeroeq
 {
 class Subscriber;
 class Publisher;

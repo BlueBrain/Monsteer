@@ -4,8 +4,6 @@
 # This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
 #
 
-source_group(\\ FILES CMakeLists.txt)
-
 flatbuffers_generate_c_headers(SPIKES_FB spikes.fbs)
 
 set(BRIONMONSTEERSPIKEREPORT_HEADERS

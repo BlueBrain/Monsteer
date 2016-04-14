@@ -9,29 +9,25 @@ if(NOT ZEROEQ_FOUND OR NOT QT5WIDGETS_FOUND)
 endif()
 
 set(MONSTEERQT_PUBLIC_HEADERS
-  qt/SteeringWidget.h)
+  SteeringWidget.h)
 
 set(MONSTEERQT_HEADERS
-  qt/nestData.h
-  qt/types.h
-  qt/GeneratorModel.h
-  qt/GeneratorPropertiesModel.h
-  qt/PropertyEditDelegate.h)
-
-set(MONSTEERQT_MOC_HEADERS
-  qt/GeneratorModel.h
-  qt/GeneratorPropertiesModel.h
-  qt/PropertyEditDelegate.h
-  qt/SteeringWidget.h)
+  GeneratorModel.h
+  GeneratorPropertiesModel.h
+  nestData.h
+  PropertyEditDelegate.h
+  SteeringWidget.h
+  types.h
+)
 
 set(MONSTEERQT_SOURCES
-  qt/nestData.cpp
-  qt/GeneratorModel.cpp
-  qt/GeneratorPropertiesModel.cpp
-  qt/PropertyEditDelegate.cpp
-  qt/SteeringWidget.cpp)
-
-set(MONSTEERQT_UI_FORMS qt/gui/SteeringWidget.ui)
+  GeneratorModel.cpp
+  GeneratorPropertiesModel.cpp
+  nestData.cpp
+  PropertyEditDelegate.cpp
+  SteeringWidget.cpp
+  SteeringWidget.ui
+)
 
 set(MONSTEERQT_LINK_LIBRARIES Monsteer Qt5::Widgets ZeroEQ ZeroEQHBP)
 set(MONSTEERQT_INCLUDE_NAME monsteer/qt)

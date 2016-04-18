@@ -31,7 +31,7 @@ namespace zeroeq
 {
 class Subscriber;
 class Publisher;
-class Event;
+class FBEvent;
 }
 
 /** @namespace monsteer MONSTEER types */

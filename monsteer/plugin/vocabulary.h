@@ -23,7 +23,7 @@
 #include "plugin/spikes_zeroeq_generated.h"
 
 #include <zeroeq/types.h>
-#include <zeroeq/event.h>
+#include <zeroeq/fbevent.h>
 
 #include <map>
 
@@ -33,12 +33,12 @@ namespace plugin
 {
 
 static const zeroeq::uint128_t EVENT_EOS(
-    zeroeq::make_uint128( "monsteer::streaming::EndOfStream" ));
+    ::zeroeq::make_uint128( "monsteer::streaming::EndOfStream" ));
 
 typedef std::multimap< float, uint32_t > SpikeMap;
 
-zeroeq::Event serializeSpikes( const SpikeMap& spikes );
-SpikeMap deserializeSpikes( const zeroeq::Event& event );
+zeroeq::FBEvent serializeSpikes( const SpikeMap& spikes );
+SpikeMap deserializeSpikes( const zeroeq::FBEvent& event );
 
 }
 }

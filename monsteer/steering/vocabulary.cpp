@@ -26,12 +26,12 @@ namespace monsteer
 {
 namespace steering
 {
-zeroeq::Event serializeStimulus( const std::string& messageID,
+zeroeq::FBEvent serializeStimulus( const std::string& messageID,
                                  const brion::uint32_ts& cells,
                                  const std::string& params,
                                  const bool multiple )
 {
-    zeroeq::Event event( EVENT_STIMULUSINJECTION );
+    zeroeq::FBEvent event( EVENT_STIMULUSINJECTION, zeroeq::EventFunc( ));
     flatbuffers::FlatBufferBuilder& fbb = event.getFBB();
 
     // This is required to make FlatBuffers aware of the event fields that
@@ -49,7 +49,7 @@ zeroeq::Event serializeStimulus( const std::string& messageID,
     return event;
 }
 
-zeroeq::Event serializeStimulus( const Stimulus& stimulus )
+zeroeq::FBEvent serializeStimulus( const Stimulus& stimulus )
 {
     return serializeStimulus( stimulus.messageID,
                               stimulus.cells,
@@ -57,7 +57,7 @@ zeroeq::Event serializeStimulus( const Stimulus& stimulus )
                               stimulus.multiple );
 }
 
-Stimulus deserializeStimulus( const zeroeq::Event& event )
+Stimulus deserializeStimulus( const zeroeq::FBEvent& event )
 {
     auto data = GetStimulusInjection( event.getData( ));
 
@@ -74,17 +74,17 @@ Stimulus deserializeStimulus( const zeroeq::Event& event )
     return stimulus;
 }
 
-zeroeq::Event serializePlaybackState( const std::string& messageID,
+zeroeq::FBEvent serializePlaybackState( const std::string& messageID,
                                     const SimulationPlaybackState::State state )
 {
-    zeroeq::Event event( EVENT_PLAYBACKSTATE );
+    zeroeq::FBEvent event( EVENT_PLAYBACKSTATE, zeroeq::EventFunc( ));
     flatbuffers::FlatBufferBuilder& fbb = event.getFBB();
     auto fbMessageID = fbb.CreateString( messageID );
     fbb.Finish( CreatePlaybackState( fbb, fbMessageID, state ));
     return event;
 }
 
-SimulationPlaybackState deserializePlaybackState( const zeroeq::Event& event )
+SimulationPlaybackState deserializePlaybackState( const zeroeq::FBEvent& event )
 {
     auto data = GetPlaybackState( event.getData( ));
 

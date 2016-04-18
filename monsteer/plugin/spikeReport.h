@@ -24,6 +24,8 @@
 #include <monsteer/types.h>
 
 #include <brion/spikeReportPlugin.h>
+#include <zeroeq/fbevent.h>
+
 #include <boost/scoped_ptr.hpp>
 
 namespace monsteer
@@ -76,8 +78,11 @@ private:
 
     bool _closed;
 
-    void _onSpikes( const zeroeq::Event& event );
-    void _onEOS( const zeroeq::Event& event );
+    void _onSpikes( const zeroeq::FBEvent& event );
+    void _onEOS( const zeroeq::FBEvent& event );
+
+    ::zeroeq::FBEvent _spikeEvent;
+    ::zeroeq::FBEvent _eosEvent;
 
     void _receiveBufferedMessages();
 };

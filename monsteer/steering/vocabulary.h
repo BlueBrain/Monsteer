@@ -22,7 +22,7 @@
 #define STEERING_VOCABULARY_H
 
 #include <zeroeq/types.h>
-#include <zeroeq/event.h>
+#include <zeroeq/fbevent.h>
 
 #include <monsteer/playbackState_zeroeq_generated.h>
 #include <monsteer/stimulus_zeroeq_generated.h>
@@ -61,18 +61,18 @@ struct SimulationPlaybackState
     State state;
 };
 
-zeroeq::Event serializeStimulus( const std::string& messageID,
+zeroeq::FBEvent serializeStimulus( const std::string& messageID,
                                  const brion::uint32_ts& cells,
                                  const std::string& params,
                                  const bool multiple );
-zeroeq::Event serializeStimulus( const Stimulus& stimulus );
+zeroeq::FBEvent serializeStimulus( const Stimulus& stimulus );
 
-Stimulus deserializeStimulus( const zeroeq::Event& event );
+Stimulus deserializeStimulus( const zeroeq::FBEvent& event );
 
-zeroeq::Event serializePlaybackState(  const std::string& messageID,
+zeroeq::FBEvent serializePlaybackState(  const std::string& messageID,
                                    const SimulationPlaybackState::State state );
 
-SimulationPlaybackState deserializePlaybackState( const zeroeq::Event& event );
+SimulationPlaybackState deserializePlaybackState( const zeroeq::FBEvent& event );
 
 }
 }

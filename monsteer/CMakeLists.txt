@@ -9,7 +9,6 @@ set(MONSTEER_SOURCES)
 
 include_directories(BEFORE SYSTEM ${PROJECT_BINARY_DIR}/monsteer)
 
-include(streaming/files.cmake)
 include(steering/files.cmake)
 
 set(MONSTEER_LINK_LIBRARIES PUBLIC Brion Lunchbox ZeroEQ)

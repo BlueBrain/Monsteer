@@ -1,4 +1,4 @@
-/* Copyright (c) 2006-2015, Ahmet Bilgili <ahmet.bilgili@epfl.ch>
+/* Copyright (c) 2006-2016, Ahmet Bilgili <ahmet.bilgili@epfl.ch>
  *                          Juan Hernando <jhernando@fi.upm.es>
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
@@ -20,10 +20,9 @@
 #ifndef MONSTEER_TYPES_H
 #define MONSTEER_TYPES_H
 
-#include <lunchbox/log.h>
-
-#include <lunchbox/types.h>
 #include <brion/types.h>
+#include <lunchbox/log.h>
+#include <lunchbox/types.h>
 
 #define MONSTEER_BRION_SPIKES_PLUGIN_SCHEME    std::string( "monsteer" )
 #define MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME  std::string( "nest" )
@@ -41,15 +40,10 @@ namespace monsteer
 using brion::URI;
 
 class Simulator;
-class Spikes;
-class SpikeReportReader;
-class SpikeReportWriter;
 
 typedef std::vector< std::string > Strings;
 
 typedef boost::shared_ptr< Simulator > SimulatorPtr;
-typedef boost::shared_ptr< SpikeReportReader > SpikeReportReaderPtr;
-typedef boost::shared_ptr< SpikeReportWriter > SpikeReportWriterPtr;
 }
 
 #endif

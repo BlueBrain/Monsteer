@@ -29,12 +29,12 @@
 #include <brion/spikeReport.h>
 #include <lunchbox/lunchbox.h>
 
-#include <boost/thread.hpp>
-
 #define BOOST_TEST_MODULE MONSTEER
 #include <boost/foreach.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/test/unit_test.hpp>
+
+#include <thread>
 
 #define NEST_SPIKES_START_TIME 1.8f
 #define NEST_SPIKES_END_TIME 98.8f
@@ -174,8 +174,8 @@ BOOST_AUTO_TEST_CASE( test_read_chunks )
     brion::SpikeReport writer( uri, brion::MODE_WRITE );
     brion::SpikeReport reader( getReadUri( writer ), brion::MODE_READ );
     lunchbox::sleep( 250 );
-    boost::thread readerThread( boost::bind( &read_chunks, &reader ));
-    boost::thread writerThread( boost::bind( &spike_writer, &writer ));
+    std::thread readerThread( std::bind( &read_chunks, &reader ));
+    std::thread writerThread( std::bind( &spike_writer, &writer ));
     writerThread.join();
     readerThread.join();
 }
@@ -186,8 +186,8 @@ BOOST_AUTO_TEST_CASE( test_stream_clear )
     brion::SpikeReport writer( uri, brion::MODE_WRITE );
     brion::SpikeReport reader( getReadUri( writer ), brion::MODE_READ );
     lunchbox::sleep( STARTUP_DELAY );
-    boost::thread readerThread( boost::bind( &stream_clear_reader, &reader ));
-    boost::thread writerThread( boost::bind( &spike_writer, &writer ));
+    std::thread readerThread( std::bind( &stream_clear_reader, &reader ));
+    std::thread writerThread( std::bind( &spike_writer, &writer ));
     writerThread.join();
     readerThread.join();
 }
@@ -198,8 +198,8 @@ BOOST_AUTO_TEST_CASE( test_stream_read_all )
     brion::SpikeReport writer( uri, brion::MODE_WRITE );
     brion::SpikeReport reader( getReadUri( writer ), brion::MODE_READ );
     lunchbox::sleep( STARTUP_DELAY );
-    boost::thread readerThread( boost::bind( &stream_read_all, &reader ));
-    boost::thread writerThread( boost::bind( &spike_writer, &writer ));
+    std::thread readerThread( std::bind( &stream_read_all, &reader ));
+    std::thread writerThread( std::bind( &spike_writer, &writer ));
     writerThread.join();
     readerThread.join();
 }
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE( test_stream_read_all )
 BOOST_AUTO_TEST_CASE( test_stream_read_close )
 {
     brion::SpikeReport reader( uri, brion::MODE_READ );
-    boost::thread readerThread( boost::bind( &stream_read_until_closed,
+    std::thread readerThread( std::bind( &stream_read_until_closed,
                                              &reader ));
     reader.close();
     readerThread.join();
@@ -219,8 +219,8 @@ BOOST_AUTO_TEST_CASE( test_stream_read_timeout )
     brion::SpikeReport writer( uri, brion::MODE_WRITE );
     brion::SpikeReport reader( getReadUri( writer ), brion::MODE_READ );
     lunchbox::sleep( STARTUP_DELAY );
-    boost::thread readerThread( boost::bind( &stream_read_timeout, &reader ));
-    boost::thread writerThread( boost::bind( &spike_writer, &writer ));
+    std::thread readerThread( std::bind( &stream_read_timeout, &reader ));
+    std::thread writerThread( std::bind( &spike_writer, &writer ));
     writerThread.join();
     readerThread.join();
 }
@@ -231,9 +231,9 @@ BOOST_AUTO_TEST_CASE( test_stream_read_by_chunks_with_timeout )
     brion::SpikeReport writer( uri, brion::MODE_WRITE );
     brion::SpikeReport reader( getReadUri( writer ), brion::MODE_READ );
     lunchbox::sleep( STARTUP_DELAY );
-    boost::thread readerThread(
-        boost::bind( &stream_read_by_chunks_with_timeout, &reader ));
-    boost::thread writerThread( boost::bind( &spike_writer, &writer ));
+    std::thread readerThread(
+        std::bind( &stream_read_by_chunks_with_timeout, &reader ));
+    std::thread writerThread( std::bind( &spike_writer, &writer ));
     writerThread.join();
     readerThread.join();
 }
@@ -244,9 +244,9 @@ BOOST_AUTO_TEST_CASE( test_stream_get_next_spike_time )
     brion::SpikeReport writer( uri, brion::MODE_WRITE );
     brion::SpikeReport reader( getReadUri( writer ), brion::MODE_READ );
     lunchbox::sleep( STARTUP_DELAY );
-    boost::thread readerThread( boost::bind( &stream_get_next_spike_time,
+    std::thread readerThread( std::bind( &stream_get_next_spike_time,
                                              &reader ));
-    boost::thread writerThread( boost::bind( &spike_writer, &writer ));
+    std::thread writerThread( std::bind( &spike_writer, &writer ));
     writerThread.join();
     readerThread.join();
 }
@@ -286,8 +286,8 @@ BOOST_AUTO_TEST_CASE( test_spike_report_read_write )
     brain::SpikeReportWriter writer( uri );
     brain::SpikeReportReader reader( getReadUri( writer ));
     lunchbox::sleep( STARTUP_DELAY );
-    boost::thread readerThread( boost::bind( &spike_report_reader, &reader ));
-    boost::thread writerThread( boost::bind( &spike_report_writer, &writer ));
+    std::thread readerThread( std::bind( &spike_report_reader, &reader ));
+    std::thread writerThread( std::bind( &spike_report_writer, &writer ));
     writerThread.join();
     readerThread.join();
 }
@@ -297,10 +297,10 @@ BOOST_AUTO_TEST_CASE( monsteer_spikes_time_windowed_read_write )
     brain::SpikeReportWriter writer( uri );
     brain::SpikeReportReader reader( getReadUri( writer ));
     lunchbox::sleep( STARTUP_DELAY );
-    boost::thread readerThread(
-        boost::bind( &spike_timewindowed_reader, &reader ));
-    boost::thread writerThread(
-        boost::bind( &spike_report_writer, &writer ));
+    std::thread readerThread(
+        std::bind( &spike_timewindowed_reader, &reader ));
+    std::thread writerThread(
+        std::bind( &spike_report_writer, &writer ));
     writerThread.join();
     readerThread.join();
 }

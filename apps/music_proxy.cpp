@@ -34,10 +34,11 @@
 
 #include <music.hh>
 
-#include <boost/bind.hpp>
 #include <boost/program_options.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
+
+#include <functional>
 
 namespace po = boost::program_options;
 
@@ -181,9 +182,9 @@ public:
     SteeringHandler( MUSIC::Setup* setup, const std::string& steeringPort )
         : _state( monsteer::steering::SimulationPlaybackState::PLAY )
         , _stimuliInjectionEvent( monsteer::steering::EVENT_STIMULUSINJECTION,
-                                  boost::bind( &SteeringHandler::_onStimulusInjection, this, _1 ))
+         [&]( const zeroeq::FBEvent& event ){ _onStimulusInjection( event); })
         , _playbackStateEvent( monsteer::steering::EVENT_PLAYBACKSTATE,
-                               boost::bind( &SteeringHandler::_onPlaybackStateChange, this, _1 ))
+         [&]( const zeroeq::FBEvent& event ){ _onPlaybackStateChange( event); })
     {
         LBINFO << "Initializing Steering Handler" << std::endl;
 

@@ -33,6 +33,8 @@
 
 #include <brion/version.h>
 
+#include <functional>
+
 extern "C" int LunchboxPluginGetVersion() { return BRION_VERSION_ABI; }
 extern "C" bool LunchboxPluginRegister()
 {
@@ -64,9 +66,9 @@ SpikeReport::SpikeReport( const brion::SpikeReportInitData& pluginData )
     , _lastTimeStamp( -1 )
     , _closed( false )
     , _spikeEvent( EVENT_SPIKES,
-                   boost::bind( &SpikeReport::_onSpikes, this, _1 ))
+                   [&]( const zeroeq::FBEvent& event ){ _onSpikes( event ); })
     , _eosEvent( EVENT_EOS,
-                 boost::bind( &SpikeReport::_onEOS, this, _1 ) )
+                 [&]( const zeroeq::FBEvent& event ){ _onEOS( event ); })
 {
     switch( pluginData.getAccessMode( ))
     {

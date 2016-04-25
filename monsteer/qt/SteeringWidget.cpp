@@ -33,7 +33,7 @@
 
 #include <QTimer>
 
-#include <boost/bind.hpp>
+#include <functional>
 #include <boost/foreach.hpp>
 
 namespace
@@ -55,11 +55,11 @@ struct SteeringWidget::Impl
         , _isRegistered( false )
         , _steeringWidget( steeringWidget )
         , _selectIdsEvent( zeroeq::hbp::EVENT_SELECTEDIDS,
-                           boost::bind( &SteeringWidget::Impl::onSelection,
-                                        this, _1 ))
+                [&]( const zeroeq::FBEvent& event ){ onSelection( event); })
     {
         _ui.setupUi( steeringWidget );
-        _ui.tblGeneratorProperties->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
+        _ui.tblGeneratorProperties->horizontalHeader()->setSectionResizeMode(
+                    QHeaderView::Stretch );
 
         connectHBP();
         connectISC();

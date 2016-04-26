@@ -11,8 +11,6 @@ if( NOT Boost_PYTHON${USE_BOOST_PYTHON_VERSION}_LIBRARY OR
   return()
 endif()
 
-add_subdirectory(bindings)
-
 configure_file(__init__.py
                ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/monsteer/__init__.py)
 
@@ -24,3 +22,23 @@ install(FILES Nesteer.py
 
 # Enables doing tests without "make install"
 configure_file(Nesteer.py ${CMAKE_BINARY_DIR}/lib/monsteer/Nesteer.py)
+
+# Python bindings
+set(MONSTEER_PYTHON_SOURCE_FILES monsteer.cpp simulator.cpp)
+
+add_library(monsteer_python MODULE ${MONSTEER_PYTHON_SOURCE_FILES})
+target_include_directories(monsteer_python PRIVATE
+  "$<BUILD_INTERFACE:${PYTHON_INCLUDE_DIRS}>")
+add_dependencies(monsteer_python Monsteer)
+
+target_link_libraries(monsteer_python
+  Monsteer ${PYTHON_LIBRARIES}
+  ${Boost_PYTHON${USE_BOOST_PYTHON_VERSION}_LIBRARY})
+
+set_target_properties(monsteer_python PROPERTIES
+  OUTPUT_NAME "_monsteer" PREFIX ""
+  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/monsteer)
+
+set_property(GLOBAL APPEND PROPERTY MONSTEER_ALL_DEP_TARGETS monsteer_python)
+install(TARGETS monsteer_python
+  LIBRARY DESTINATION ${PYTHON_LIBRARY_SUFFIX}/monsteer)

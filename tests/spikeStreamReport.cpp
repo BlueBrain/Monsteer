@@ -18,9 +18,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <monsteer/monsteer.h>
-#include <monsteer/streaming/spikeReportReader.h>
-#include <monsteer/streaming/spikeReportWriter.h>
+#include <brain/brain.h>
+#include <brain/spikeReportReader.h>
+#include <brain/spikeReportWriter.h>
 #include <monsteer/plugin/spikeReport.h>
 
 #include <BBP/TestDatasets.h>
@@ -251,17 +251,17 @@ BOOST_AUTO_TEST_CASE( test_stream_get_next_spike_time )
     readerThread.join();
 }
 
-void spike_report_writer( monsteer::SpikeReportWriter* writer )
+void spike_report_writer( brain::SpikeReportWriter* writer )
 {
     boost::filesystem::path path( BBP_TESTDATA );
     const std::string& files = NEST_SPIKE_REPORT_FILE;
-    monsteer::SpikeReportReader report( brion::URI(( path / files ).string( )));
-    const monsteer::Spikes& spikes = report.getSpikes();
+    brain::SpikeReportReader report( brion::URI(( path / files ).string( )));
+    const brain::Spikes& spikes = report.getSpikes();
     writer->writeSpikes( spikes );
     writer->close();
 }
 
-void spike_report_reader( monsteer::SpikeReportReader* reader )
+void spike_report_reader( brain::SpikeReportReader* reader )
 {
     while( !reader->hasEnded( ))
         reader->getSpikes();
@@ -272,7 +272,7 @@ void spike_report_reader( monsteer::SpikeReportReader* reader )
     BOOST_CHECK( reader->hasEnded( ));
 }
 
-void spike_timewindowed_reader( monsteer::SpikeReportReader* reader )
+void spike_timewindowed_reader( brain::SpikeReportReader* reader )
 {
     reader->getSpikes(0, nextafterf( NEST_SPIKES_END_TIME, INFINITY ));
     BOOST_CHECK_EQUAL( reader->getStartTime(), NEST_SPIKES_START_TIME );
@@ -283,8 +283,8 @@ void spike_timewindowed_reader( monsteer::SpikeReportReader* reader )
 
 BOOST_AUTO_TEST_CASE( test_spike_report_read_write )
 {
-    monsteer::SpikeReportWriter writer( uri );
-    monsteer::SpikeReportReader reader( getReadUri( writer ));
+    brain::SpikeReportWriter writer( uri );
+    brain::SpikeReportReader reader( getReadUri( writer ));
     lunchbox::sleep( STARTUP_DELAY );
     boost::thread readerThread( boost::bind( &spike_report_reader, &reader ));
     boost::thread writerThread( boost::bind( &spike_report_writer, &writer ));
@@ -294,8 +294,8 @@ BOOST_AUTO_TEST_CASE( test_spike_report_read_write )
 
 BOOST_AUTO_TEST_CASE( monsteer_spikes_time_windowed_read_write )
 {
-    monsteer::SpikeReportWriter writer( uri );
-    monsteer::SpikeReportReader reader( getReadUri( writer ));
+    brain::SpikeReportWriter writer( uri );
+    brain::SpikeReportReader reader( getReadUri( writer ));
     lunchbox::sleep( STARTUP_DELAY );
     boost::thread readerThread(
         boost::bind( &spike_timewindowed_reader, &reader ));

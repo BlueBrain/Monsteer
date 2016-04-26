@@ -1,5 +1,6 @@
 
-/* Copyright (c) 2006-2015, Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2006-2015, Ahmet Bilgili <ahmet.bilgili@epfl.ch>
+ *                          Juan Hernando <jhernando@fi.upm.es>
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
  *
@@ -17,9 +18,15 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MONSTEER_BINDING_SPIKES_H
-#define MONSTEER_BINDING_SPIKES_H
-
-void export_Spikes();
-
+#ifdef _MSC_VER
+#pragma warning(disable:4127)
 #endif
+
+#include <boost/python.hpp>
+
+#include "simulator.h"
+
+BOOST_PYTHON_MODULE(_monsteer)
+{
+    export_Simulator();
+}

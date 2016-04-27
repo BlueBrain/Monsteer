@@ -6,13 +6,12 @@
 
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 project(Monsteer VERSION 0.5.0)
+set(Monsteer_VERSION_ABI 5)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
-  ${CMAKE_SOURCE_DIR}/CMake/common)
+                              ${CMAKE_SOURCE_DIR}/CMake/common)
 
 include(GitExternal)
-
-set(Monsteer_VERSION_ABI 5)
 
 set(MONSTEER_ISSUES_URL "https://github.com/BlueBrain/Monsteer/issues")
 set(MONSTEER_DESCRIPTION

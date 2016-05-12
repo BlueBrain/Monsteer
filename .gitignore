@@ -1,6 +1,5 @@
 CMakeLists.txt.user*
 Makefile
-.travis.yml
 CMake/common/
 BBPSDK/
 Brion/

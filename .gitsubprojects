@@ -1,5 +1,5 @@
 # -*- mode: cmake -*-
-git_subproject(Servus https://github.com/HBPVIS/Servus 62873a5)
-git_subproject(Lunchbox https://github.com/Eyescale/Lunchbox.git 883bbb7)
-git_subproject(Brion https://github.com/BlueBrain/Brion.git 08beb55)
-git_subproject(ZeroEQ https://github.com/HBPVis/ZeroEQ.git 6857b2f)
+git_subproject(Servus https://github.com/HBPVIS/Servus 9fb8f08)
+git_subproject(Lunchbox https://github.com/Eyescale/Lunchbox.git b990d7f)
+git_subproject(Brion https://github.com/BlueBrain/Brion.git 4e8898f)
+git_subproject(ZeroEQ https://github.com/HBPVis/ZeroEQ.git 0273bde)

@@ -33,6 +33,7 @@ common_application(music_spike_writer)
 
 set(MUSIC_PROXY_SOURCES music_proxy.cpp)
 set(MUSIC_PROXY_LINK_LIBRARIES Monsteer ${MPI_CXX_LIBRARIES}
-                               ${Boost_PROGRAM_OPTIONS_LIBRARY})
+                               ${Boost_PROGRAM_OPTIONS_LIBRARY}
+                               flatbuffers)
 add_music(MUSIC_PROXY)
 common_application(music_proxy)

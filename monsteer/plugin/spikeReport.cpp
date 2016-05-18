@@ -67,7 +67,7 @@ SpikeReport::SpikeReport( const brion::SpikeReportInitData& pluginData )
     , _closed( false )
     , _spikeEvent( EVENT_SPIKES,
                    [&]( const zeroeq::FBEvent& event ){ _onSpikes( event ); })
-    , _eosEvent( EVENT_EOS,
+    , _eosEvent( EVENT_ENDOFSTREAM,
                  [&]( const zeroeq::FBEvent& event ){ _onEOS( event ); })
 {
     switch( pluginData.getAccessMode( ))
@@ -139,7 +139,7 @@ brion::SpikeReport::ReadMode SpikeReport::getReadMode() const
 void SpikeReport::close()
 {
     if( _publisher )
-        _publisher->publish( _eosEvent );
+        _publisher->publish( serializeEOS( ));
     if( _subscriber )
         _closed = true; // _lastTimeStamp is not reused to avoid race conditions
 }
@@ -252,7 +252,7 @@ void SpikeReport::clear( const float startTime, const float endTime )
 
 void SpikeReport::_onSpikes( const zeroeq::FBEvent& event )
 {
-    LBASSERT( event.getType() == EVENT_SPIKES );
+    LBASSERT( event.getTypeIdentifier() == EVENT_SPIKES );
     const SpikeMap& spikes = deserializeSpikes( event );
     _incoming.insert( spikes.begin(), spikes.end( ));
     if( !_incoming.empty() )
@@ -262,7 +262,7 @@ void SpikeReport::_onSpikes( const zeroeq::FBEvent& event )
 
 void SpikeReport::_onEOS( const zeroeq::FBEvent& event LB_UNUSED )
 {
-    LBASSERT( event.getType() == EVENT_EOS );
+    LBASSERT( event.getTypeIdentifier() == EVENT_ENDOFSTREAM );
     _lastTimeStamp = std::numeric_limits< float >::infinity();
 }
 

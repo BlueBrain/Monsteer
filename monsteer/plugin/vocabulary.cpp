@@ -20,11 +20,22 @@
 #include "vocabulary.h"
 
 #include "plugin/spikes_generated.h"
+#include "plugin/endOfStream_generated.h"
 
 namespace monsteer
 {
 namespace plugin
 {
+
+zeroeq::FBEvent serializeEOS()
+{
+    zeroeq::FBEvent event( EVENT_ENDOFSTREAM, ::zeroeq::EventFunc( ));
+    flatbuffers::FlatBufferBuilder& fbb = event.getFBB();
+    EndOfStreamBuilder builder( fbb );
+    builder.add_endofstream( true );
+    fbb.Finish( builder.Finish( ));
+    return event;
+}
 
 zeroeq::FBEvent serializeSpikes( const SpikeMap& spikes )
 {
@@ -55,6 +66,11 @@ SpikeMap deserializeSpikes( const zeroeq::FBEvent& event )
         spikes.insert( std::make_pair( spike->time(), spike->cell( )));
     }
     return spikes;
+}
+
+bool deserializeEOS( const zeroeq::FBEvent&  )
+{
+    return true;
 }
 
 }

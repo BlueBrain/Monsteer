@@ -1,0 +1,12 @@
+// Copyright (c) 2014-2015, EPFL/Blue Brain Project
+//                          Ahmet Bilgili <ahmet.bilgili@epfl.ch>
+//
+
+namespace monsteer.plugin;
+
+table EndOfStream
+{
+endofstream:bool = true;
+}
+
+root_type EndOfStream;

@@ -227,12 +227,27 @@ public:
         return _state;
     }
 
+    std::string deserializeJSON( const zeroeq::FBEvent& event,
+                                 const std::string& schema )
+    {
+         flatbuffers::Parser parser;
+         if( !parser.Parse( schema.c_str( )))
+            throw std::runtime_error( parser.error_ );
+
+         std::string json;
+         flatbuffers::GeneratorOptions opts;
+         opts.base64_byte_array = true;
+         opts.strict_json = true;
+         GenerateText( parser, event.getData(), opts, &json );
+         return json;
+    }
+
 private:
 
     void _onStimulusInjection( const zeroeq::FBEvent& event )
     {
-        LBASSERT( event.getType() == monsteer::steering::EVENT_STIMULUSINJECTION )
-        const std::string& json = zeroeq::vocabulary::deserializeJSON( event,
+        LBASSERT( event.getTypeIdentifier() == monsteer::steering::EVENT_STIMULUSINJECTION )
+        const std::string& json = deserializeJSON( event,
                                 monsteer::steering::SCHEMA_STIMULUSINJECTION );
         // Although music library internally "does not" touch the sent data,
         // the Music "insertMessage" function accepts only non-const data.
@@ -244,7 +259,7 @@ private:
 
     void _onPlaybackStateChange( const zeroeq::FBEvent& event )
     {
-        LBASSERT( event.getType() == monsteer::steering::EVENT_PLAYBACKSTATE )
+        LBASSERT( event.getTypeIdentifier() == monsteer::steering::EVENT_PLAYBACKSTATE )
         const monsteer::steering::SimulationPlaybackState& state =
                 monsteer::steering::deserializePlaybackState( event );
 

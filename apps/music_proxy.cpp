@@ -38,8 +38,6 @@
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 
-#include <functional>
-
 namespace po = boost::program_options;
 
 namespace

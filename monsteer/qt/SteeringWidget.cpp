@@ -33,7 +33,6 @@
 
 #include <QTimer>
 
-#include <functional>
 #include <boost/foreach.hpp>
 
 namespace

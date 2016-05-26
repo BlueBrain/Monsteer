@@ -33,8 +33,6 @@
 
 #include <brion/version.h>
 
-#include <functional>
-
 extern "C" int LunchboxPluginGetVersion() { return BRION_VERSION_ABI; }
 extern "C" bool LunchboxPluginRegister()
 {

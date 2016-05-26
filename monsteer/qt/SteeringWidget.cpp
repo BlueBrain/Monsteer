@@ -28,8 +28,7 @@
 #include <monsteer/qt/ui_SteeringWidget.h>
 
 #include <zeroeq/subscriber.h>
-#include <zeroeq/fbevent.h>
-#include <zeroeq/hbp/vocabulary.h>
+#include <lexis/lexis.h>
 
 #include <QTimer>
 
@@ -51,10 +50,7 @@ struct SteeringWidget::Impl
         : _simulator( 0 )
         , _selectionSubscriber( new zeroeq::Subscriber( ))
         , _playing( true )
-        , _isRegistered( false )
         , _steeringWidget( steeringWidget )
-        , _selectIdsEvent( zeroeq::hbp::EVENT_SELECTEDIDS,
-                [&]( const zeroeq::FBEvent& event ){ onSelection( event); })
     {
         _ui.setupUi( steeringWidget );
         _ui.tblGeneratorProperties->horizontalHeader()->setSectionResizeMode(
@@ -157,11 +153,9 @@ struct SteeringWidget::Impl
         delete _simulator;
     }
 
-    void onSelection( const ::zeroeq::FBEvent& event_ )
+    void onSelection( ::lexis::data::ConstSelectedIDsPtr event )
     {
-        const std::vector<uint32_t>& selection
-                = zeroeq::hbp::deserializeSelectedIDs( event_ );
-        emit _steeringWidget->updateCellIdsTextBox( selection );
+        emit _steeringWidget->updateCellIdsTextBox( event->getIdsVector( ));
     }
 
     void updateCellIdsTextBox( const std::vector<uint32_t>& cellIds )
@@ -176,7 +170,7 @@ struct SteeringWidget::Impl
 
         std::stringstream str;
         BOOST_FOREACH( const uint32_t gid, _selectedIds )
-                str << gid << " ,";
+                str << gid << " ";
 
         _ui.txtCellIds->setText( str.str().c_str( ));
     }
@@ -185,20 +179,21 @@ struct SteeringWidget::Impl
     {
         try
         {
-            _selectionSubscriber->subscribe( _selectIdsEvent );
-            _isRegistered = true;
+            _selectionSubscriber->subscribe( ::lexis::data::SelectedIDs::ZEROBUF_TYPE_IDENTIFIER(),
+                [&]( const void* data, const size_t size )
+                {
+                    onSelection( ::lexis::data::SelectedIDs::create( data, size ));
+                } );
         }
         catch( const std::exception& error )
         {
             LBERROR << "Error:" << error.what() << std::endl;
-            _isRegistered = false;
         }
     }
 
     void disconnectHBP()
     {
-        _selectionSubscriber->unsubscribe( _selectIdsEvent );
-        _isRegistered = false;
+        _selectionSubscriber->unsubscribe( ::lexis::data::SelectedIDs::ZEROBUF_TYPE_IDENTIFIER( ));
     }
 
     void propertiesChanged()
@@ -217,14 +212,11 @@ public:
     ::monsteer::Simulator* _simulator;
     zeroeq::Subscriber* _selectionSubscriber;
     bool _playing;
-    bool _isRegistered;
     Ui_steeringWidget _ui;
     SteeringWidget* _steeringWidget;
 
     QTimer _receiveTimer;
     std::vector<uint32_t> _selectedIds;
-
-    ::zeroeq::FBEvent _selectIdsEvent;
 };
 
 SteeringWidget::SteeringWidget( QWidget* parentWgt )

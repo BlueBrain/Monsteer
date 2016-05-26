@@ -29,7 +29,7 @@ namespace plugin
 
 zeroeq::FBEvent serializeEOS()
 {
-    zeroeq::FBEvent event( EVENT_ENDOFSTREAM, ::zeroeq::EventFunc( ));
+    zeroeq::FBEvent event( EVENT_ENDOFSTREAM, ::zeroeq::FBEventFunc( ));
     flatbuffers::FlatBufferBuilder& fbb = event.getFBB();
     EndOfStreamBuilder builder( fbb );
     builder.add_endofstream( true );
@@ -39,7 +39,7 @@ zeroeq::FBEvent serializeEOS()
 
 zeroeq::FBEvent serializeSpikes( const SpikeMap& spikes )
 {
-    zeroeq::FBEvent event( EVENT_SPIKES, ::zeroeq::EventFunc( ));
+    zeroeq::FBEvent event( EVENT_SPIKES, ::zeroeq::FBEventFunc( ));
 
     std::vector< Spike > spikeVector;
     spikeVector.reserve( spikes.size( ));

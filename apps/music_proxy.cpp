@@ -30,9 +30,10 @@
 #include <zeroeq/publisher.h>
 #include <zeroeq/vocabulary.h>
 
+#include <flatbuffers/idl.h>
+
 #include <music.hh>
 
-#include <boost/bind.hpp>
 #include <boost/program_options.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -178,6 +179,10 @@ public:
 
     SteeringHandler( MUSIC::Setup* setup, const std::string& steeringPort )
         : _state( monsteer::steering::SimulationPlaybackState::PLAY )
+        , _stimuliInjectionEvent( monsteer::steering::EVENT_STIMULUSINJECTION,
+         [&]( const zeroeq::FBEvent& event ){ _onStimulusInjection( event); })
+        , _playbackStateEvent( monsteer::steering::EVENT_PLAYBACKSTATE,
+         [&]( const zeroeq::FBEvent& event ){ _onPlaybackStateChange( event); })
     {
         LBINFO << "Initializing Steering Handler" << std::endl;
 
@@ -190,14 +195,8 @@ public:
         }
 
         _steeringOutput->map();
-
-        _subscriber.registerHandler(
-            monsteer::steering::EVENT_STIMULUSINJECTION,
-            boost::bind( &SteeringHandler::_onStimulusInjection, this, _1 ));
-
-        _subscriber.registerHandler(
-            monsteer::steering::EVENT_PLAYBACKSTATE,
-            boost::bind( &SteeringHandler::_onPlaybackStateChange, this, _1 ));
+        _subscriber.subscribe( _stimuliInjectionEvent );
+        _subscriber.subscribe( _playbackStateEvent );
 
         LBINFO << "Initialized Steering Handler" << std::endl;
     }
@@ -221,17 +220,33 @@ public:
         }
     }
 
-    monsteer::steering::SimulationPlaybackState::State getPlaybackState( ) const
+    monsteer::steering::SimulationPlaybackState::State getPlaybackState() const
     {
         return _state;
     }
 
+    std::string deserializeJSON( const zeroeq::FBEvent& event,
+                                 const std::string& schema )
+    {
+         flatbuffers::Parser parser;
+         if( !parser.Parse( schema.c_str( )))
+            throw std::runtime_error( parser.error_ );
+
+         std::string json;
+         flatbuffers::GeneratorOptions opts;
+         opts.base64_byte_array = true;
+         opts.strict_json = true;
+         GenerateText( parser, event.getData(), opts, &json );
+         return json;
+    }
+
 private:
 
-    void _onStimulusInjection( const zeroeq::Event& event )
+    void _onStimulusInjection( const zeroeq::FBEvent& event )
     {
-        LBASSERT( event.getType() == monsteer::steering::EVENT_STIMULUSINJECTION )
-        const std::string& json = zeroeq::vocabulary::deserializeJSON( event );
+        LBASSERT( event.getTypeIdentifier() == monsteer::steering::EVENT_STIMULUSINJECTION )
+        const std::string& json = deserializeJSON( event,
+                                monsteer::steering::SCHEMA_STIMULUSINJECTION );
         // Although music library internally "does not" touch the sent data,
         // the Music "insertMessage" function accepts only non-const data.
         // Not to have a second copy, the below const_cast is applied.
@@ -240,9 +255,9 @@ private:
                                         json.size());
     }
 
-    void _onPlaybackStateChange( const zeroeq::Event& event )
+    void _onPlaybackStateChange( const zeroeq::FBEvent& event )
     {
-        LBASSERT( event.getType() == monsteer::steering::EVENT_PLAYBACKSTATE )
+        LBASSERT( event.getTypeIdentifier() == monsteer::steering::EVENT_PLAYBACKSTATE )
         const monsteer::steering::SimulationPlaybackState& state =
                 monsteer::steering::deserializePlaybackState( event );
 
@@ -253,6 +268,8 @@ private:
     MUSIC::MessageOutputPort* _steeringOutput;
     double _currentTime;
     monsteer::steering::SimulationPlaybackState::State _state;
+    zeroeq::FBEvent _stimuliInjectionEvent;
+    zeroeq::FBEvent _playbackStateEvent;
 };
 
 class Proxy : boost::noncopyable

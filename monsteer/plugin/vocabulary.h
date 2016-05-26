@@ -21,9 +21,10 @@
 #define MONSTEER_PLUGIN_VOCABULARY_H
 
 #include "plugin/spikes_zeroeq_generated.h"
+#include "plugin/endOfStream_zeroeq_generated.h"
 
 #include <zeroeq/types.h>
-#include <zeroeq/event.h>
+#include <zeroeq/fbevent.h>
 
 #include <map>
 
@@ -32,13 +33,12 @@ namespace monsteer
 namespace plugin
 {
 
-static const zeroeq::uint128_t EVENT_EOS(
-    zeroeq::make_uint128( "monsteer::streaming::EndOfStream" ));
-
 typedef std::multimap< float, uint32_t > SpikeMap;
 
-zeroeq::Event serializeSpikes( const SpikeMap& spikes );
-SpikeMap deserializeSpikes( const zeroeq::Event& event );
+zeroeq::FBEvent serializeEOS();
+bool deserializeEOS( const zeroeq::FBEvent& event );
+zeroeq::FBEvent serializeSpikes( const SpikeMap& spikes );
+SpikeMap deserializeSpikes( const zeroeq::FBEvent& event );
 
 }
 }

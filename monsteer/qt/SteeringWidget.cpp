@@ -28,11 +28,11 @@
 #include <monsteer/qt/ui_SteeringWidget.h>
 
 #include <zeroeq/subscriber.h>
+#include <zeroeq/fbevent.h>
 #include <zeroeq/hbp/vocabulary.h>
 
 #include <QTimer>
 
-#include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 
 namespace
@@ -53,9 +53,12 @@ struct SteeringWidget::Impl
         , _playing( true )
         , _isRegistered( false )
         , _steeringWidget( steeringWidget )
+        , _selectIdsEvent( zeroeq::hbp::EVENT_SELECTEDIDS,
+                [&]( const zeroeq::FBEvent& event ){ onSelection( event); })
     {
         _ui.setupUi( steeringWidget );
-        _ui.tblGeneratorProperties->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
+        _ui.tblGeneratorProperties->horizontalHeader()->setSectionResizeMode(
+                    QHeaderView::Stretch );
 
         connectHBP();
         connectISC();
@@ -154,7 +157,7 @@ struct SteeringWidget::Impl
         delete _simulator;
     }
 
-    void onSelection( const ::zeroeq::Event& event_ )
+    void onSelection( const ::zeroeq::FBEvent& event_ )
     {
         const std::vector<uint32_t>& selection
                 = zeroeq::hbp::deserializeSelectedIDs( event_ );
@@ -182,10 +185,7 @@ struct SteeringWidget::Impl
     {
         try
         {
-            _selectionSubscriber->registerHandler(
-                        zeroeq::hbp::EVENT_SELECTEDIDS,
-                        boost::bind( &SteeringWidget::Impl::onSelection,
-                                     this, _1 ));
+            _selectionSubscriber->subscribe( _selectIdsEvent );
             _isRegistered = true;
         }
         catch( const std::exception& error )
@@ -197,7 +197,7 @@ struct SteeringWidget::Impl
 
     void disconnectHBP()
     {
-        _selectionSubscriber->deregisterHandler( zeroeq::hbp::EVENT_SELECTEDIDS );
+        _selectionSubscriber->unsubscribe( _selectIdsEvent );
         _isRegistered = false;
     }
 
@@ -223,6 +223,8 @@ public:
 
     QTimer _receiveTimer;
     std::vector<uint32_t> _selectedIds;
+
+    ::zeroeq::FBEvent _selectIdsEvent;
 };
 
 SteeringWidget::SteeringWidget( QWidget* parentWgt )

@@ -4,7 +4,7 @@
 # This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
 #
 
-flatbuffers_generate_c_headers(SPIKES_FB spikes.fbs)
+flatbuffers_generate_c_headers(SPIKES_FB spikes.fbs endOfStream.fbs)
 
 set(BRIONMONSTEERSPIKEREPORT_HEADERS
   ${SPIKES_FB_ZEROEQ_OUTPUTS}

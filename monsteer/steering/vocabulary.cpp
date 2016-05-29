@@ -31,7 +31,7 @@ zeroeq::FBEvent serializeStimulus( const std::string& messageID,
                                  const std::string& params,
                                  const bool multiple )
 {
-    zeroeq::FBEvent event( EVENT_STIMULUSINJECTION, zeroeq::EventFunc( ));
+    zeroeq::FBEvent event( EVENT_STIMULUSINJECTION, zeroeq::FBEventFunc( ));
     flatbuffers::FlatBufferBuilder& fbb = event.getFBB();
 
     // This is required to make FlatBuffers aware of the event fields that
@@ -77,7 +77,7 @@ Stimulus deserializeStimulus( const zeroeq::FBEvent& event )
 zeroeq::FBEvent serializePlaybackState( const std::string& messageID,
                                     const SimulationPlaybackState::State state )
 {
-    zeroeq::FBEvent event( EVENT_PLAYBACKSTATE, zeroeq::EventFunc( ));
+    zeroeq::FBEvent event( EVENT_PLAYBACKSTATE, zeroeq::FBEventFunc( ));
     flatbuffers::FlatBufferBuilder& fbb = event.getFBB();
     auto fbMessageID = fbb.CreateString( messageID );
     fbb.Finish( CreatePlaybackState( fbb, fbMessageID, state ));

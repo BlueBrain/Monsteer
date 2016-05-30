@@ -4,7 +4,8 @@
 # This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
 #
 
-if(NOT ZEROEQ_FOUND OR NOT QT5WIDGETS_FOUND)
+if(NOT QT5WIDGETS_FOUND OR NOT TARGET Lexis)
+  message(STATUS "Not building MonsteerQt due to missing Qt5 or Lexis dependency")
   return()
 endif()
 
@@ -29,7 +30,7 @@ set(MONSTEERQT_SOURCES
   SteeringWidget.ui
 )
 
-set(MONSTEERQT_LINK_LIBRARIES Monsteer Qt5::Widgets ZeroEQ ZeroEQHBP)
+set(MONSTEERQT_LINK_LIBRARIES Lexis Monsteer Qt5::Widgets ZeroEQ)
 set(MONSTEERQT_INCLUDE_NAME monsteer/qt)
 set(MONSTEERQT_NAMESPACE monsteerqt)
 

@@ -43,8 +43,7 @@
 
 #define STARTUP_DELAY 250
 
-const std::string monsteerPluginScheme( "monsteer" );
-const lunchbox::URI uri( monsteerPluginScheme + "://127.0.0.1" );
+const lunchbox::URI uri( MONSTEER_BRION_SPIKES_PLUGIN_SCHEME + "://127.0.0.1" );
 
 // Explicit registration required because the folder of the brion plugin is not
 // in the LD_LIBRARY_PATH of the test executable.
@@ -164,7 +163,7 @@ template <typename T>
 brion::URI getReadUri( const T& writer )
 {
     brion::URI readUri = writer.getURI();
-    readUri.setScheme( monsteerPluginScheme );
+    readUri.setScheme( MONSTEER_BRION_SPIKES_PLUGIN_SCHEME );
     return readUri;
 }
 

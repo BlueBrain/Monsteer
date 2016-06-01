@@ -20,14 +20,14 @@
 #include "nestSimulator.h"
 
 #include <monsteer/types.h>
-#include <monsteer/steering/vocabulary.h>
 
-#include <zeroeq/subscriber.h>
-#include <zeroeq/publisher.h>
-#include <zeroeq/uri.h>
+#include <zeroeq/zeroeq.h>
 
 #include <lunchbox/debug.h>
 #include <lunchbox/pluginRegisterer.h>
+
+#include <monsteer/steering/playbackState.h>
+#include <monsteer/steering/stimulus.h>
 
 namespace monsteer
 {
@@ -58,7 +58,8 @@ void NESTSimulator::injectStimulus( const std::string& jsonParameters,
 {
     // The messageID is irrelevant for the moment
     _requestPublisher->publish(
-        serializeStimulus( "", cells, jsonParameters, /*single*/ false ));
+        StimulusInjection( "", "EVENT_STIMULUSINJECTION", cells,
+                           jsonParameters, /*single*/ false ));
 }
 
 void NESTSimulator::injectMultipleStimuli( const std::string& jsonParameters,
@@ -66,20 +67,18 @@ void NESTSimulator::injectMultipleStimuli( const std::string& jsonParameters,
 {
     // The messageID is irrelevant for the moment
     _requestPublisher->publish(
-        serializeStimulus( "", cells, jsonParameters, /*multiple*/ true ));
+        StimulusInjection( "", "EVENT_STIMULUSINJECTION", cells,
+                           jsonParameters, /*multiple*/ true ));
 }
 
 void NESTSimulator::play()
 {
-    _requestPublisher->publish(
-        serializePlaybackState( "", SimulationPlaybackState::PLAY ));
+    _requestPublisher->publish( PlaybackState( State_PLAY ));
 }
-
 
 void NESTSimulator::pause()
 {
-    _requestPublisher->publish(
-        serializePlaybackState( "", SimulationPlaybackState::PAUSE ));
+    _requestPublisher->publish( PlaybackState( State_PAUSE ));
 }
 
 

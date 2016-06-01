@@ -6,7 +6,4 @@ namespace monsteer.plugin;
 
 table EndOfStream
 {
-endofstream:bool = true;
 }
-
-root_type EndOfStream;

@@ -20,8 +20,8 @@
 #ifndef MONSTEER_PLUGIN_NESTSIMULATOR_H
 #define MONSTEER_PLUGIN_NESTSIMULATOR_H
 
+#include <zeroeq/types.h>
 #include <monsteer/steering/simulatorPlugin.h>
-#include <lunchbox/uri.h>
 #include <boost/scoped_ptr.hpp>
 
 namespace monsteer

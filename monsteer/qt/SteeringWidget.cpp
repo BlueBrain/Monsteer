@@ -33,6 +33,7 @@
 #include <QTimer>
 
 #include <boost/foreach.hpp>
+#include <lunchbox/log.h>
 
 namespace
 {

@@ -27,7 +27,6 @@ common_find_package(Boost REQUIRED COMPONENTS filesystem serialization system
                                          program_options thread
                                          unit_test_framework)
 common_find_package(Brion REQUIRED)
-common_find_package(FlatBuffers REQUIRED)
 common_find_package(Lexis)
 common_find_package(Lunchbox REQUIRED)
 common_find_package(MPI)
@@ -36,10 +35,11 @@ common_find_package(Qt5Widgets)
 common_find_package(PythonInterp)
 common_find_package(PythonLibs)
 common_find_package(vmmlib REQUIRED)
+common_find_package(ZeroBuf REQUIRED)
 common_find_package(ZeroEQ REQUIRED)
 common_find_package_post()
 
-set(MONSTEER_DEPENDENT_LIBRARIES Lunchbox ZeroEQ)
+set(MONSTEER_DEPENDENT_LIBRARIES Lunchbox ZeroBuf)
 
 add_subdirectory(monsteer)
 add_subdirectory(apps)

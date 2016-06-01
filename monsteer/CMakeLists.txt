@@ -6,12 +6,9 @@
 
 set(MONSTEER_PUBLIC_HEADERS types.h)
 set(MONSTEER_SOURCES)
-
-include_directories(BEFORE SYSTEM ${PROJECT_BINARY_DIR}/monsteer)
-
 include(steering/files.cmake)
 
-set(MONSTEER_LINK_LIBRARIES PUBLIC Brion Lunchbox ZeroEQ)
+set(MONSTEER_LINK_LIBRARIES PUBLIC Brion ZeroBuf PRIVATE Lunchbox ZeroEQ)
 
 common_library(Monsteer)
 

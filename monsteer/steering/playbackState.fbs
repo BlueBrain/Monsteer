@@ -3,10 +3,13 @@
 //
 namespace monsteer.steering;
 
-table PlaybackState
+enum State : uint
 {
-  messageID:string;
-  state:uint;
+  PAUSE
+  PLAY
 }
 
-root_type PlaybackState;
+table PlaybackState
+{
+  state:State;
+}

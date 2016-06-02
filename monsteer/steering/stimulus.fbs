@@ -11,5 +11,3 @@ table StimulusInjection
   params:string;
   multiple:bool;
 }
-
-root_type StimulusInjection;

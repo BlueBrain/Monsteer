@@ -21,29 +21,19 @@
 #define MONSTEER_TYPES_H
 
 #include <brion/types.h>
-#include <lunchbox/log.h>
-#include <lunchbox/types.h>
 
 #define MONSTEER_BRION_SPIKES_PLUGIN_SCHEME    std::string( "monsteer" )
 #define MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME  std::string( "nest" )
 
-namespace zeroeq
-{
-class Subscriber;
-class Publisher;
-class FBEvent;
-}
-
 /** @namespace monsteer MONSTEER types */
 namespace monsteer
 {
+using brion::Strings;
 using brion::URI;
 
 class Simulator;
-
-typedef std::vector< std::string > Strings;
-
 typedef boost::shared_ptr< Simulator > SimulatorPtr;
+
 }
 
 #endif

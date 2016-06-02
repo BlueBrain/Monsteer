@@ -19,13 +19,8 @@
  */
 
 #include "spikeReport.h"
-#include "vocabulary.h"
 
-#include <zeroeq/subscriber.h>
-#include <zeroeq/publisher.h>
-#include <zeroeq/vocabulary.h>
-#include <zeroeq/fbevent.h>
-#include <zeroeq/uri.h>
+#include <zeroeq/zeroeq.h>
 
 #include <lunchbox/clock.h>
 #include <lunchbox/pluginRegisterer.h>
@@ -63,19 +58,19 @@ SpikeReport::SpikeReport( const brion::SpikeReportInitData& pluginData )
     , _lastEndTime( 0 )
     , _lastTimeStamp( -1 )
     , _closed( false )
-    , _spikeEvent( EVENT_SPIKES,
-                   [&]( const zeroeq::FBEvent& event ){ _onSpikes( event ); })
-    , _eosEvent( EVENT_ENDOFSTREAM,
-                 [&]( const zeroeq::FBEvent& event ){ _onEOS( event ); })
 {
     switch( pluginData.getAccessMode( ))
     {
     case brion::MODE_READ:
     {
         _subscriber.reset( new zeroeq::Subscriber( zeroeq::URI( _uri ),
-                                                zeroeq::DEFAULT_SESSION ));
-        _subscriber->subscribe( _spikeEvent );
-        _subscriber->subscribe( _eosEvent );
+                                                   zeroeq::DEFAULT_SESSION ));
+
+        _subscriber->subscribe( SpikesEvent::ZEROBUF_TYPE_IDENTIFIER(),
+            [&]( const void* data, const size_t size )
+            { _onSpikes( SpikesEvent::create( data, size )); });
+        _subscriber->subscribe( EndOfStream::ZEROBUF_TYPE_IDENTIFIER(),
+            [&] { _onEOS(); });
         break;
     }
     case brion::MODE_WRITE:
@@ -93,7 +88,7 @@ SpikeReport::SpikeReport( const brion::SpikeReportInitData& pluginData )
 
 bool SpikeReport::handles( const brion::SpikeReportInitData& pluginData )
 {
-    return pluginData.getURI().getScheme() == "monsteer";
+    return pluginData.getURI().getScheme() == MONSTEER_BRION_SPIKES_PLUGIN_SCHEME;
 }
 
 const lunchbox::URI& SpikeReport::getURI() const
@@ -120,8 +115,10 @@ float SpikeReport::getEndTime() const
 
 void SpikeReport::writeSpikes( const brion::Spikes& spikes )
 {
-    const zeroeq::FBEvent& event = serializeSpikes( spikes );
-    _publisher->publish( event );
+    SpikesEvent event;
+    for( const auto& i : spikes )
+        event.getSpikes().push_back( Spike( i.first, i.second ));
+    _publisher->publish( event  );
 }
 
 const brion::Spikes& SpikeReport::getSpikes() const
@@ -137,7 +134,7 @@ brion::SpikeReport::ReadMode SpikeReport::getReadMode() const
 void SpikeReport::close()
 {
     if( _publisher )
-        _publisher->publish( serializeEOS( ));
+        _publisher->publish( EndOfStream::ZEROBUF_TYPE_IDENTIFIER( ));
     if( _subscriber )
         _closed = true; // _lastTimeStamp is not reused to avoid race conditions
 }
@@ -248,19 +245,22 @@ void SpikeReport::clear( const float startTime, const float endTime )
                    _spikes.upper_bound( endTime ));
 }
 
-void SpikeReport::_onSpikes( const zeroeq::FBEvent& event )
+void SpikeReport::_onSpikes( ConstSpikesEventPtr event )
 {
-    LBASSERT( event.getTypeIdentifier() == EVENT_SPIKES );
-    const SpikeMap& spikes = deserializeSpikes( event );
-    _incoming.insert( spikes.begin(), spikes.end( ));
+    brion::Spikes::const_iterator hint = _incoming.end();
+    for( size_t i = 0; i < event->getSpikes().size( ); ++i )
+    {
+        const Spike& spike = event->getSpikes()[i];
+        hint = _incoming.insert( hint, std::make_pair( spike.getTime(),
+                                                       spike.getCell( )));
+    }
     if( !_incoming.empty() )
         _lastTimeStamp = _incoming.rbegin()->first;
 
 }
 
-void SpikeReport::_onEOS( const zeroeq::FBEvent& event LB_UNUSED )
+void SpikeReport::_onEOS()
 {
-    LBASSERT( event.getTypeIdentifier() == EVENT_ENDOFSTREAM );
     _lastTimeStamp = std::numeric_limits< float >::infinity();
 }
 

@@ -3,15 +3,13 @@
 //
 namespace monsteer.plugin;
 
-struct Spike
+table Spike
 {
   time:float; // In milliseconds (what Brion expects).
   cell:uint;
 }
 
-table Spikes
+table SpikesEvent
 {
   spikes:[Spike];
 }
-
-root_type Spikes;

@@ -22,9 +22,12 @@
 #define MONSTEER_PLUGIN_SPIKEREPORT_H
 
 #include <monsteer/types.h>
+#include <zeroeq/types.h>
+
+#include <monsteer/plugin/endOfStream.h>
+#include <monsteer/plugin/spikes.h>
 
 #include <brion/spikeReportPlugin.h>
-#include <zeroeq/fbevent.h>
 
 #include <boost/scoped_ptr.hpp>
 
@@ -61,7 +64,7 @@ public:
 
     brion::SpikeReport::ReadMode getReadMode() const final;
 
-    const lunchbox::URI& getURI() const final;
+    const URI& getURI() const final;
 
     void close() final;
 
@@ -78,11 +81,8 @@ private:
 
     bool _closed;
 
-    void _onSpikes( const zeroeq::FBEvent& event );
-    void _onEOS( const zeroeq::FBEvent& event );
-
-    ::zeroeq::FBEvent _spikeEvent;
-    ::zeroeq::FBEvent _eosEvent;
+    void _onSpikes( ConstSpikesEventPtr event );
+    void _onEOS();
 
     void _receiveBufferedMessages();
 };

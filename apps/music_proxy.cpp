@@ -18,19 +18,15 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "monsteer/playbackState_generated.h"
-#include "monsteer/steering/vocabulary.h"
-#include "monsteer/stimulus_generated.h"
+#include <monsteer/types.h>
+#include <monsteer/steering/playbackState.h>
+#include <monsteer/steering/stimulus.h>
 
 #include <brion/spikeReport.h>
 #include <lunchbox/debug.h>
 #include <lunchbox/log.h>
 
-#include <zeroeq/subscriber.h>
-#include <zeroeq/publisher.h>
-#include <zeroeq/vocabulary.h>
-
-#include <flatbuffers/idl.h>
+#include <zeroeq/zeroeq.h>
 
 #include <music.hh>
 
@@ -178,11 +174,7 @@ class SteeringHandler
 public:
 
     SteeringHandler( MUSIC::Setup* setup, const std::string& steeringPort )
-        : _state( monsteer::steering::SimulationPlaybackState::PLAY )
-        , _stimuliInjectionEvent( monsteer::steering::EVENT_STIMULUSINJECTION,
-         [&]( const zeroeq::FBEvent& event ){ _onStimulusInjection( event); })
-        , _playbackStateEvent( monsteer::steering::EVENT_PLAYBACKSTATE,
-         [&]( const zeroeq::FBEvent& event ){ _onPlaybackStateChange( event); })
+        : _state( monsteer::steering::State_PLAY )
     {
         LBINFO << "Initializing Steering Handler" << std::endl;
 
@@ -195,8 +187,16 @@ public:
         }
 
         _steeringOutput->map();
-        _subscriber.subscribe( _stimuliInjectionEvent );
-        _subscriber.subscribe( _playbackStateEvent );
+
+        using monsteer::steering::PlaybackState;
+        using monsteer::steering::StimulusInjection;
+
+        _subscriber.subscribe( PlaybackState::ZEROBUF_TYPE_IDENTIFIER(),
+                               [&]( const void* data, const size_t size )
+                               { _onPlaybackStateChange( PlaybackState::create( data, size )); });
+        _subscriber.subscribe( StimulusInjection::ZEROBUF_TYPE_IDENTIFIER(),
+                               [&]( const void* data, const size_t size )
+                               { _onStimulusInjection( StimulusInjection::create( data, size )); });
 
         LBINFO << "Initialized Steering Handler" << std::endl;
     }
@@ -205,14 +205,14 @@ public:
     {
         switch( _state )
         {
-        case monsteer::steering::SimulationPlaybackState::PLAY:
+        case monsteer::steering::State_PLAY:
         {
             _currentTime = musicTime;
             while( _subscriber.receive( 0 ))
              ;
             break;
         }
-        case monsteer::steering::SimulationPlaybackState::PAUSE:
+        case monsteer::steering::State_PAUSE:
         {
             _subscriber.receive( -1 );
             break;
@@ -220,33 +220,16 @@ public:
         }
     }
 
-    monsteer::steering::SimulationPlaybackState::State getPlaybackState() const
+    monsteer::steering::State getPlaybackState() const
     {
         return _state;
     }
 
-    std::string deserializeJSON( const zeroeq::FBEvent& event,
-                                 const std::string& schema )
-    {
-         flatbuffers::Parser parser;
-         if( !parser.Parse( schema.c_str( )))
-            throw std::runtime_error( parser.error_ );
-
-         std::string json;
-         flatbuffers::GeneratorOptions opts;
-         opts.base64_byte_array = true;
-         opts.strict_json = true;
-         GenerateText( parser, event.getData(), opts, &json );
-         return json;
-    }
-
 private:
 
-    void _onStimulusInjection( const zeroeq::FBEvent& event )
+    void _onStimulusInjection( monsteer::steering::ConstStimulusInjectionPtr event )
     {
-        LBASSERT( event.getTypeIdentifier() == monsteer::steering::EVENT_STIMULUSINJECTION )
-        const std::string& json = deserializeJSON( event,
-                                monsteer::steering::SCHEMA_STIMULUSINJECTION );
+        const std::string& json = event->toJSON();
         // Although music library internally "does not" touch the sent data,
         // the Music "insertMessage" function accepts only non-const data.
         // Not to have a second copy, the below const_cast is applied.
@@ -255,21 +238,15 @@ private:
                                         json.size());
     }
 
-    void _onPlaybackStateChange( const zeroeq::FBEvent& event )
+    void _onPlaybackStateChange( monsteer::steering::ConstPlaybackStatePtr event )
     {
-        LBASSERT( event.getTypeIdentifier() == monsteer::steering::EVENT_PLAYBACKSTATE )
-        const monsteer::steering::SimulationPlaybackState& state =
-                monsteer::steering::deserializePlaybackState( event );
-
-        _state = state.state;
+        _state = event->getState();
     }
 
     zeroeq::Subscriber _subscriber;
     MUSIC::MessageOutputPort* _steeringOutput;
     double _currentTime;
-    monsteer::steering::SimulationPlaybackState::State _state;
-    zeroeq::FBEvent _stimuliInjectionEvent;
-    zeroeq::FBEvent _playbackStateEvent;
+    monsteer::steering::State _state;
 };
 
 class Proxy : boost::noncopyable
@@ -309,8 +286,10 @@ public:
         {
             if( !_steeringHandler ||
                  _steeringHandler->getPlaybackState() ==
-                    monsteer::steering::SimulationPlaybackState::PLAY )
+                    monsteer::steering::State_PLAY )
+            {
                 runtime.tick();
+            }
 
             if( _steeringHandler )
                 _steeringHandler->processMessages(apptime);

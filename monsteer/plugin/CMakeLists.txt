@@ -4,19 +4,18 @@
 # This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
 #
 
-flatbuffers_generate_c_headers(SPIKES_FB spikes.fbs endOfStream.fbs)
+include(zerobufGenerateCxx)
+zerobuf_generate_cxx(BRIONMONSTEERSPIKEREPORT ${CMAKE_CURRENT_BINARY_DIR}
+  endOfStream.fbs spikes.fbs)
 
-set(BRIONMONSTEERSPIKEREPORT_HEADERS
-  ${SPIKES_FB_ZEROEQ_OUTPUTS}
+list(APPEND BRIONMONSTEERSPIKEREPORT_HEADERS
   spikeReport.h
-  vocabulary.h
 )
 
-set(BRIONMONSTEERSPIKEREPORT_SOURCES
+list(APPEND BRIONMONSTEERSPIKEREPORT_SOURCES
   spikeReport.cpp
-  vocabulary.cpp
 )
 
-set(BRIONMONSTEERSPIKEREPORT_LINK_LIBRARIES Brion Lunchbox ZeroEQ)
+set(BRIONMONSTEERSPIKEREPORT_LINK_LIBRARIES Brion Lunchbox ZeroBuf ZeroEQ)
 
 common_library(BrionMonsteerSpikeReport)

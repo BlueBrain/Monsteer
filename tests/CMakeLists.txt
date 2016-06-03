@@ -9,7 +9,8 @@ if(NOT BBPTESTDATA_FOUND)
   return()
 endif()
 
+common_find_package(Threads REQUIRED)
 set(TEST_LIBRARIES ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-  BBPTestData Monsteer BrionMonsteerSpikeReport Brain)
+  BBPTestData Monsteer BrionMonsteerSpikeReport Brain ${CMAKE_THREAD_LIBS_INIT})
 
 include(CommonCTest)

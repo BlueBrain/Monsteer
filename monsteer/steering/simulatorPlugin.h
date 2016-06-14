@@ -21,6 +21,9 @@
 
 #include <monsteer/types.h>
 
+#include <boost/lexical_cast.hpp>
+#include <boost/noncopyable.hpp>
+
 namespace monsteer
 {
 

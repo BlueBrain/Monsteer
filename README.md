@@ -62,3 +62,5 @@ The following platforms and build environments are tested:
 Contact: ahmet.bilgili@epfl.ch
          jafet.villafrancadiaz@epfl.ch
          jhernando@fi.upm.es
+
+This work has been partially funded by the European Union Seventh Framework Program (FP7/2007­2013) under grant agreement no. 604102 (HBP).

@@ -3,10 +3,14 @@ Changelog {#Changelog}
 
 # git master
 
+# Release 0.5.0 (30-06-2016)
+
 * [#32](https://github.com/BlueBrain/Monsteer/pull/32):
   Use ZeroBuf events for steering and streaming
 * [#31](https://github.com/BlueBrain/Monsteer/pull/31):
   Use Lexis library for ZeroBuf-based vocabulary
+* [#27](https://github.com/BlueBrain/Monsteer/pull/27):
+  Move old SDK/Monsteer spike report to brain
 * [#24](https://github.com/BlueBrain/Monsteer/pull/24):
   Adapt to the renaming of zeq to ZeroEQ
 

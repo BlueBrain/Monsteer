@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2015, Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2006-2016, Juan Hernando <jhernando@fi.upm.es>
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
  *
@@ -30,8 +30,7 @@ namespace monsteer
 class Simulator::Impl
 {
 public:
-    typedef lunchbox::PluginFactory<
-        SimulatorPlugin, SimulatorPluginInitData > SimulatorPluginFactory;
+    typedef lunchbox::PluginFactory< SimulatorPlugin > SimulatorPluginFactory;
 
     explicit Impl( const SimulatorPluginInitData& initData )
         : plugin( SimulatorPluginFactory::getInstance().create( initData ))

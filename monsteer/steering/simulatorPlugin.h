@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2015, Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2006-2016, Juan Hernando <jhernando@fi.upm.es>
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
  *
@@ -48,7 +48,7 @@ class SimulatorPlugin : public boost::noncopyable
 {
 public:
     /** @internal Needed by the PluginRegisterer. */
-    typedef SimulatorPlugin PluginT;
+    typedef SimulatorPlugin InterfaceT;
 
     /** @internal Needed by the PluginRegisterer. */
     typedef SimulatorPluginInitData InitDataT;

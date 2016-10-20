@@ -174,7 +174,7 @@ class SteeringHandler
 public:
 
     SteeringHandler( MUSIC::Setup* setup, const std::string& steeringPort )
-        : _state( monsteer::steering::State_PLAY )
+        : _state( monsteer::steering::State::PLAY )
     {
         LBINFO << "Initializing Steering Handler" << std::endl;
 
@@ -205,14 +205,14 @@ public:
     {
         switch( _state )
         {
-        case monsteer::steering::State_PLAY:
+        case monsteer::steering::State::PLAY:
         {
             _currentTime = musicTime;
             while( _subscriber.receive( 0 ))
              ;
             break;
         }
-        case monsteer::steering::State_PAUSE:
+        case monsteer::steering::State::PAUSE:
         {
             _subscriber.receive( -1 );
             break;
@@ -286,7 +286,7 @@ public:
         {
             if( !_steeringHandler ||
                  _steeringHandler->getPlaybackState() ==
-                    monsteer::steering::State_PLAY )
+                    monsteer::steering::State::PLAY )
             {
                 runtime.tick();
             }

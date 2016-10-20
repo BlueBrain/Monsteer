@@ -73,12 +73,12 @@ void NESTSimulator::injectMultipleStimuli( const std::string& jsonParameters,
 
 void NESTSimulator::play()
 {
-    _requestPublisher->publish( PlaybackState( State_PLAY ));
+    _requestPublisher->publish( PlaybackState( State::PLAY ));
 }
 
 void NESTSimulator::pause()
 {
-    _requestPublisher->publish( PlaybackState( State_PAUSE ));
+    _requestPublisher->publish( PlaybackState( State::PAUSE ));
 }
 
 

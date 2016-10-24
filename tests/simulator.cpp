@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2015, Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2006-2016, Juan Hernando <jhernando@fi.upm.es>
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
  *
@@ -103,12 +103,11 @@ const std::string jsonParameters( "blahblah" );
 
 namespace std
 {
-    ostream& operator<<( ostream& s, const brion::uint32_ts& cellIds )
+    ostream& operator<<( ostream& os, const brion::uint32_ts& cellIds )
     {
-        BOOST_FOREACH( const uint32_t& cellId, cellIds )
-                s << cellId << " ";
-        s << std::endl;
-        return s;
+        for( const uint32_t& cellId : cellIds )
+            os << cellId << " ";
+        return os << std::endl;
     }
 }
 

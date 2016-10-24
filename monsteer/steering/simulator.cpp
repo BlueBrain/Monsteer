@@ -22,7 +22,6 @@
 
 #include <lunchbox/plugin.h>
 #include <lunchbox/pluginFactory.h>
-#include <boost/scoped_ptr.hpp>
 
 namespace monsteer
 {
@@ -37,7 +36,7 @@ public:
     {
     }
 
-    boost::scoped_ptr< SimulatorPlugin > plugin;
+    std::unique_ptr< SimulatorPlugin > plugin;
 };
 
 Simulator::Simulator( const URI& uri )

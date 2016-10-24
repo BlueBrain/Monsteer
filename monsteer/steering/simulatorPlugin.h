@@ -21,7 +21,6 @@
 
 #include <monsteer/types.h>
 
-#include <boost/lexical_cast.hpp>
 #include <boost/noncopyable.hpp>
 
 namespace monsteer
@@ -72,12 +71,11 @@ public:
 
 }
 
-namespace boost
+namespace std
 {
-template<> inline
-std::string lexical_cast( const monsteer::SimulatorPluginInitData& data )
+inline string to_string( const monsteer::SimulatorPluginInitData& data )
 {
-    return lexical_cast< std::string >( data.subscriber );
+    return to_string( data.subscriber );
 }
 }
 

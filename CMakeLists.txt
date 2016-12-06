@@ -42,6 +42,7 @@ common_find_package_post()
 set(MONSTEER_DEPENDENT_LIBRARIES Lunchbox ZeroBuf)
 
 add_subdirectory(monsteer)
+add_subdirectory(nrp)
 add_subdirectory(apps)
 add_subdirectory(tests)
 add_subdirectory(examples)

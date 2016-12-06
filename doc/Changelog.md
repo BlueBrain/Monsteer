@@ -16,6 +16,8 @@ Changelog {#Changelog}
 
 # Release 0.4.0 (05-04-2016)
 
+# Release 0.4.0 (03-10-2016) {#release_004000}
+
 * [13](https://github.com/BlueBrain/Monsteer/pull/13):
   Adapted Monsteer to the new ZeroEQ sessions mechanism introduced in
   [105](https://github.com/HBPVIS/ZeroEQ/pull/105).

@@ -1,4 +1,7 @@
-# Monsteer
+Monsteer
+=======
+
+# Overview
 
 Monsteer is a library for Interactive Supercomputing in the neuroscience
 domain. Monsteer facilitates the coupling of running simulations
@@ -9,7 +12,7 @@ clients (also kown as computational steering). Monsteer's main
 components are a C++ library, a MUSIC-based application and Python
 helpers.
 
-## Features
+# Features
 
 Monsteer provides the following functionality:
 * A brion::SpikeReportPlugin for streaming spike data using ZeroEQ. The
@@ -20,7 +23,7 @@ Monsteer provides the following functionality:
   MUSIC proxy on the simulator side. This library also activates the Brion
   plugin when imported.
 
-## Examples
+# Examples
 
 The directory *examples/nest* contains two simple examples using NEST. For each
 example there is Python script (the simulator code) and a MUSIC configuration
@@ -34,33 +37,22 @@ This package does not provide any client code example at the moment. As a
 streaming client you can use the spikeConverter tool from
 [Brion](https://github.com/BlueBrain/Brion.git) as a reference.
 
-## Building from Source
+# Building from Source
 
-~~~
-git clone https://github.com/BlueBrain/Monsteer.git
-mkdir Monsteer/build
-cd Monsteer/build
-cmake ..
-make
-~~~
+Monsteer is a cross-platform library, designed to run on any modern operating
+system, including all Unix variants. It requires a C++11 compiler and uses CMake
+to create a platform-specific build environment. The following platforms and
+build environments are tested:
 
-## Known Bugs
+* Linux: Ubuntu 16.04, RHEL 6.8 (Makefile, Ninja)
+* Mac OS X: 10.9 (Makefile, Ninja)
 
-The following bugs were known at release time. Please file a
-[Bug Report](https://github.com/BlueBrain/Monsteer/issues) if you find
-any other issue with this release
+Building from source is as simple as:
 
-## About
-
-The [API documentation](http://bluebrain.github.io/Monsteer-0.4/index.html)
-can be found on [bluebrain.github.io](http://bluebrain.github.io/).
-
-The following platforms and build environments are tested:
-
-* Linux: Ubuntu 14.04, RHEL 6.5 (Makefile, x64)
-
-Contact: ahmet.bilgili@epfl.ch
-         jafet.villafrancadiaz@epfl.ch
-         jhernando@fi.upm.es
+    git clone https://github.com/BlueBrain/Monsteer.git
+    mkdir Monsteer/build
+    cd Monsteer/build
+    cmake -GNinja ..
+    ninja
 
 This work has been partially funded by the European Union Seventh Framework Program (FP7/2007­2013) under grant agreement no. 604102 (HBP).

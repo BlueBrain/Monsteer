@@ -3,13 +3,6 @@ notifications:
     on_success: never
 language: cpp
 sudo: false
-cache:
-  ccache: true
-  pip: true
-  directories:
-  - /usr/local
-before_cache:
-  - brew cleanup
 os:
   - osx
 env:
@@ -24,11 +17,7 @@ before_install:
   - brew update
   - brew outdated cmake || brew upgrade cmake
   - brew install cppcheck doxygen ninja
-  - brew install zeromq
   - brew install homebrew/science/hdf5
-  - brew install python
-  - brew unlink boost
-  - brew install boost --with-python
   - brew install boost-python
   - brew install qt5
   - brew install zeromq

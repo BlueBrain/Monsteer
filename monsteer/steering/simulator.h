@@ -84,7 +84,7 @@ public:
     void injectMultipleStimuli( const std::string& jsonParameters,
                                 const brion::uint32_ts& cells );
 
-    /*
+    /**
      * Resumes/plays the simulation.
      *
      * The synchronization policies are defined by each simulation engine and
@@ -100,7 +100,7 @@ public:
      */
     void play();
 
-    /*
+    /**
      * Pauses the simulation.
      *
      * Does not check the current playback state of the simulation.

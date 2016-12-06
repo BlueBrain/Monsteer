@@ -1,7 +1,10 @@
-Changelog {#Changelog}
-=========
-
+# Changelog {#Changelog}
 # git master
+
+# Release 0.6.0 (09-12-2016)
+
+* Update to latest versions of Lunchbox and ZeroBuf
+* Support building with GCC 6
 
 # Release 0.5.0 (30-06-2016)
 

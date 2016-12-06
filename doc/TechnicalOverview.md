@@ -3,8 +3,6 @@ Technical Overview {#Technical_Overview}
 
 [TOC]
 
-# Technical Overview {#Technical_Overview}
-
 The Monsteer library helps users setting up loosely coupled
 simulation-observer/controller pairs in an easy manner. After the
 integration of all the components, users can interact with a simulation both
@@ -14,7 +12,7 @@ To accomplish this task, Monsteer provides: Brion plugins for spike data streami
 a Python interface to steer the simulator and a bridging application between
 the user and the simulator.
 
-At the moment, Monsteer only offers support for the \ref NEST simulator which is
+At the moment, Monsteer only offers support for the \ref NEST_Simulator which is
 mainly used by the Neurobotics group in the BlueBrain project. Despite this
 limitation, all the Monsteer components were developed thinking on their
 reusability with other simulators such as Neuron.
@@ -189,7 +187,7 @@ components can be seen below.
 
 ![](detailed_steering_streaming.png "Controlling the simulation")
 
-# Nesteer: A Python interface for processing the steering messages {#Nesteer}
+# Nesteer: A Python interface for processing the steering messages {#Nesteer2}
 
 NEST users generally use a Python shell for constructing and running their
 simulations. If at some point they want to add steering and streaming

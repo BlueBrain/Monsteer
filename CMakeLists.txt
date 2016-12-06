@@ -5,8 +5,8 @@
 #
 
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
-project(Monsteer VERSION 0.5.0)
-set(Monsteer_VERSION_ABI 5)
+project(Monsteer VERSION 0.6.0)
+set(Monsteer_VERSION_ABI 6)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
                               ${CMAKE_SOURCE_DIR}/CMake/common)

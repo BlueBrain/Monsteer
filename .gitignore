@@ -3,12 +3,11 @@ Makefile
 CMake/common/
 BBPSDK/
 Brion/
-FlatBuffers/
 Lunchbox/
 MVDTool/
 Servus/
 ZeroBuf/
 build/
-httpxx/
 vmmlib/
 ZeroEQ/
+Pydoxine/

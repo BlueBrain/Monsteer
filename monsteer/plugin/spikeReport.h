@@ -29,64 +29,45 @@
 
 #include <brion/spikeReportPlugin.h>
 
-#include <boost/scoped_ptr.hpp>
+namespace monsteer { namespace plugin
+{
 
-namespace monsteer
-{
-namespace plugin
-{
+using brion::SpikeReportInitData;
+
 
 /** A ZeroEQ streaming spike report reader/writer. Class is not thread safe. */
 class SpikeReport : public brion::SpikeReportPlugin
 {
 public:
+
     /** Create a new streaming NEST report. */
-    explicit SpikeReport( const brion::SpikeReportInitData& pluginData );
+    explicit SpikeReport( const SpikeReportInitData& initData );
 
-    /** Check if this plugin can handle the given plugin data. */
-    static bool handles( const brion::SpikeReportInitData& pluginData );
+    static bool handles( const SpikeReportInitData& initData );
 
-    float getStartTime() const final;
-
-    float getEndTime() const final;
-
-    void writeSpikes( const brion::Spikes& spikes ) final;
-
-    const brion::Spikes& getSpikes() const final;
-
-    bool waitUntil( float timeStamp, uint32_t timeout ) final;
-
-    float getNextSpikeTime() final;
-
-    float getLatestSpikeTime() final;
-
-    void clear( float startTime, float endTime );
-
-    brion::SpikeReport::ReadMode getReadMode() const final;
-
-    const URI& getURI() const final;
+    virtual const URI& getURI()const;
 
     void close() final;
+    std::vector<brion::Spike> read(float min)final;
+    std::vector<brion::Spike> readUntil(float max)final;
+    void  readSeek(float toTimeStamp)final;
+    void  writeSeek(float toTimeStamp)final;
+    void write(const std::vector<brion::Spike>& spikes)final;
+
+
+private:
+    void _onSpikes( ConstSpikesEventPtr event );
+    void _onSeekForward(ConstSeekForwardEventPtr event);
+    void _onEOS();
+    void _receiveBufferedMessages();
+
 
 private:
     const URI _uri;
-    brion::Spikes _incoming;
-    brion::Spikes _spikes;
-
-    float _lastEndTime;
-    float _lastTimeStamp;
-
-    boost::scoped_ptr< zeroeq::Subscriber > _subscriber;
-    boost::scoped_ptr< zeroeq::Publisher > _publisher;
-
-    bool _closed;
-
-    void _onSpikes( ConstSpikesEventPtr event );
-    void _onEOS();
-
-    void _receiveBufferedMessages();
+    std::vector<brion::Spike> _spikes;
+    std::unique_ptr<zeroeq::Subscriber> _subscriber;
+    std::unique_ptr<zeroeq::Publisher> _publisher;
 };
 
-}
-}
+}}
 #endif

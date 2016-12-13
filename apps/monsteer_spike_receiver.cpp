@@ -54,20 +54,20 @@ public:
 
     void run()
     {
-        float time = 0;
-        while( _reader.waitUntil( time ))
-        {
-            const brion::Spikes& spikes = _reader.getSpikes();
-            BOOST_FOREACH( const brion::Spike& spike, spikes )
-                std::cout << spike.first << " " << spike.second << std::endl;
+//        float time = 0;
+//        while( _reader.waitUntil( time ))
+//        {
+//            const brion::Spikes& spikes = _reader.getSpikes();
+//            BOOST_FOREACH( const brion::Spike& spike, spikes )
+//                std::cout << spike.first << " " << spike.second << std::endl;
 
-            _reader.clear( 0, time );
-            time = time + MUSIC_TIMESTEP;
-        }
-        /* Printing the last window received */
-        const brion::Spikes& spikes = _reader.getSpikes();
-        BOOST_FOREACH( const brion::Spike& spike, spikes )
-            std::cout << spike.first << " " << spike.second << std::endl;
+//            _reader.clear( 0, time );
+//            time = time + MUSIC_TIMESTEP;
+//        }
+//        /* Printing the last window received */
+//        const brion::Spikes& spikes = _reader.getSpikes();
+//        BOOST_FOREACH( const brion::Spike& spike, spikes )
+//            std::cout << spike.first << " " << spike.second << std::endl;
     }
 
 private:

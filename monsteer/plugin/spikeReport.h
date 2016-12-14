@@ -63,7 +63,6 @@ private:
 
 
 private:
-    const URI _uri;
     std::vector<brion::Spike> _spikes;
     std::unique_ptr<zeroeq::Subscriber> _subscriber;
     std::unique_ptr<zeroeq::Publisher> _publisher;

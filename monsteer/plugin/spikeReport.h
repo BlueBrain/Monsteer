@@ -43,6 +43,7 @@ public:
     /** Create a new streaming NEST report. */
     explicit SpikeReport( const SpikeReportInitData& initData );
 
+
     static bool handles( const SpikeReportInitData& initData );
 
     virtual const URI& getURI()const;
@@ -66,6 +67,9 @@ private:
     std::vector<brion::Spike> _spikes;
     std::unique_ptr<zeroeq::Subscriber> _subscriber;
     std::unique_ptr<zeroeq::Publisher> _publisher;
+    float _publisherTimeStamp = -std::numeric_limits<float>::infinity();
+    bool _publisherFinished = false;
+
 };
 
 }}

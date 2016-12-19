@@ -603,7 +603,6 @@ BOOST_AUTO_TEST_CASE( test_forward )
     auto destinationSpikesFile =  "/tmp/" + lunchbox::make_UUID().getString() + ".gdf" ;
 
     {
-
         brion::SpikeReport sourceReport { brion::URI { sourceSpikesFile } };
         brion::SpikeReport emitter      { uri , brion::MODE_WRITE };
         brion::SpikeReport receiver     { getReadUri(emitter) };
@@ -662,4 +661,20 @@ BOOST_AUTO_TEST_CASE( test_forward )
                     destinationSpikes.begin(), destinationSpikes.end()
                     );
     }
+}
+
+
+BOOST_AUTO_TEST_CASE( test_interrupt )
+{
+    brion::SpikeReport emitter {uri , brion::MODE_WRITE };
+    brion::SpikeReport receiver { getReadUri(emitter) };
+    lunchbox::sleep( STARTUP_DELAY );
+
+    auto future = receiver.read(100);
+
+    receiver.interrupt();
+    BOOST_CHECK_THROW(
+                future.get(),
+                std::runtime_error);
+
 }

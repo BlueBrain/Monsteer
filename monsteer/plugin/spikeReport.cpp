@@ -36,6 +36,9 @@ extern "C" bool LunchboxPluginRegister()
     return true;
 }
 
+
+#define RECEIVE_TIMEOUT 100 // ms
+
 namespace monsteer { namespace plugin {
 
 
@@ -126,7 +129,8 @@ std::vector<brion::Spike> SpikeReport::read(float min)
            !_publisherFinished &&
            _publisherTimeStamp < min )
     {
-        _subscriber->receive();
+        _subscriber->receive(RECEIVE_TIMEOUT);
+        checkNotInterrupted();
     }
 
     if( _state == State::FAILED )
@@ -169,7 +173,8 @@ std::vector<brion::Spike> SpikeReport::readUntil(float max)
            !_publisherFinished &&
            _publisherTimeStamp < max )
     {
-        _subscriber->receive();
+        _subscriber->receive(RECEIVE_TIMEOUT);
+        checkNotInterrupted();
     }
 
     if( _publisherFinished && _publisherTimeStamp != max )
@@ -207,7 +212,8 @@ void  SpikeReport::readSeek(float toTimeStamp)
            !_publisherFinished &&
            _publisherTimeStamp < toTimeStamp )
     {
-        _subscriber->receive();
+        _subscriber->receive(RECEIVE_TIMEOUT);
+        checkNotInterrupted();
     }
 
 

@@ -22,18 +22,18 @@
 #define MONSTEER_PLUGIN_SPIKEREPORT_H
 
 #include <monsteer/types.h>
-#include <zeroeq/types.h>
-
 #include <monsteer/plugin/endOfStream.h>
 #include <monsteer/plugin/spikes.h>
 
+#include <zeroeq/types.h>
+
 #include <brion/spikeReportPlugin.h>
 
-namespace monsteer { namespace plugin
+namespace monsteer
 {
-
+namespace plugin
+{
 using brion::SpikeReportInitData;
-
 
 /** A ZeroEQ streaming spike report reader/writer. Class is not thread safe. */
 class SpikeReport : public brion::SpikeReportPlugin
@@ -43,28 +43,27 @@ public:
     /** Create a new streaming NEST report. */
     explicit SpikeReport( const SpikeReportInitData& initData );
 
-
     static bool handles( const SpikeReportInitData& initData );
 
-    virtual const URI& getURI()const;
+    virtual const URI& getURI() const;
 
     void close() final;
-    std::vector<brion::Spike> read(float min)final;
-    std::vector<brion::Spike> readUntil(float max)final;
-    void  readSeek(float toTimeStamp)final;
-    void  writeSeek(float toTimeStamp)final;
-    void write(const std::vector<brion::Spike>& spikes)final;
+    brion::Spikes read( float min ) final;
+    brion::Spikes readUntil( float max ) final;
+    void readSeek( float toTimeStamp ) final;
+    void writeSeek( float toTimeStamp ) final;
+    void write(const brion::Spikes& spikes ) final;
 
 
 private:
     void _onSpikes( ConstSpikesEventPtr event );
-    void _onSeekForward(ConstSeekForwardEventPtr event);
+    void _onSeekForward( ConstSeekForwardEventPtr event );
     void _onEOS();
     void _receiveBufferedMessages();
 
 
 private:
-    std::vector<brion::Spike> _spikes;
+    brion::Spikes _spikes;
     std::unique_ptr<zeroeq::Subscriber> _subscriber;
     std::unique_ptr<zeroeq::Publisher> _publisher;
     float _publisherTimeStamp = -std::numeric_limits<float>::infinity();
@@ -72,5 +71,6 @@ private:
 
 };
 
-}}
+}
+}// namespaces
 #endif

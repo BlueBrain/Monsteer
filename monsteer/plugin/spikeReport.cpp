@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2015, Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2006-2016, Juan Hernando <jhernando@fi.upm.es>
  *                          Ahmet Bilgili <ahmet.bilgili@epfl.ch>
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
@@ -20,13 +20,14 @@
 
 #include "spikeReport.h"
 
-#include <zeroeq/zeroeq.h>
-
 #include <lunchbox/clock.h>
 #include <lunchbox/pluginRegisterer.h>
 #include <lunchbox/uri.h>
 
 #include <brion/version.h>
+
+#include <zeroeq/zeroeq.h>
+
 
 
 extern "C" int LunchboxPluginGetVersion() { return BRION_VERSION_ABI; }
@@ -39,8 +40,10 @@ extern "C" bool LunchboxPluginRegister()
 
 #define RECEIVE_TIMEOUT 100 // ms
 
-namespace monsteer { namespace plugin {
-
+namespace monsteer
+{
+namespace plugin
+{
 
 URI toHostAndPort( const URI& uri )
 {
@@ -66,10 +69,10 @@ SpikeReport::SpikeReport( const SpikeReportInitData&  initData) :
 
         _subscriber->subscribe(
                     SpikesEvent::ZEROBUF_TYPE_IDENTIFIER(),
-                    [&](const void* data,const size_t size)
-        {
-            _onSpikes(SpikesEvent::create(data,size));
-        }
+                    [&]( const void* data,const size_t size )
+                    {
+                        _onSpikes(SpikesEvent::create(data,size));
+                    }
         );
 
         _subscriber->subscribe(
@@ -79,10 +82,10 @@ SpikeReport::SpikeReport( const SpikeReportInitData&  initData) :
 
         _subscriber->subscribe(
                     SeekForwardEvent::ZEROBUF_TYPE_IDENTIFIER(),
-                    [&](const void* data,const size_t size)
-        {
-            _onSeekForward(SeekForwardEvent::create(data,size));
-        }
+                    [&]( const void* data,const size_t size )
+                    {
+                        _onSeekForward(SeekForwardEvent::create(data,size));
+                    }
         );
         break;
     }
@@ -97,7 +100,7 @@ SpikeReport::SpikeReport( const SpikeReportInitData&  initData) :
 }
 
 
-bool SpikeReport::handles( const SpikeReportInitData&  pluginData)
+bool SpikeReport::handles( const SpikeReportInitData&  pluginData )
 {
     return pluginData.getURI().getScheme() == MONSTEER_BRION_SPIKES_PLUGIN_SCHEME;
 }
@@ -114,18 +117,16 @@ const lunchbox::URI& SpikeReport::getURI() const
 void SpikeReport::close()
 {
     if( _publisher )
-    {
-        _publisher->publish( EndOfStream::ZEROBUF_TYPE_IDENTIFIER());
-    }
-    _state = State::ENDED;
+        _publisher->publish(EndOfStream::ZEROBUF_TYPE_IDENTIFIER());
 
+    _state = State::ended;
 }
 
-std::vector<brion::Spike> SpikeReport::read(float min)
+brion::Spikes SpikeReport::read( float min )
 {
-    std::vector<brion::Spike> spikes;
+    brion::Spikes spikes;
 
-    while( _state == State::OK &&
+    while( _state == State::ok &&
            !_publisherFinished &&
            _publisherTimeStamp < min )
     {
@@ -133,15 +134,13 @@ std::vector<brion::Spike> SpikeReport::read(float min)
         checkNotInterrupted();
     }
 
-    if( _state == State::FAILED )
-    {
+    if( _state == State::failed )
         return spikes;
-    }
 
     if( _publisherFinished && _publisherTimeStamp < min )
     {
         _currentTime = brion::UNDEFINED_TIMESTAMP;
-        _state = State::ENDED;
+        _state = State::failed;
         spikes =  std::move(_spikes);
         return spikes;
     }
@@ -149,15 +148,12 @@ std::vector<brion::Spike> SpikeReport::read(float min)
     size_t index = 0;
     for( ;index < _spikes.size() ;++index )
     {
-        if( _spikes[index].first < min )
-        {
-            spikes.push_back(_spikes[index]);
-        }
-        else
+        if( _spikes[index].first >= min )
         {
             _currentTime = _spikes[index].first ;
             break;
         }
+        spikes.push_back(_spikes[index]);
     }
 
     _spikes.erase(_spikes.begin(),_spikes.begin()+index);
@@ -165,11 +161,11 @@ std::vector<brion::Spike> SpikeReport::read(float min)
     return spikes;
 }
 
-std::vector<brion::Spike> SpikeReport::readUntil(float max)
+brion::Spikes SpikeReport::readUntil( float max )
 {
-    std::vector<brion::Spike> spikes;
+    brion::Spikes spikes;
 
-    while( _state == State::OK &&
+    while( _state == State::ok &&
            !_publisherFinished &&
            _publisherTimeStamp < max )
     {
@@ -180,7 +176,7 @@ std::vector<brion::Spike> SpikeReport::readUntil(float max)
     if( _publisherFinished && _publisherTimeStamp != max )
     {
         _currentTime = brion::UNDEFINED_TIMESTAMP;
-        _state = State::ENDED;
+        _state = State::ended;
         spikes = std::move(_spikes);
         return spikes;
     }
@@ -201,14 +197,14 @@ std::vector<brion::Spike> SpikeReport::readUntil(float max)
     return spikes;
 }
 
-void  SpikeReport::readSeek(float toTimeStamp)
+void  SpikeReport::readSeek( float toTimeStamp )
 {
     if( toTimeStamp < _currentTime )
     {
         throw std::runtime_error("Bakward seek is not supported");
     }
 
-    while( _state == State::OK &&
+    while( _state == State::ok &&
            !_publisherFinished &&
            _publisherTimeStamp < toTimeStamp )
     {
@@ -217,7 +213,7 @@ void  SpikeReport::readSeek(float toTimeStamp)
     }
 
 
-    if( _state == State::FAILED )
+    if( _state == State::failed )
     {
         return ;
     }
@@ -225,7 +221,7 @@ void  SpikeReport::readSeek(float toTimeStamp)
     if( _publisherFinished && _currentTime < toTimeStamp )
     {
         _currentTime = brion::UNDEFINED_TIMESTAMP;
-        _state = State::ENDED;
+        _state = State::ended;
         _spikes.clear();
         return ;
     }
@@ -233,16 +229,17 @@ void  SpikeReport::readSeek(float toTimeStamp)
     auto position = std::upper_bound(
                 _spikes.begin(),_spikes.end(),
                 toTimeStamp,
-                [](float val,const brion::Spike & spike){
+                []( float val,const brion::Spike & spike )
+                {
                     return spike.first >= val;
                 }
     );
 
-    _spikes.erase(_spikes.begin(),position);
+    _spikes.erase( _spikes.begin(),position ) ;
     _currentTime = toTimeStamp;
 }
 
-void  SpikeReport::writeSeek(float toTimeStamp)
+void  SpikeReport::writeSeek( float toTimeStamp )
 {
     if( toTimeStamp < _currentTime )
     {
@@ -255,7 +252,7 @@ void  SpikeReport::writeSeek(float toTimeStamp)
     _currentTime = toTimeStamp;
 }
 
-void SpikeReport::write(const std::vector<brion::Spike>& spikes)
+void SpikeReport::write( const brion::Spikes& spikes )
 {
     if( !spikes.size() )
     {
@@ -280,12 +277,12 @@ void SpikeReport::_onEOS()
     _publisherFinished = true;
 }
 
-void SpikeReport::_onSeekForward(ConstSeekForwardEventPtr event)
+void SpikeReport::_onSeekForward( ConstSeekForwardEventPtr event )
 {
     _publisherTimeStamp = event->getTime();
 }
 
-void SpikeReport::_onSpikes(ConstSpikesEventPtr event)
+void SpikeReport::_onSpikes( ConstSpikesEventPtr event )
 {
     const SpikesEvent::Spikes & spikes = event->getSpikes();
     auto size = spikes.size();
@@ -300,9 +297,10 @@ void SpikeReport::_onSpikes(ConstSpikesEventPtr event)
         const Spike& spike = spikes[i];
         pushBackSpike({spike.getTime(),spike.getCell()},_spikes);
     }
-    _publisherTimeStamp = spikes[size-1].getTime();
 
+    _publisherTimeStamp = spikes[size-1].getTime();
 }
 
 
-}} // namespaces
+}
+} // namespaces

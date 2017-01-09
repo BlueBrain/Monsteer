@@ -53,6 +53,12 @@ bool NESTSimulator::handles( const SimulatorPluginInitData& pluginData )
                       MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME;
 }
 
+std::string NESTSimulator::getDescription()
+{
+    return std::string( "NEST Simulator: " ) +
+           MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME + "://";
+}
+
 void NESTSimulator::injectStimulus( const std::string& jsonParameters,
                                     const brion::uint32_ts& cells )
 {

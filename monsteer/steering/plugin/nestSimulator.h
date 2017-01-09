@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2015, Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2006-2017, Juan Hernando <jhernando@fi.upm.es>
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
  *
@@ -37,6 +37,7 @@ public:
 
     /** Check if this plugin can handle the given plugin data. */
     static bool handles( const SimulatorPluginInitData& pluginData );
+    static std::string getDescription();
 
     /** @copydoc monsteer::Simulator::injectStimulus */
     void injectStimulus( const std::string& jsonParameters,

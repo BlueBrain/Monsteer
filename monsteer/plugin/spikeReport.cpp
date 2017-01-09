@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2015, Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2006-2017, Juan Hernando <jhernando@fi.upm.es>
  *                          Ahmet Bilgili <ahmet.bilgili@epfl.ch>
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
@@ -88,7 +88,14 @@ SpikeReport::SpikeReport( const brion::SpikeReportInitData& pluginData )
 
 bool SpikeReport::handles( const brion::SpikeReportInitData& pluginData )
 {
-    return pluginData.getURI().getScheme() == MONSTEER_BRION_SPIKES_PLUGIN_SCHEME;
+    return pluginData.getURI().getScheme() ==
+           MONSTEER_BRION_SPIKES_PLUGIN_SCHEME;
+}
+
+std::string SpikeReport::getDescription()
+{
+    return std::string( "ZeroEQ streaming spike report: " ) +
+           MONSTEER_BRION_SPIKES_PLUGIN_SCHEME + "://";
 }
 
 const lunchbox::URI& SpikeReport::getURI() const

@@ -54,6 +54,8 @@ public:
         return pluginData.subscriber.getScheme() == "dummy";
     }
 
+    static std::string getDescription() { return "dummy://"; }
+
     void injectStimulus( const std::string& jsonParameters,
                          const brion::uint32_ts& cells ) final
     {

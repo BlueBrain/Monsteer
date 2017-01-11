@@ -1,4 +1,5 @@
 # -*- mode: cmake -*-
+git_subproject(BBPTestData ssh://bbpcode.epfl.ch/common/TestData b5b73bb)
 git_subproject(Servus https://github.com/HBPVIS/Servus 2da95ea)
 git_subproject(Lunchbox https://github.com/Eyescale/Lunchbox.git e1ecab8)
 git_subproject(Brion https://github.com/BlueBrain/Brion.git e9ab6bf)

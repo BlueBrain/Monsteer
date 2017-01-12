@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2015, Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2006-2017, Juan Hernando <jhernando@fi.upm.es>
  *                          Ahmet Bilgili <ahmet.bilgili@epfl.ch>
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
@@ -42,6 +42,7 @@ public:
     /** Create a new streaming NEST report. */
     explicit SpikeReport( const SpikeReportInitData &initData );
 
+    /** Check if this plugin can handle the given plugin data. */
     static bool handles( const SpikeReportInitData &initData );
     static std::string getDescription();
 
@@ -53,7 +54,6 @@ public:
     void readSeek( float toTimeStamp ) final;
     void writeSeek( float toTimeStamp ) final;
     void write( const brion::Spikes &spikes ) final;
-    void commitState() final;
 
 private:
     void _onSpikes( ConstSpikesEventPtr event );
@@ -67,7 +67,6 @@ private:
     std::unique_ptr< zeroeq::Publisher > _publisher;
     float _publisherTimeStamp = -std::numeric_limits< float >::infinity();
     bool _publisherFinished = false;
-    ReadState _readState;
 };
 }
 } // namespaces

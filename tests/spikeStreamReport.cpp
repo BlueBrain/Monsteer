@@ -79,7 +79,6 @@ const brion::Spikes & getTestSpikes()
         { 0.25f,  23 },
         { 0.3f ,  24 },
         { 0.4f ,  25 }
-
     };
 
     return spikes;
@@ -317,6 +316,7 @@ BOOST_AUTO_TEST_CASE( test_invalid_read )
     };
 
     auto readSpikes = receiver.readUntil(0.3).get();
+
 
     BOOST_CHECK_THROW(
                 receiver.read(0.1),

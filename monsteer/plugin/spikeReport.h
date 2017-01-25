@@ -46,8 +46,6 @@ public:
     static bool handles( const SpikeReportInitData &initData );
     static std::string getDescription();
 
-    virtual const URI &getURI() const;
-
     void close() final;
     brion::Spikes read( float min ) final;
     brion::Spikes readUntil( float max ) final;
@@ -61,7 +59,6 @@ private:
     void _onEOS();
     void _receiveBufferedMessages();
 
-private:
     brion::Spikes _spikes;
     std::unique_ptr< zeroeq::Subscriber > _subscriber;
     std::unique_ptr< zeroeq::Publisher > _publisher;

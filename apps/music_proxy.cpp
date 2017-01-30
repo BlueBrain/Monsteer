@@ -89,7 +89,7 @@ public:
         if (_spikeBuffer.empty())
             return;
 
-        _spikeReport.writeSpikes( _spikeBuffer );
+        _spikeReport.write( _spikeBuffer );
         _spikeBuffer.clear();
     }
 

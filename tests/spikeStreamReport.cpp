@@ -30,7 +30,6 @@
 #include <lunchbox/lunchbox.h>
 
 #define BOOST_TEST_MODULE MONSTEER
-#include <boost/foreach.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/test/unit_test.hpp>
 
@@ -43,263 +42,310 @@
 
 #define STARTUP_DELAY 250
 
-const lunchbox::URI uri( MONSTEER_BRION_SPIKES_PLUGIN_SCHEME + "://127.0.0.1" );
+#define INTER_SPIKE_INTERVAL std::chrono::milliseconds(100)
+
+const lunchbox::URI uri(MONSTEER_BRION_SPIKES_PLUGIN_SCHEME + "://127.0.0.1");
 
 // Explicit registration required because the folder of the brion plugin is not
 // in the LD_LIBRARY_PATH of the test executable.
-lunchbox::PluginRegisterer< monsteer::plugin::SpikeReport > registerer;
+lunchbox::PluginRegisterer<monsteer::plugin::SpikeReport> registerer;
 
-void spike_writer( brion::SpikeReport* writer )
+using State = brion::SpikeReport::State;
+
+inline void debugSpikes(const brion::Spikes& v, const char* prefix = "")
 {
-    boost::filesystem::path path( BBP_TESTDATA );
-    const std::string& files = NEST_SPIKE_REPORT_FILE;
-    const brion::SpikeReport report( brion::URI(( path / files ).string( )),
-                                     brion::MODE_READ );
-
-    const brion::Spikes& spikes = report.getSpikes();
-    std::set< float > timeSet;
-    for( brion::Spikes::const_iterator it = spikes.begin();
-         it != spikes.end(); ++ it )
-        timeSet.insert( it->first );
-
-    BOOST_FOREACH( const float time, timeSet )
+    for (auto& spike : v)
     {
-        brion::Spikes::const_iterator begin = spikes.lower_bound( time );
-        brion::Spikes::const_iterator end = spikes.upper_bound( time );
-
-        const brion::Spikes messageSpike( begin, end );
-        writer->writeSpikes( messageSpike );
+        std::cout << prefix << spike.first << " -- " << spike.second << "\n";
     }
-    writer->close();
+
+    std::cout << std::flush;
 }
 
-void read_chunks( brion::SpikeReport* reader )
+const brion::Spikes& getTestSpikes()
 {
-    for( float time = 10; time < 101; time += 10 )
-    {
-        const bool status = reader->waitUntil( time );
-        if( status )
-            BOOST_CHECK( reader->getEndTime() <= time );
-        else
+    static const brion::Spikes spikes = {
+        {0.1f, 20}, {0.2f, 22}, {0.25f, 23}, {0.3f, 24}, {0.4f, 25}};
+
+    return spikes;
+}
+
+BOOST_AUTO_TEST_CASE(invoke_invalid_method_streaming)
+{
+    brion::SpikeReport emitter{uri, brion::MODE_WRITE};
+    brion::SpikeReport receiver{emitter.getURI()};
+    lunchbox::sleep(STARTUP_DELAY);
+
+    BOOST_CHECK_THROW(receiver.write(brion::Spikes{}), std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(write_read)
+{
+    brion::SpikeReport emitter{uri, brion::MODE_WRITE};
+    brion::SpikeReport receiver{emitter.getURI()};
+    lunchbox::sleep(STARTUP_DELAY);
+
+    std::thread writeThread{[&emitter] {
+        for (const brion::Spike& spike : getTestSpikes())
         {
-            BOOST_CHECK_EQUAL( reader->getStartTime(), NEST_SPIKES_START_TIME );
-            BOOST_CHECK_EQUAL( reader->getEndTime(), NEST_SPIKES_END_TIME );
-            BOOST_CHECK_EQUAL( reader->getSpikes().size(), NEST_SPIKES_COUNT );
+            std::this_thread::sleep_for(INTER_SPIKE_INTERVAL);
+            emitter.write({spike});
         }
-    }
-}
+        emitter.close();
+    }};
 
-void stream_clear_reader( brion::SpikeReport* reader )
-{
-    size_t lines[] = { 62, 1122, 1934, 2044 };
-    double timestamps[] = { 1.8, 1.9, 2.0, 2.1 };
+    brion::Spikes readSpikes;
 
-    reader->waitUntil( timestamps[3] );
-    BOOST_CHECK_EQUAL( reader->getSpikes().size(), lines[3] );
-
-    reader->clear( timestamps[1], timestamps[2] );
-    BOOST_CHECK_EQUAL( reader->getStartTime(), NEST_SPIKES_START_TIME );
-    BOOST_CHECK_CLOSE( reader->getEndTime(), 2.1, 0.00001 );
-    BOOST_CHECK_EQUAL( reader->getSpikes().size(),
-                       lines[3] - ( lines[1] - lines[0] )
-                                - ( lines[2] - lines[1] ));
-
-    reader->clear( timestamps[2], timestamps[3] );
-    BOOST_CHECK_EQUAL( reader->getStartTime(), NEST_SPIKES_START_TIME );
-    BOOST_CHECK_CLOSE( reader->getEndTime(), 1.8, 0.00001 );
-    BOOST_CHECK_EQUAL( reader->getSpikes().size(), lines[0] );
-
-    reader->clear( 0, timestamps[0] );
-    BOOST_CHECK_EQUAL( reader->getStartTime(), brion::UNDEFINED_TIMESTAMP );
-    BOOST_CHECK_EQUAL( reader->getEndTime(), brion::UNDEFINED_TIMESTAMP );
-    BOOST_CHECK( reader->getSpikes().empty( ));
-}
-
-void stream_read_all( brion::SpikeReport* reader )
-{
-    reader->waitUntil( brion::UNDEFINED_TIMESTAMP );
-
-    BOOST_CHECK_EQUAL( reader->getStartTime(), NEST_SPIKES_START_TIME );
-    BOOST_CHECK_EQUAL( reader->getEndTime(), NEST_SPIKES_END_TIME );
-    BOOST_CHECK_EQUAL( reader->getSpikes().size(), NEST_SPIKES_COUNT );
-}
-
-void stream_read_until_closed( brion::SpikeReport* reader )
-{
-    reader->waitUntil( brion::UNDEFINED_TIMESTAMP );
-
-    BOOST_CHECK_EQUAL( reader->getStartTime(), brion::UNDEFINED_TIMESTAMP );
-    BOOST_CHECK_EQUAL( reader->getEndTime(), brion::UNDEFINED_TIMESTAMP );
-    BOOST_CHECK( reader->getSpikes().empty( ));
-}
-
-void stream_read_timeout( brion::SpikeReport* reader )
-{
-    BOOST_CHECK( !reader->waitUntil( 1000, 1 ));
-}
-
-void stream_read_by_chunks_with_timeout( brion::SpikeReport* reader )
-{
-    for( float time = 10; time < 101; ++time )
+    for (size_t i = 1; i < getTestSpikes().size(); ++i)
     {
-        while( !reader->waitUntil( time, 1 ))
+        auto tmpSpikes = receiver.read(getTestSpikes()[i].first).get();
+        readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+    }
+
+    auto tmpSpikes = receiver.read(brion::UNDEFINED_TIMESTAMP).get();
+    readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+
+    BOOST_CHECK_EQUAL_COLLECTIONS(getTestSpikes().begin(),
+                                  getTestSpikes().end(), readSpikes.begin(),
+                                  readSpikes.end());
+
+    writeThread.join();
+}
+
+BOOST_AUTO_TEST_CASE(write_read_until)
+{
+    brion::SpikeReport emitter{uri, brion::MODE_WRITE};
+    brion::SpikeReport receiver{emitter.getURI()};
+    lunchbox::sleep(STARTUP_DELAY);
+
+    std::thread writeThread{[&emitter] {
+        for (const brion::Spike& spike : getTestSpikes())
         {
-            if( reader->getEndTime() == NEST_SPIKES_END_TIME )
-                break;
+            std::this_thread::sleep_for(INTER_SPIKE_INTERVAL);
+            emitter.write({spike});
         }
-        BOOST_CHECK( reader->getEndTime() <= time );
+        emitter.close();
+    }};
+
+    brion::Spikes readSpikes;
+
+    for (size_t i = 1; i < getTestSpikes().size(); ++i)
+    {
+        auto tmpSpikes = receiver.readUntil(getTestSpikes()[i].first).get();
+        readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+    }
+
+    auto tmpSpikes = receiver.readUntil(brion::UNDEFINED_TIMESTAMP).get();
+    readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+
+    BOOST_CHECK_EQUAL_COLLECTIONS(getTestSpikes().begin(),
+                                  getTestSpikes().end(), readSpikes.begin(),
+                                  readSpikes.end());
+
+    writeThread.join();
+}
+
+BOOST_AUTO_TEST_CASE(seek)
+{
+    brion::SpikeReport emitter{uri, brion::MODE_WRITE};
+    brion::SpikeReport receiver{emitter.getURI()};
+    lunchbox::sleep(STARTUP_DELAY);
+
+    std::thread writeThread{[&emitter] {
+
+        std::this_thread::sleep_for(INTER_SPIKE_INTERVAL);
+        emitter.seek(10).get();
+        std::this_thread::sleep_for(INTER_SPIKE_INTERVAL);
+        emitter.seek(20).get();
+        emitter.close();
+    }};
+
+    receiver.seek(10).get();
+    receiver.seek(20).get();
+
+    BOOST_CHECK_EQUAL(receiver.getCurrentTime(), 20.f);
+
+    writeThread.join();
+}
+
+BOOST_AUTO_TEST_CASE(write_read_filtered)
+{
+    brion::SpikeReport emitter{uri, brion::MODE_WRITE};
+    brion::SpikeReport receiver{emitter.getURI(), {20, 22}};
+
+    lunchbox::sleep(STARTUP_DELAY);
+    std::thread writeThread{[&emitter] {
+        for (const brion::Spike& spike : getTestSpikes())
+        {
+            std::this_thread::sleep_for(INTER_SPIKE_INTERVAL);
+            emitter.write({spike});
+        }
+        emitter.close();
+    }};
+
+    brion::Spikes readSpikes;
+
+    for (size_t i = 1; i < getTestSpikes().size(); ++i)
+    {
+        auto tmpSpikes = receiver.read(getTestSpikes()[i].first).get();
+        readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+    }
+
+    auto tmpSpikes = receiver.read(brion::UNDEFINED_TIMESTAMP).get();
+    readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+
+    BOOST_CHECK_EQUAL(readSpikes.size(), 2);
+
+    writeThread.join();
+}
+
+BOOST_AUTO_TEST_CASE(write_read_until_filtered)
+{
+    brion::SpikeReport emitter{uri, brion::MODE_WRITE};
+    brion::SpikeReport receiver{emitter.getURI(), {20, 22}};
+    lunchbox::sleep(STARTUP_DELAY);
+
+    std::thread writeThread{[&emitter] {
+        for (const brion::Spike& spike : getTestSpikes())
+        {
+            std::this_thread::sleep_for(INTER_SPIKE_INTERVAL);
+            emitter.write({spike});
+        }
+        emitter.close();
+    }};
+
+    brion::Spikes readSpikes;
+
+    for (size_t i = 1; i < getTestSpikes().size(); ++i)
+    {
+        auto tmpSpikes = receiver.readUntil(getTestSpikes()[i].first).get();
+        readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+    }
+
+    auto tmpSpikes = receiver.readUntil(brion::UNDEFINED_TIMESTAMP).get();
+    readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+
+    BOOST_CHECK_EQUAL(readSpikes.size(), 2);
+
+    writeThread.join();
+}
+
+BOOST_AUTO_TEST_CASE(simultaneous_read)
+{
+    brion::SpikeReport emitter{uri, brion::MODE_WRITE};
+    brion::SpikeReport receiver{emitter.getURI()};
+    lunchbox::sleep(STARTUP_DELAY);
+
+    auto spikes = receiver.read(brion::UNDEFINED_TIMESTAMP);
+
+    BOOST_CHECK_THROW(receiver.read(brion::UNDEFINED_TIMESTAMP),
+                      std::runtime_error);
+
+    emitter.close();
+}
+BOOST_AUTO_TEST_CASE(invalid_read)
+{
+    brion::SpikeReport emitter{uri, brion::MODE_WRITE};
+    brion::SpikeReport receiver{emitter.getURI()};
+    lunchbox::sleep(STARTUP_DELAY);
+
+    std::thread writeThread{[&emitter] {
+        for (const brion::Spike& spike : getTestSpikes())
+        {
+            std::this_thread::sleep_for(INTER_SPIKE_INTERVAL);
+            emitter.write({spike});
+        }
+        emitter.close();
+    }};
+
+    auto readSpikes = receiver.readUntil(0.3).get();
+
+    BOOST_CHECK_THROW(receiver.read(0.1), std::logic_error);
+
+    BOOST_CHECK_THROW(receiver.readUntil(0.1), std::logic_error);
+
+    writeThread.join();
+}
+
+BOOST_AUTO_TEST_CASE(invalid_write)
+{
+    brion::SpikeReport emitter{uri, brion::MODE_WRITE};
+    emitter.write(getTestSpikes());
+    BOOST_CHECK_THROW(emitter.write(getTestSpikes()), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(forward)
+{
+    // file ==> emitter ==> receiver ==> writer (file)
+
+    auto sourceSpikesFile =
+        (boost::filesystem::path(BBP_TESTDATA) / NEST_SPIKE_REPORT_FILE)
+            .string();
+
+    auto destinationSpikesFile =
+        "/tmp/" + lunchbox::make_UUID().getString() + ".gdf";
+
+    {
+        brion::SpikeReport sourceReport{brion::URI{sourceSpikesFile}};
+        brion::SpikeReport emitter{uri, brion::MODE_WRITE};
+        brion::SpikeReport receiver{emitter.getURI()};
+        brion::SpikeReport writer{brion::URI{destinationSpikesFile},
+                                  brion::MODE_WRITE};
+
+        lunchbox::sleep(STARTUP_DELAY);
+
+        std::thread fileToStreamThread{[&sourceReport, &emitter] {
+            float t = NEST_SPIKES_START_TIME;
+            while (sourceReport.getState() == State::ok)
+            {
+                auto spikes = sourceReport.read(t).get();
+                t = std::max(sourceReport.getCurrentTime(), t + 1);
+                emitter.write(spikes);
+            }
+            emitter.close();
+        }};
+
+        std::thread streamToFileThread{[&receiver, &writer] {
+            float t = NEST_SPIKES_START_TIME;
+            while (receiver.getState() == State::ok)
+            {
+                auto spikes = receiver.read(t).get();
+                t = std::max(receiver.getCurrentTime(), t + 1);
+                writer.write(spikes);
+            }
+        }};
+
+        fileToStreamThread.join();
+        streamToFileThread.join();
+    }
+
+    // checks
+    {
+        brion::SpikeReport sourceReport{brion::URI{sourceSpikesFile}};
+        brion::SpikeReport destinationReport{brion::URI{destinationSpikesFile}};
+
+        auto sourceSpikes = sourceReport.read(brion::UNDEFINED_TIMESTAMP).get();
+        auto destinationSpikes =
+            destinationReport.read(brion::UNDEFINED_TIMESTAMP).get();
+
+        BOOST_REQUIRE_EQUAL(sourceSpikes.size(), destinationSpikes.size());
+        BOOST_REQUIRE_EQUAL(NEST_SPIKES_COUNT, destinationSpikes.size());
+
+        BOOST_CHECK_EQUAL_COLLECTIONS(sourceSpikes.begin(), sourceSpikes.end(),
+                                      destinationSpikes.begin(),
+                                      destinationSpikes.end());
     }
 }
 
-void stream_get_next_spike_time( brion::SpikeReport* reader )
+BOOST_AUTO_TEST_CASE(interrupt)
 {
-    while( reader->waitUntil( reader->getNextSpikeTime( )))
-        ;
+    brion::SpikeReport emitter{uri, brion::MODE_WRITE};
+    brion::SpikeReport receiver{emitter.getURI()};
+    lunchbox::sleep(STARTUP_DELAY);
 
-    BOOST_CHECK( reader->getEndTime() == NEST_SPIKES_END_TIME );
-}
+    auto future = receiver.read(100);
 
-template <typename T>
-brion::URI getReadUri( const T& writer )
-{
-    brion::URI readUri = writer.getURI();
-    readUri.setScheme( MONSTEER_BRION_SPIKES_PLUGIN_SCHEME );
-    return readUri;
-}
+    receiver.interrupt();
 
-BOOST_AUTO_TEST_CASE( test_read_chunks )
-{
-    std::cout << "Running test_read_chunks" << std::endl;
-    brion::SpikeReport writer( uri, brion::MODE_WRITE );
-    brion::SpikeReport reader( getReadUri( writer ), brion::MODE_READ );
-    lunchbox::sleep( 250 );
-    std::thread readerThread( std::bind( &read_chunks, &reader ));
-    std::thread writerThread( std::bind( &spike_writer, &writer ));
-    writerThread.join();
-    readerThread.join();
-}
-
-BOOST_AUTO_TEST_CASE( test_stream_clear )
-{
-    std::cout << "Running test_stream_clear" << std::endl;
-    brion::SpikeReport writer( uri, brion::MODE_WRITE );
-    brion::SpikeReport reader( getReadUri( writer ), brion::MODE_READ );
-    lunchbox::sleep( STARTUP_DELAY );
-    std::thread readerThread( std::bind( &stream_clear_reader, &reader ));
-    std::thread writerThread( std::bind( &spike_writer, &writer ));
-    writerThread.join();
-    readerThread.join();
-}
-
-BOOST_AUTO_TEST_CASE( test_stream_read_all )
-{
-    std::cout << "Running test_stream_read_all" << std::endl;
-    brion::SpikeReport writer( uri, brion::MODE_WRITE );
-    brion::SpikeReport reader( getReadUri( writer ), brion::MODE_READ );
-    lunchbox::sleep( STARTUP_DELAY );
-    std::thread readerThread( std::bind( &stream_read_all, &reader ));
-    std::thread writerThread( std::bind( &spike_writer, &writer ));
-    writerThread.join();
-    readerThread.join();
-}
-
-BOOST_AUTO_TEST_CASE( test_stream_read_close )
-{
-    brion::SpikeReport reader( uri, brion::MODE_READ );
-    std::thread readerThread( std::bind( &stream_read_until_closed,
-                                             &reader ));
-    reader.close();
-    readerThread.join();
-}
-
-BOOST_AUTO_TEST_CASE( test_stream_read_timeout )
-{
-    std::cout << "Running test_stream_read_timeout" << std::endl;
-    brion::SpikeReport writer( uri, brion::MODE_WRITE );
-    brion::SpikeReport reader( getReadUri( writer ), brion::MODE_READ );
-    lunchbox::sleep( STARTUP_DELAY );
-    std::thread readerThread( std::bind( &stream_read_timeout, &reader ));
-    std::thread writerThread( std::bind( &spike_writer, &writer ));
-    writerThread.join();
-    readerThread.join();
-}
-
-BOOST_AUTO_TEST_CASE( test_stream_read_by_chunks_with_timeout )
-{
-    std::cout << "Running test_stream_read_by_chunks_with_timeout" << std::endl;
-    brion::SpikeReport writer( uri, brion::MODE_WRITE );
-    brion::SpikeReport reader( getReadUri( writer ), brion::MODE_READ );
-    lunchbox::sleep( STARTUP_DELAY );
-    std::thread readerThread(
-        std::bind( &stream_read_by_chunks_with_timeout, &reader ));
-    std::thread writerThread( std::bind( &spike_writer, &writer ));
-    writerThread.join();
-    readerThread.join();
-}
-
-BOOST_AUTO_TEST_CASE( test_stream_get_next_spike_time )
-{
-    std::cout << "Running test_stream_get_next_spike_time" << std::endl;
-    brion::SpikeReport writer( uri, brion::MODE_WRITE );
-    brion::SpikeReport reader( getReadUri( writer ), brion::MODE_READ );
-    lunchbox::sleep( STARTUP_DELAY );
-    std::thread readerThread( std::bind( &stream_get_next_spike_time,
-                                             &reader ));
-    std::thread writerThread( std::bind( &spike_writer, &writer ));
-    writerThread.join();
-    readerThread.join();
-}
-
-void spike_report_writer( brain::SpikeReportWriter* writer )
-{
-    boost::filesystem::path path( BBP_TESTDATA );
-    const std::string& files = NEST_SPIKE_REPORT_FILE;
-    brain::SpikeReportReader report( brion::URI(( path / files ).string( )));
-    const brain::Spikes& spikes = report.getSpikes();
-    writer->writeSpikes( spikes );
-    writer->close();
-}
-
-void spike_report_reader( brain::SpikeReportReader* reader )
-{
-    while( !reader->hasEnded( ))
-        reader->getSpikes();
-
-    BOOST_CHECK_EQUAL( reader->getStartTime(), NEST_SPIKES_START_TIME );
-    BOOST_CHECK_EQUAL( reader->getEndTime(), NEST_SPIKES_END_TIME  );
-    BOOST_CHECK_EQUAL( reader->getSpikes().size(), NEST_SPIKES_COUNT );
-    BOOST_CHECK( reader->hasEnded( ));
-}
-
-void spike_timewindowed_reader( brain::SpikeReportReader* reader )
-{
-    reader->getSpikes(0, nextafterf( NEST_SPIKES_END_TIME, INFINITY ));
-    BOOST_CHECK_EQUAL( reader->getStartTime(), NEST_SPIKES_START_TIME );
-    BOOST_CHECK_EQUAL( reader->getEndTime(), NEST_SPIKES_END_TIME  );
-    BOOST_CHECK_EQUAL( reader->getSpikes().size(), NEST_SPIKES_COUNT );
-    BOOST_CHECK( reader->hasEnded( ));
-}
-
-BOOST_AUTO_TEST_CASE( test_spike_report_read_write )
-{
-    brain::SpikeReportWriter writer( uri );
-    brain::SpikeReportReader reader( getReadUri( writer ));
-    lunchbox::sleep( STARTUP_DELAY );
-    std::thread readerThread( std::bind( &spike_report_reader, &reader ));
-    std::thread writerThread( std::bind( &spike_report_writer, &writer ));
-    writerThread.join();
-    readerThread.join();
-}
-
-BOOST_AUTO_TEST_CASE( monsteer_spikes_time_windowed_read_write )
-{
-    brain::SpikeReportWriter writer( uri );
-    brain::SpikeReportReader reader( getReadUri( writer ));
-    lunchbox::sleep( STARTUP_DELAY );
-    std::thread readerThread(
-        std::bind( &spike_timewindowed_reader, &reader ));
-    std::thread writerThread(
-        std::bind( &spike_report_writer, &writer ));
-    writerThread.join();
-    readerThread.join();
+    BOOST_CHECK_THROW(future.get(), std::runtime_error);
 }

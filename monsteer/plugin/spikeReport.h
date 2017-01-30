@@ -21,73 +21,50 @@
 #ifndef MONSTEER_PLUGIN_SPIKEREPORT_H
 #define MONSTEER_PLUGIN_SPIKEREPORT_H
 
-#include <monsteer/types.h>
-#include <zeroeq/types.h>
-
 #include <monsteer/plugin/endOfStream.h>
 #include <monsteer/plugin/spikes.h>
+#include <monsteer/types.h>
+
+#include <zeroeq/types.h>
 
 #include <brion/spikeReportPlugin.h>
-
-#include <boost/scoped_ptr.hpp>
 
 namespace monsteer
 {
 namespace plugin
 {
+using brion::SpikeReportInitData;
 
 /** A ZeroEQ streaming spike report reader/writer. Class is not thread safe. */
 class SpikeReport : public brion::SpikeReportPlugin
 {
 public:
     /** Create a new streaming NEST report. */
-    explicit SpikeReport( const brion::SpikeReportInitData& pluginData );
+    explicit SpikeReport( const SpikeReportInitData &initData );
 
     /** Check if this plugin can handle the given plugin data. */
-    static bool handles( const brion::SpikeReportInitData& pluginData );
+    static bool handles( const SpikeReportInitData &initData );
     static std::string getDescription();
 
-    float getStartTime() const final;
-
-    float getEndTime() const final;
-
-    void writeSpikes( const brion::Spikes& spikes ) final;
-
-    const brion::Spikes& getSpikes() const final;
-
-    bool waitUntil( float timeStamp, uint32_t timeout ) final;
-
-    float getNextSpikeTime() final;
-
-    float getLatestSpikeTime() final;
-
-    void clear( float startTime, float endTime );
-
-    brion::SpikeReport::ReadMode getReadMode() const final;
-
-    const URI& getURI() const final;
-
     void close() final;
+    brion::Spikes read( float min ) final;
+    brion::Spikes readUntil( float max ) final;
+    void readSeek( float toTimeStamp ) final;
+    void writeSeek( float toTimeStamp ) final;
+    void write( const brion::Spikes &spikes ) final;
 
 private:
-    const URI _uri;
-    brion::Spikes _incoming;
-    brion::Spikes _spikes;
-
-    float _lastEndTime;
-    float _lastTimeStamp;
-
-    boost::scoped_ptr< zeroeq::Subscriber > _subscriber;
-    boost::scoped_ptr< zeroeq::Publisher > _publisher;
-
-    bool _closed;
-
     void _onSpikes( ConstSpikesEventPtr event );
+    void _onSeekForward( ConstSeekForwardEventPtr event );
     void _onEOS();
-
     void _receiveBufferedMessages();
-};
 
+    brion::Spikes _spikes;
+    std::unique_ptr< zeroeq::Subscriber > _subscriber;
+    std::unique_ptr< zeroeq::Publisher > _publisher;
+    float _publisherTimeStamp = -std::numeric_limits< float >::infinity();
+    bool _publisherFinished = false;
+};
 }
-}
+} // namespaces
 #endif

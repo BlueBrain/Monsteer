@@ -13,3 +13,9 @@ table SpikesEvent
 {
   spikes:[Spike];
 }
+
+
+table SeekForwardEvent
+{
+  time:float; // In milliseconds
+}

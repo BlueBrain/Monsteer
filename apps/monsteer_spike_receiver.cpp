@@ -1,5 +1,4 @@
-
-/* Copyright (c) 2006-2015, Ahmet Bilgili <ahmet.bilgili@epfl.ch>
+/* Copyright (c) 2006-2017, Ahmet Bilgili <ahmet.bilgili@epfl.ch>
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
  *
@@ -17,20 +16,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#define MUSIC_TIMESTEP 0.01f //seconds
-
 #include <monsteer/types.h>
-
-#include <brion/spikeReport.h>
+#include <brion/brion.h>
 #include <lunchbox/file.h>
 
-#include <boost/foreach.hpp>
-#include <algorithm>
-#include <iostream>
 
 namespace
 {
-const std::string pluginScheme( MONSTEER_BRION_SPIKES_PLUGIN_SCHEME + "://" );
+const std::string pluginScheme(MONSTEER_BRION_SPIKES_PLUGIN_SCHEME + "://");
 }
 
 class CommandLineOptions
@@ -38,8 +31,8 @@ class CommandLineOptions
 public:
     brion::URI inputURI;
 
-    CommandLineOptions( int32_t argc, char* argv[] )
-        : inputURI( pluginScheme )
+    CommandLineOptions(int32_t argc, char* argv[])
+        : inputURI(pluginScheme)
     {
         if( argc > 1 )
         {
@@ -59,28 +52,23 @@ public:
 class SpikeReceiver
 {
 public:
-    SpikeReceiver( int32_t argc, char* argv[] )
-       : _options( argc, argv )
-       , _reader( _options.inputURI, brion::MODE_READ )
+    SpikeReceiver(int32_t argc, char* argv[])
+        : _options(argc, argv)
+        , _reader(_options.inputURI, brion::MODE_READ)
     {
     }
 
     void run()
     {
-        float time = 0;
-        while( _reader.waitUntil( time ))
+        const float step = 10.f; // ms, arbitrary value
+        while (_reader.getState() == brion::SpikeReport::State::ok)
         {
-            const brion::Spikes& spikes = _reader.getSpikes();
-            BOOST_FOREACH( const brion::Spike& spike, spikes )
-                std::cout << spike.first << " " << spike.second << std::endl;
+            const auto spikes =
+                _reader.readUntil(_reader.getCurrentTime() + step).get();
 
-            _reader.clear( 0, time );
-            time = time + MUSIC_TIMESTEP;
+            for (const brion::Spike& spike : spikes)
+                std::cout << spike.first << " " << spike.second << std::endl;
         }
-        /* Printing the last window received */
-        const brion::Spikes& spikes = _reader.getSpikes();
-        BOOST_FOREACH( const brion::Spike& spike, spikes )
-            std::cout << spike.first << " " << spike.second << std::endl;
     }
 
 private:
@@ -88,9 +76,9 @@ private:
     brion::SpikeReport _reader;
 };
 
-int32_t main( int32_t argc, char* argv[] )
+int32_t main(int32_t argc, char* argv[])
 {
-    SpikeReceiver receiver( argc, argv );
+    SpikeReceiver receiver(argc, argv);
     receiver.run();
     return EXIT_SUCCESS;
 }

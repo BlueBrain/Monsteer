@@ -80,8 +80,7 @@ public:
 
     void operator()( double time, MUSIC::GlobalIndex gid ) final
     {
-        _spikeBuffer.insert( std::make_pair( float( time * 1000 ),
-                                             uint32_t( gid )));
+        _spikeBuffer.push_back(  { float( time * 1000 ),  uint32_t( gid )});
     }
 
     void flush()

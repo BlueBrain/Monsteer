@@ -1,5 +1,4 @@
-
-/* Copyright (c) 2006-2015, Ahmet Bilgili <ahmet.bilgili@epfl.ch>
+/* Copyright (c) 2006-2017, Ahmet Bilgili <ahmet.bilgili@epfl.ch>
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
  *
@@ -17,11 +16,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <brion/brion.h>
 #include <monsteer/types.h>
-
-#include <algorithm>
-#include <boost/foreach.hpp>
+#include <brion/brion.h>
+#include <lunchbox/file.h>
 
 namespace
 {
@@ -36,8 +33,18 @@ public:
     CommandLineOptions(int32_t argc, char* argv[])
         : inputURI(pluginScheme)
     {
-        if (argc > 1)
-            inputURI = brion::URI(pluginScheme + argv[1]);
+        if( argc > 1 )
+        {
+            if( std::string( argv[1] ) == "--help" )
+            {
+                std::cout << lunchbox::getFilename( argv[0] )
+                          << " [hostname]: receive spike stream and output to "
+                          << "stdout" << std::endl;
+                ::exit( EXIT_SUCCESS );
+            }
+        }
+        else
+            inputURI = brion::URI( pluginScheme + argv[1] );
     }
 };
 

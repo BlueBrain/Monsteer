@@ -13,4 +13,4 @@ set(MONSTEERGUI_SOURCES
 
 set(MONSTEERGUI_LINK_LIBRARIES Monsteer MonsteerQt Qt5::Widgets)
 
-common_application(monsteerGUI GUI)
+common_application(monsteerGUI GUI NOHELP)

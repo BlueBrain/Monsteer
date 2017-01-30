@@ -20,6 +20,7 @@
 #include <brion/brion.h>
 #include <lunchbox/file.h>
 
+
 namespace
 {
 const std::string pluginScheme(MONSTEER_BRION_SPIKES_PLUGIN_SCHEME + "://");

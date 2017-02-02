@@ -98,12 +98,19 @@ BOOST_AUTO_TEST_CASE(write_read)
 
     for (size_t i = 1; i < getTestSpikes().size(); ++i)
     {
-        auto tmpSpikes = receiver.read(getTestSpikes()[i].first).get();
-        readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+        if (receiver.getState() != brion::SpikeReport::State::ended)
+        {
+            auto tmpSpikes = receiver.read(getTestSpikes()[i].first).get();
+            readSpikes.insert(readSpikes.end(),
+                              tmpSpikes.begin(), tmpSpikes.end());
+        }
     }
 
-    auto tmpSpikes = receiver.read(brion::UNDEFINED_TIMESTAMP).get();
-    readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+    if (receiver.getState() != brion::SpikeReport::State::ended)
+    {
+        auto tmpSpikes = receiver.read(brion::UNDEFINED_TIMESTAMP).get();
+        readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+    }
 
     BOOST_CHECK_EQUAL_COLLECTIONS(getTestSpikes().begin(),
                                   getTestSpikes().end(), readSpikes.begin(),
@@ -135,9 +142,6 @@ BOOST_AUTO_TEST_CASE(write_read_until)
         readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
     }
 
-    auto tmpSpikes = receiver.readUntil(brion::UNDEFINED_TIMESTAMP).get();
-    readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
-
     BOOST_CHECK_EQUAL_COLLECTIONS(getTestSpikes().begin(),
                                   getTestSpikes().end(), readSpikes.begin(),
                                   readSpikes.end());
@@ -161,9 +165,12 @@ BOOST_AUTO_TEST_CASE(seek)
     }};
 
     receiver.seek(10).get();
-    receiver.seek(20).get();
+    BOOST_CHECK_EQUAL(receiver.getCurrentTime(), 10.f);
+    BOOST_CHECK(receiver.getState() != brion::SpikeReport::State::ended);
 
-    BOOST_CHECK_EQUAL(receiver.getCurrentTime(), 20.f);
+    receiver.seek(20).get();
+    BOOST_CHECK(receiver.getCurrentTime() == 20.f ||
+                receiver.getState() == brion::SpikeReport::State::ended);
 
     writeThread.join();
 }
@@ -187,12 +194,19 @@ BOOST_AUTO_TEST_CASE(write_read_filtered)
 
     for (size_t i = 1; i < getTestSpikes().size(); ++i)
     {
-        auto tmpSpikes = receiver.read(getTestSpikes()[i].first).get();
-        readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+        if (receiver.getState() != brion::SpikeReport::State::ended)
+        {
+            auto tmpSpikes = receiver.read(getTestSpikes()[i].first).get();
+            readSpikes.insert(readSpikes.end(),
+                              tmpSpikes.begin(), tmpSpikes.end());
+        }
     }
 
-    auto tmpSpikes = receiver.read(brion::UNDEFINED_TIMESTAMP).get();
-    readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+    if (receiver.getState() != brion::SpikeReport::State::ended)
+    {
+        auto tmpSpikes = receiver.read(brion::UNDEFINED_TIMESTAMP).get();
+        readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+    }
 
     BOOST_CHECK_EQUAL(readSpikes.size(), 2);
 
@@ -222,9 +236,6 @@ BOOST_AUTO_TEST_CASE(write_read_until_filtered)
         readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
     }
 
-    auto tmpSpikes = receiver.readUntil(brion::UNDEFINED_TIMESTAMP).get();
-    readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
-
     BOOST_CHECK_EQUAL(readSpikes.size(), 2);
 
     writeThread.join();
@@ -243,6 +254,7 @@ BOOST_AUTO_TEST_CASE(simultaneous_read)
 
     emitter.close();
 }
+
 BOOST_AUTO_TEST_CASE(invalid_read)
 {
     brion::SpikeReport emitter{uri, brion::MODE_WRITE};
@@ -260,7 +272,8 @@ BOOST_AUTO_TEST_CASE(invalid_read)
 
     auto readSpikes = receiver.readUntil(0.3).get();
 
-    BOOST_CHECK_THROW(receiver.read(0.1), std::logic_error);
+    // This doesn't throw anymore
+    receiver.read(0.1);
 
     BOOST_CHECK_THROW(receiver.readUntil(0.1), std::logic_error);
 
@@ -341,11 +354,13 @@ BOOST_AUTO_TEST_CASE(interrupt)
 {
     brion::SpikeReport emitter{uri, brion::MODE_WRITE};
     brion::SpikeReport receiver{emitter.getURI()};
-    lunchbox::sleep(STARTUP_DELAY);
 
     auto future = receiver.read(100);
-
+    lunchbox::sleep(100);
     receiver.interrupt();
+    BOOST_CHECK_THROW(future.get(), std::runtime_error);
 
+    future = receiver.read(100);
+    receiver.interrupt();
     BOOST_CHECK_THROW(future.get(), std::runtime_error);
 }

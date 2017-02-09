@@ -52,6 +52,7 @@ public:
     void readSeek( float toTimeStamp ) final;
     void writeSeek( float toTimeStamp ) final;
     void write( const brion::Spikes &spikes ) final;
+    bool supportsBackwardSeek() const final { return false; }
 
 private:
     void _onSpikes( ConstSpikesEventPtr event );

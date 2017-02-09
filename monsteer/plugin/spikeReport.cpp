@@ -27,6 +27,8 @@
 
 #include <zeroeq/zeroeq.h>
 
+#include <cmath>
+
 extern "C" int LunchboxPluginGetVersion()
 {
     return BRION_VERSION_ABI;
@@ -113,6 +115,13 @@ brion::Spikes SpikeReport::read(float min)
 {
     brion::Spikes spikes;
 
+    // First empty the buffered data with no timeout no matter the timestamps
+    // received. In this case this gives the opportunity to update the end
+    // time without having to use a minimum timestamp that may cause the client
+    // to block.
+    while( _subscriber->receive( 0 ))
+        ;
+
     while (_state == State::ok && !_publisherFinished &&
            _publisherTimeStamp < min)
     {
@@ -133,11 +142,12 @@ brion::Spikes SpikeReport::read(float min)
         // current time should be > last read spike
         // The writer guarantees that no spikes are emitted with timestamp
         // <= last emited spike timestamp
-        _currentTime =
-            _publisherTimeStamp + std::numeric_limits<float>::epsilon();
+        _currentTime = std::nextafter( _publisherTimeStamp,
+                                       std::numeric_limits<float>::max( ));
     }
 
     spikes = std::move(_spikes);
+    _endTime = std::max(_endTime, _publisherTimeStamp);
 
     return spikes;
 }
@@ -145,6 +155,10 @@ brion::Spikes SpikeReport::read(float min)
 brion::Spikes SpikeReport::readUntil(float toTimeStamp)
 {
     brion::Spikes spikes;
+
+    // Empty the receive buffer without blocking
+    while( _subscriber->receive( 0 ))
+        ;
 
     while (_state == State::ok && !_publisherFinished &&
            _publisherTimeStamp < toTimeStamp)
@@ -172,11 +186,8 @@ brion::Spikes SpikeReport::readUntil(float toTimeStamp)
                   });
 
     _spikes.erase(_spikes.begin(), pos);
-
-    if (!_spikes.empty())
-        _currentTime = _spikes.front().first;
-    else
-        _currentTime = _publisherTimeStamp;
+    _currentTime = _publisherTimeStamp;
+    _endTime = _publisherTimeStamp;
 
     return spikes;
 }
@@ -185,6 +196,10 @@ void SpikeReport::readSeek(float toTimeStamp)
 {
     if (toTimeStamp < _currentTime)
         throw std::runtime_error("Backward seek is not supported");
+
+    // Empty the receive buffer without blocking
+    while( _subscriber->receive( 0 ))
+        ;
 
     while (_state == State::ok && !_publisherFinished &&
            _publisherTimeStamp < toTimeStamp)
@@ -212,6 +227,8 @@ void SpikeReport::readSeek(float toTimeStamp)
 
     _spikes.erase(_spikes.begin(), position);
     _currentTime = toTimeStamp;
+    if( _spikes.empty( ))
+        _endTime = toTimeStamp;
 }
 
 void SpikeReport::writeSeek(float toTimeStamp)
@@ -268,6 +285,8 @@ void SpikeReport::_onSpikes(ConstSpikesEventPtr event)
         pushBack({spike.getTime(), spike.getCell()}, _spikes);
     }
 
+    // This timestamp has to updated with the incoming spikes, not the filtered
+    // ones.
     _publisherTimeStamp = spikes[size - 1].getTime();
 }
 }

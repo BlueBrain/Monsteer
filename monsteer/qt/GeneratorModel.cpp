@@ -24,47 +24,48 @@ namespace monsteer
 {
 namespace qt
 {
-
-GeneratorModel::GeneratorModel( QObject* parentObj )
-    : QAbstractTableModel( parentObj )
-{}
+GeneratorModel::GeneratorModel(QObject* parentObj)
+    : QAbstractTableModel(parentObj)
+{
+}
 
 GeneratorModel::~GeneratorModel()
-{}
+{
+}
 
-int GeneratorModel::columnCount( const QModelIndex& ) const
+int GeneratorModel::columnCount(const QModelIndex&) const
 {
     return 1;
 }
 
-int GeneratorModel::rowCount( const QModelIndex& ) const
+int GeneratorModel::rowCount(const QModelIndex&) const
 {
     const Strings& generators = getGenerators();
     return generators.size();
 }
 
-QVariant GeneratorModel::data( const QModelIndex& ind, int role ) const
+QVariant GeneratorModel::data(const QModelIndex& ind, int role) const
 {
-    if( role == Qt::DisplayRole )
+    if (role == Qt::DisplayRole)
     {
         const Strings& generators = getGenerators();
-        return generators[ ind.row() ].c_str();
+        return generators[ind.row()].c_str();
     }
     return QVariant();
 }
 
-Qt::ItemFlags GeneratorModel::flags( const QModelIndex& ) const
+Qt::ItemFlags GeneratorModel::flags(const QModelIndex&) const
 {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
-QVariant GeneratorModel::headerData( int section,
-                                     Qt::Orientation orientation,
-                                     int role ) const
+QVariant GeneratorModel::headerData(int section, Qt::Orientation orientation,
+                                    int role) const
 {
-    if( role == Qt::DisplayRole )
+    if (role == Qt::DisplayRole)
     {
-        if( orientation == Qt::Horizontal ) {
+        if (orientation == Qt::Horizontal)
+        {
             switch (section)
             {
             case 0:
@@ -74,6 +75,5 @@ QVariant GeneratorModel::headerData( int section,
     }
     return QVariant();
 }
-
 }
 }

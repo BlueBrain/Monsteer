@@ -17,12 +17,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <monsteer/qt/PropertyEditDelegate.h>
 #include <monsteer/qt/GeneratorPropertiesModel.h>
+#include <monsteer/qt/PropertyEditDelegate.h>
 
+#include <QCheckBox>
 #include <QLineEdit>
 #include <QSpinBox>
-#include <QCheckBox>
 
 #include <boost/foreach.hpp>
 
@@ -30,85 +30,85 @@ namespace monsteer
 {
 namespace qt
 {
-
-PropertyEditDelegate::PropertyEditDelegate( QObject* parent_ )
-    : QItemDelegate( parent_ )
-{}
-
-QWidget* PropertyEditDelegate::createEditor( QWidget* parent_,
-                                             const QStyleOptionViewItem&,
-                                             const QModelIndex& index ) const
+PropertyEditDelegate::PropertyEditDelegate(QObject* parent_)
+    : QItemDelegate(parent_)
 {
-    if( index.column() == 0 )
+}
+
+QWidget* PropertyEditDelegate::createEditor(QWidget* parent_,
+                                            const QStyleOptionViewItem&,
+                                            const QModelIndex& index) const
+{
+    if (index.column() == 0)
         return 0;
 
     const QVariant& data = index.data();
 
-    QVariant::Type type = data.type( );
-    switch( type )
+    QVariant::Type type = data.type();
+    switch (type)
     {
     case QVariant::Double:
     {
-        QLineEdit* editor = new QLineEdit( parent_ );
-        editor->setValidator( new QDoubleValidator( editor ));
+        QLineEdit* editor = new QLineEdit(parent_);
+        editor->setValidator(new QDoubleValidator(editor));
         return editor;
     }
     case QVariant::Int:
     {
-        QSpinBox* editor = new QSpinBox( parent_ );
+        QSpinBox* editor = new QSpinBox(parent_);
         return editor;
     }
     case QVariant::Bool:
     {
-        QCheckBox* editor = new QCheckBox( parent_ );
+        QCheckBox* editor = new QCheckBox(parent_);
         return editor;
     }
     case QVariant::List:
     {
-        QLineEdit* editor = new QLineEdit( parent_ );
+        QLineEdit* editor = new QLineEdit(parent_);
         return editor;
     }
     default:
     {
-        QLineEdit* editor = new QLineEdit( parent_ );
+        QLineEdit* editor = new QLineEdit(parent_);
         return editor;
     }
     }
 }
 
-void PropertyEditDelegate::setEditorData( QWidget* editor_,
-                                          const QModelIndex& index ) const
+void PropertyEditDelegate::setEditorData(QWidget* editor_,
+                                         const QModelIndex& index) const
 {
     const QVariant& data = index.data();
 
-    switch( data.type( ))
+    switch (data.type())
     {
     case QVariant::Double:
     {
-        QLineEdit* editor = static_cast< QLineEdit *>( editor_ );
-        editor->setText( QString::number( data.toDouble( )));
+        QLineEdit* editor = static_cast<QLineEdit*>(editor_);
+        editor->setText(QString::number(data.toDouble()));
         break;
     }
     case QVariant::Int:
     {
-        QSpinBox* editor = static_cast< QSpinBox *>( editor_ );
-        editor->setValue( data.toInt( ));
+        QSpinBox* editor = static_cast<QSpinBox*>(editor_);
+        editor->setValue(data.toInt());
         break;
     }
     case QVariant::Bool:
     {
-        QCheckBox* editor = static_cast< QCheckBox *>( editor_ );
+        QCheckBox* editor = static_cast<QCheckBox*>(editor_);
         const bool value = data.toBool();
-        editor->setCheckState( value ? Qt::Checked : Qt::Unchecked );
+        editor->setCheckState(value ? Qt::Checked : Qt::Unchecked);
         break;
     }
     case QVariant::List:
     {
-        QLineEdit* editor = static_cast< QLineEdit *>( editor_ );
+        QLineEdit* editor = static_cast<QLineEdit*>(editor_);
         QString str;
-        BOOST_FOREACH( const QVariant& var, data.toList( ))
-                str += QString::number( var.toDouble( )) + ",";
-        editor->setText( str );
+        BOOST_FOREACH (const QVariant& var, data.toList())
+            str += QString::number(var.toDouble()) + ",";
+        editor->setText(str);
         break;
     }
     default:
@@ -118,55 +118,54 @@ void PropertyEditDelegate::setEditorData( QWidget* editor_,
     }
 }
 
-void PropertyEditDelegate::setModelData( QWidget* editor_,
-                                         QAbstractItemModel* model_,
-                                         const QModelIndex& index ) const
+void PropertyEditDelegate::setModelData(QWidget* editor_,
+                                        QAbstractItemModel* model_,
+                                        const QModelIndex& index) const
 {
     const QVariant& data = index.data();
     GeneratorPropertiesModel* model =
-            static_cast< GeneratorPropertiesModel* >( model_ );
+        static_cast<GeneratorPropertiesModel*>(model_);
 
-    switch( data.type( ))
+    switch (data.type())
     {
     case QVariant::Double:
     {
-        QLineEdit* editor = static_cast< QLineEdit *>( editor_ );
-        model->setData( index, editor->text().toDouble(), Qt::EditRole );
+        QLineEdit* editor = static_cast<QLineEdit*>(editor_);
+        model->setData(index, editor->text().toDouble(), Qt::EditRole);
         break;
     }
     case QVariant::Int:
     {
-        QSpinBox* editor = static_cast< QSpinBox *>( editor_ );
+        QSpinBox* editor = static_cast<QSpinBox*>(editor_);
         editor->interpretText();
-        model->setData( index, editor->value(), Qt::EditRole );
+        model->setData(index, editor->value(), Qt::EditRole);
         break;
     }
     case QVariant::Bool:
     {
-        QCheckBox* editor = static_cast< QCheckBox *>( editor_ );
+        QCheckBox* editor = static_cast<QCheckBox*>(editor_);
         const bool value = editor->checkState() == Qt::Checked;
-        model->setData( index, value, Qt::EditRole );
+        model->setData(index, value, Qt::EditRole);
         break;
     }
     case QVariant::List:
     {
-        QLineEdit* editor = static_cast< QLineEdit *>( editor_ );
-        QStringList list = editor->text().split( "," );
+        QLineEdit* editor = static_cast<QLineEdit*>(editor_);
+        QStringList list = editor->text().split(",");
         QVariantList varList;
         QDoubleValidator validator;
-        BOOST_FOREACH( QString& str, list )
+        BOOST_FOREACH (QString& str, list)
         {
-            if( str == "" )
+            if (str == "")
                 continue;
 
             int pos = 0;
-            if( validator.validate( str, pos ) == QValidator::Acceptable )
-                varList.push_back( QVariant( str.toDouble( )));
+            if (validator.validate(str, pos) == QValidator::Acceptable)
+                varList.push_back(QVariant(str.toDouble()));
             else
-                varList.push_back( QVariant( -1.0 ));
-
+                varList.push_back(QVariant(-1.0));
         }
-        model->setData( index, varList, Qt::EditRole );
+        model->setData(index, varList, Qt::EditRole);
         break;
     }
     default:
@@ -176,20 +175,19 @@ void PropertyEditDelegate::setModelData( QWidget* editor_,
     }
 }
 
-void PropertyEditDelegate::updateEditorGeometry( QWidget* editor_,
-                                                 const QStyleOptionViewItem& option_,
-                                                 const QModelIndex& ind ) const
+void PropertyEditDelegate::updateEditorGeometry(
+    QWidget* editor_, const QStyleOptionViewItem& option_,
+    const QModelIndex& ind) const
 {
     const QVariant& data = ind.data();
-    if( data.type() == QVariant::Bool )
+    if (data.type() == QVariant::Bool)
     {
-        QRect r( option_.rect );
-        r.setLeft( r.left() + 40 );
-        editor_->setGeometry( r );
+        QRect r(option_.rect);
+        r.setLeft(r.left() + 40);
+        editor_->setGeometry(r);
     }
     else
-        editor_->setGeometry( option_.rect );
+        editor_->setGeometry(option_.rect);
 }
-
 }
 }

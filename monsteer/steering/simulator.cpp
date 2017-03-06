@@ -25,24 +25,23 @@
 
 namespace monsteer
 {
-
 class Simulator::Impl
 {
 public:
-    typedef lunchbox::PluginFactory< SimulatorPlugin > SimulatorPluginFactory;
+    typedef lunchbox::PluginFactory<SimulatorPlugin> SimulatorPluginFactory;
 
-    explicit Impl( const SimulatorPluginInitData& initData )
-        : plugin( SimulatorPluginFactory::getInstance().create( initData ))
+    explicit Impl(const SimulatorPluginInitData& initData)
+        : plugin(SimulatorPluginFactory::getInstance().create(initData))
     {
     }
 
-    std::unique_ptr< SimulatorPlugin > plugin;
+    std::unique_ptr<SimulatorPlugin> plugin;
 };
 
-Simulator::Simulator( const URI& uri )
+Simulator::Simulator(const URI& uri)
     // The publisher URI is the scheme part of the subscriber URI for the
     // moment.
-    : _impl( new Simulator::Impl( SimulatorPluginInitData( uri )))
+    : _impl(new Simulator::Impl(SimulatorPluginInitData(uri)))
 {
 }
 
@@ -51,16 +50,16 @@ Simulator::~Simulator()
     delete _impl;
 }
 
-void Simulator::injectStimulus( const std::string& jsonParameters,
-                                const brion::uint32_ts& cells )
+void Simulator::injectStimulus(const std::string& jsonParameters,
+                               const brion::uint32_ts& cells)
 {
-    _impl->plugin->injectStimulus( jsonParameters, cells );
+    _impl->plugin->injectStimulus(jsonParameters, cells);
 }
 
-void Simulator::injectMultipleStimuli( const std::string& jsonParameters,
-                                       const brion::uint32_ts& cells )
+void Simulator::injectMultipleStimuli(const std::string& jsonParameters,
+                                      const brion::uint32_ts& cells)
 {
-    _impl->plugin->injectMultipleStimuli( jsonParameters, cells );
+    _impl->plugin->injectMultipleStimuli(jsonParameters, cells);
 }
 
 void Simulator::play()
@@ -72,5 +71,4 @@ void Simulator::pause()
 {
     _impl->plugin->pause();
 }
-
 }

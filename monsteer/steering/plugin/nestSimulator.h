@@ -20,32 +20,31 @@
 #ifndef MONSTEER_PLUGIN_NESTSIMULATOR_H
 #define MONSTEER_PLUGIN_NESTSIMULATOR_H
 
-#include <zeroeq/types.h>
-#include <monsteer/steering/simulatorPlugin.h>
 #include <boost/scoped_ptr.hpp>
+#include <monsteer/steering/simulatorPlugin.h>
+#include <zeroeq/types.h>
 
 namespace monsteer
 {
 namespace steering
 {
-
 /** Steering interface to NEST simulations */
 class NESTSimulator : public monsteer::SimulatorPlugin
 {
 public:
-    explicit NESTSimulator( const SimulatorPluginInitData& pluginData );
+    explicit NESTSimulator(const SimulatorPluginInitData& pluginData);
 
     /** Check if this plugin can handle the given plugin data. */
-    static bool handles( const SimulatorPluginInitData& pluginData );
+    static bool handles(const SimulatorPluginInitData& pluginData);
     static std::string getDescription();
 
     /** @copydoc monsteer::Simulator::injectStimulus */
-    void injectStimulus( const std::string& jsonParameters,
-                         const brion::uint32_ts& cells ) final;
+    void injectStimulus(const std::string& jsonParameters,
+                        const brion::uint32_ts& cells) final;
 
     /** @copydoc monsteer::Simulator::injectMultipleStimuli */
-    void injectMultipleStimuli( const std::string& jsonParameters,
-                                const brion::uint32_ts& cells ) final;
+    void injectMultipleStimuli(const std::string& jsonParameters,
+                               const brion::uint32_ts& cells) final;
 
     /** @copydoc monsteer::Simulator::play */
     void play() final;
@@ -54,10 +53,9 @@ public:
     void pause() final;
 
 private:
-    boost::scoped_ptr< zeroeq::Subscriber > _replySubscriber;
-    boost::scoped_ptr< zeroeq::Publisher > _requestPublisher;
+    boost::scoped_ptr<zeroeq::Subscriber> _replySubscriber;
+    boost::scoped_ptr<zeroeq::Publisher> _requestPublisher;
 };
-
 }
 }
 #endif

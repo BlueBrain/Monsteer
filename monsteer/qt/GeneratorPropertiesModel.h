@@ -28,7 +28,6 @@ namespace monsteer
 {
 namespace qt
 {
-
 /**
  * GeneratorPropertiesModel has the model data for the property table view.
  * It updates the NEST properties when data is changed.
@@ -38,28 +37,28 @@ class GeneratorPropertiesModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-
     /**
      * @param parentObj Parent widget.
      */
-    explicit GeneratorPropertiesModel( QObject *parentObj );
+    explicit GeneratorPropertiesModel(QObject* parentObj);
     ~GeneratorPropertiesModel();
 
-    int columnCount( const QModelIndex& parent = QModelIndex( )) const final;
-    int rowCount( const QModelIndex& parent = QModelIndex( )) const final;
-    QVariant data( const QModelIndex &index, int role = Qt::DisplayRole ) const final;
-    Qt::ItemFlags flags(const QModelIndex &index ) const final;
-    QVariant headerData(int section, Qt::Orientation orientation, int role ) const final;
-    bool setData( const QModelIndex& index, const QVariant& value, int role )  final;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const final;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const final;
+    QVariant data(const QModelIndex& index,
+                  int role = Qt::DisplayRole) const final;
+    Qt::ItemFlags flags(const QModelIndex& index) const final;
+    QVariant headerData(int section, Qt::Orientation orientation,
+                        int role) const final;
+    bool setData(const QModelIndex& index, const QVariant& value,
+                 int role) final;
 
-    void setProperties( const PropertyList& properties );
+    void setProperties(const PropertyList& properties);
     const PropertyList& getProperties() const;
 
 private:
-
     PropertyList _properties;
 };
-
 }
 }
 #endif

@@ -101,8 +101,8 @@ BOOST_AUTO_TEST_CASE(write_read)
         if (receiver.getState() != brion::SpikeReport::State::ended)
         {
             auto tmpSpikes = receiver.read(getTestSpikes()[i].first).get();
-            readSpikes.insert(readSpikes.end(),
-                              tmpSpikes.begin(), tmpSpikes.end());
+            readSpikes.insert(readSpikes.end(), tmpSpikes.begin(),
+                              tmpSpikes.end());
         }
     }
 
@@ -197,8 +197,8 @@ BOOST_AUTO_TEST_CASE(write_read_filtered)
         if (receiver.getState() != brion::SpikeReport::State::ended)
         {
             auto tmpSpikes = receiver.read(getTestSpikes()[i].first).get();
-            readSpikes.insert(readSpikes.end(),
-                              tmpSpikes.begin(), tmpSpikes.end());
+            readSpikes.insert(readSpikes.end(), tmpSpikes.begin(),
+                              tmpSpikes.end());
         }
     }
 

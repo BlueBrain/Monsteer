@@ -17,10 +17,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <monsteer/types.h>
+#include <lunchbox/pluginRegisterer.h>
 #include <monsteer/steering/simulator.h>
 #include <monsteer/steering/simulatorPlugin.h>
-#include <lunchbox/pluginRegisterer.h>
+#include <monsteer/types.h>
 
 #define BOOST_TEST_MODULE Simulator
 #include <boost/test/unit_test.hpp>
@@ -44,113 +44,102 @@ SimulatorData globalData;
 class DummySimulator : public monsteer::SimulatorPlugin
 {
 public:
-    explicit DummySimulator( const monsteer::SimulatorPluginInitData& pluginData )
+    explicit DummySimulator(const monsteer::SimulatorPluginInitData& pluginData)
     {
         globalData.subscriber = pluginData.subscriber;
     }
 
-    static bool handles( const monsteer::SimulatorPluginInitData& pluginData )
+    static bool handles(const monsteer::SimulatorPluginInitData& pluginData)
     {
         return pluginData.subscriber.getScheme() == "dummy";
     }
 
     static std::string getDescription() { return "dummy://"; }
-
-    void injectStimulus( const std::string& jsonParameters,
-                         const brion::uint32_ts& cells ) final
+    void injectStimulus(const std::string& jsonParameters,
+                        const brion::uint32_ts& cells) final
     {
         globalData.stimulusString = jsonParameters;
         globalData.cells = cells;
     }
 
-    void injectMultipleStimuli( const std::string& jsonParameters,
-                                const brion::uint32_ts& cells ) final
+    void injectMultipleStimuli(const std::string& jsonParameters,
+                               const brion::uint32_ts& cells) final
     {
         globalData.stimulusString = jsonParameters;
         globalData.cells = cells;
     }
 
-    void play()
-    {
-        globalData.playbackState = SimulatorData::PLAY;
-
-    }
-
-    void pause()
-    {
-        globalData.playbackState = SimulatorData::PAUSE;
-    }
+    void play() { globalData.playbackState = SimulatorData::PLAY; }
+    void pause() { globalData.playbackState = SimulatorData::PAUSE; }
 };
 
-lunchbox::PluginRegisterer< DummySimulator > registerer;
+lunchbox::PluginRegisterer<DummySimulator> registerer;
 
-
-BOOST_AUTO_TEST_CASE( test_create_handled_simulator )
+BOOST_AUTO_TEST_CASE(test_create_handled_simulator)
 {
-    monsteer::URI uri( "dummy://" );
-    monsteer::Simulator simulator( uri );
+    monsteer::URI uri("dummy://");
+    monsteer::Simulator simulator(uri);
 
-    BOOST_CHECK_EQUAL( globalData.subscriber, uri );
+    BOOST_CHECK_EQUAL(globalData.subscriber, uri);
 }
 
-BOOST_AUTO_TEST_CASE( test_create_unhandled )
+BOOST_AUTO_TEST_CASE(test_create_unhandled)
 {
-    BOOST_CHECK_THROW( monsteer::Simulator( monsteer::URI( "invalid://" )),
-                       std::runtime_error );
+    BOOST_CHECK_THROW(monsteer::Simulator(monsteer::URI("invalid://")),
+                      std::runtime_error);
 }
 
-monsteer::URI uri( "dummy://" );
+monsteer::URI uri("dummy://");
 uint32_t cellIds[] = {3, 7, 12, 20, 24, 30, 28, 1};
-const std::string jsonParameters( "blahblah" );
+const std::string jsonParameters("blahblah");
 
 namespace std
 {
-    ostream& operator<<( ostream& os, const brion::uint32_ts& cellIds )
-    {
-        for( const uint32_t& cellId : cellIds )
-            os << cellId << " ";
-        return os << std::endl;
-    }
+ostream& operator<<(ostream& os, const brion::uint32_ts& cellIds)
+{
+    for (const uint32_t& cellId : cellIds)
+        os << cellId << " ";
+    return os << std::endl;
+}
 }
 
-BOOST_AUTO_TEST_CASE( test_inject_stimulus )
+BOOST_AUTO_TEST_CASE(test_inject_stimulus)
 {
-    monsteer::Simulator simulator( uri );
+    monsteer::Simulator simulator(uri);
 
     brion::uint32_ts cells;
-    for( uint32_t i = 0; i != 8; ++i )
-        cells.push_back( cellIds[i] );
+    for (uint32_t i = 0; i != 8; ++i)
+        cells.push_back(cellIds[i]);
 
-    simulator.injectStimulus( jsonParameters, cells );
-    BOOST_CHECK_EQUAL( globalData.stimulusString, jsonParameters );
-    BOOST_CHECK_EQUAL( globalData.cells, cells );
+    simulator.injectStimulus(jsonParameters, cells);
+    BOOST_CHECK_EQUAL(globalData.stimulusString, jsonParameters);
+    BOOST_CHECK_EQUAL(globalData.cells, cells);
 
     globalData.cells.clear();
 }
 
-BOOST_AUTO_TEST_CASE( test_inject_multiple_stimuli )
+BOOST_AUTO_TEST_CASE(test_inject_multiple_stimuli)
 {
-    monsteer::Simulator simulator( uri );
+    monsteer::Simulator simulator(uri);
 
     brion::uint32_ts cells;
-    for( uint32_t i = 0; i != 8; ++i )
-        cells.push_back( cellIds[i] );
+    for (uint32_t i = 0; i != 8; ++i)
+        cells.push_back(cellIds[i]);
 
-    simulator.injectMultipleStimuli( jsonParameters, cells );
-    BOOST_CHECK_EQUAL( globalData.stimulusString, jsonParameters );
-    BOOST_CHECK_EQUAL( globalData.cells, cells );
+    simulator.injectMultipleStimuli(jsonParameters, cells);
+    BOOST_CHECK_EQUAL(globalData.stimulusString, jsonParameters);
+    BOOST_CHECK_EQUAL(globalData.cells, cells);
 
     globalData.cells.clear();
 }
 
-
-BOOST_AUTO_TEST_CASE( test_play_pause )
+BOOST_AUTO_TEST_CASE(test_play_pause)
 {
-    monsteer::Simulator simulator( uri );
+    monsteer::Simulator simulator(uri);
 
     simulator.play();
-    BOOST_CHECK( globalData.playbackState == SimulatorData::PLAY );
+    BOOST_CHECK(globalData.playbackState == SimulatorData::PLAY);
 
     simulator.pause();
-    BOOST_CHECK( globalData.playbackState == SimulatorData::PAUSE );
+    BOOST_CHECK(globalData.playbackState == SimulatorData::PAUSE);
 }

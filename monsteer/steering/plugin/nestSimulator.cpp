@@ -33,60 +33,57 @@ namespace monsteer
 {
 namespace steering
 {
-
 namespace
 {
-lunchbox::PluginRegisterer< NESTSimulator > registerer;
+lunchbox::PluginRegisterer<NESTSimulator> registerer;
 }
 
-NESTSimulator::NESTSimulator( const SimulatorPluginInitData& pluginData )
-    : _replySubscriber( new zeroeq::Subscriber( zeroeq::URI(
-                                                    pluginData.subscriber ),
-                                                zeroeq::DEFAULT_SESSION ))
-    , _requestPublisher( new zeroeq::Publisher( ))
+NESTSimulator::NESTSimulator(const SimulatorPluginInitData& pluginData)
+    : _replySubscriber(
+          new zeroeq::Subscriber(zeroeq::URI(pluginData.subscriber),
+                                 zeroeq::DEFAULT_SESSION))
+    , _requestPublisher(new zeroeq::Publisher())
 {
 }
 
-bool NESTSimulator::handles( const SimulatorPluginInitData& pluginData )
+bool NESTSimulator::handles(const SimulatorPluginInitData& pluginData)
 {
     return pluginData.subscriber.getScheme() ==
-                      MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME;
+           MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME;
 }
 
 std::string NESTSimulator::getDescription()
 {
-    return std::string( "NEST Simulator: " ) +
+    return std::string("NEST Simulator: ") +
            MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME + "://";
 }
 
-void NESTSimulator::injectStimulus( const std::string& jsonParameters,
-                                    const brion::uint32_ts& cells )
+void NESTSimulator::injectStimulus(const std::string& jsonParameters,
+                                   const brion::uint32_ts& cells)
 {
     // The messageID is irrelevant for the moment
-    _requestPublisher->publish(
-        StimulusInjection( "", "EVENT_STIMULUSINJECTION", cells,
-                           jsonParameters, /*single*/ false ));
+    _requestPublisher->publish(StimulusInjection("", "EVENT_STIMULUSINJECTION",
+                                                 cells, jsonParameters,
+                                                 /*single*/ false));
 }
 
-void NESTSimulator::injectMultipleStimuli( const std::string& jsonParameters,
-                                           const brion::uint32_ts& cells )
+void NESTSimulator::injectMultipleStimuli(const std::string& jsonParameters,
+                                          const brion::uint32_ts& cells)
 {
     // The messageID is irrelevant for the moment
-    _requestPublisher->publish(
-        StimulusInjection( "", "EVENT_STIMULUSINJECTION", cells,
-                           jsonParameters, /*multiple*/ true ));
+    _requestPublisher->publish(StimulusInjection("", "EVENT_STIMULUSINJECTION",
+                                                 cells, jsonParameters,
+                                                 /*multiple*/ true));
 }
 
 void NESTSimulator::play()
 {
-    _requestPublisher->publish( PlaybackState( State::PLAY ));
+    _requestPublisher->publish(PlaybackState(State::PLAY));
 }
 
 void NESTSimulator::pause()
 {
-    _requestPublisher->publish( PlaybackState( State::PAUSE ));
+    _requestPublisher->publish(PlaybackState(State::PAUSE));
 }
-
-
 }
 }

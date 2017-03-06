@@ -28,7 +28,6 @@ namespace monsteer
 {
 namespace qt
 {
-
 /**
  * Keeps the data for generator table view.
  */
@@ -37,20 +36,20 @@ class GeneratorModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-
     /**
      * @param parentObj Parent widget.
      */
-    explicit GeneratorModel( QObject* parentObj );
-    ~GeneratorModel( );
+    explicit GeneratorModel(QObject* parentObj);
+    ~GeneratorModel();
 
-    int columnCount( const QModelIndex& parent = QModelIndex( )) const final;
-    int rowCount( const QModelIndex& parent = QModelIndex( )) const final;
-    QVariant data( const QModelIndex &index, int role = Qt::DisplayRole ) const final;
-    Qt::ItemFlags flags(const QModelIndex & /*index*/) const final;
-    QVariant headerData(int section, Qt::Orientation orientation, int role ) const final;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const final;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const final;
+    QVariant data(const QModelIndex& index,
+                  int role = Qt::DisplayRole) const final;
+    Qt::ItemFlags flags(const QModelIndex& /*index*/) const final;
+    QVariant headerData(int section, Qt::Orientation orientation,
+                        int role) const final;
 };
-
 }
 }
 #endif

@@ -22,8 +22,8 @@
 
 #include <brion/types.h>
 
-#define MONSTEER_BRION_SPIKES_PLUGIN_SCHEME    std::string( "monsteer" )
-#define MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME  std::string( "nest" )
+#define MONSTEER_BRION_SPIKES_PLUGIN_SCHEME std::string("monsteer")
+#define MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME std::string("nest")
 
 /** @namespace monsteer MONSTEER types */
 namespace monsteer
@@ -32,8 +32,7 @@ using brion::Strings;
 using brion::URI;
 
 class Simulator;
-typedef boost::shared_ptr< Simulator > SimulatorPtr;
-
+typedef boost::shared_ptr<Simulator> SimulatorPtr;
 }
 
 #endif

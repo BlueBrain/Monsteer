@@ -28,43 +28,40 @@
 using namespace monsteer;
 using namespace boost::python;
 
-void Simulator_injectStimulus( monsteer::Simulator& simulator,
-                               const std::string& json,
-                               object list )
+void Simulator_injectStimulus(monsteer::Simulator& simulator,
+                              const std::string& json, object list)
 {
     brion::uint32_ts ids;
-    ids.reserve( len( list ) );
-    stl_input_iterator< uint32_t > i(list), end;
-    while( i != end )
-        ids.push_back( *i++ );
-    simulator.injectStimulus( json, ids );
+    ids.reserve(len(list));
+    stl_input_iterator<uint32_t> i(list), end;
+    while (i != end)
+        ids.push_back(*i++);
+    simulator.injectStimulus(json, ids);
 }
 
-void Simulator_injectMultipleStimuli( monsteer::Simulator& simulator,
-                                      const std::string& json,
-                                      object list )
+void Simulator_injectMultipleStimuli(monsteer::Simulator& simulator,
+                                     const std::string& json, object list)
 {
     brion::uint32_ts ids;
-    ids.reserve( len( list ));
-    stl_input_iterator< uint32_t > i( list ), end;
-    while( i != end )
-        ids.push_back( *i++ );
-    simulator.injectMultipleStimuli( json, ids );
+    ids.reserve(len(list));
+    stl_input_iterator<uint32_t> i(list), end;
+    while (i != end)
+        ids.push_back(*i++);
+    simulator.injectMultipleStimuli(json, ids);
 }
 
-SimulatorPtr Simulator_init( const std::string& uri )
+SimulatorPtr Simulator_init(const std::string& uri)
 {
-    return SimulatorPtr(new Simulator( lunchbox::URI( uri )));
+    return SimulatorPtr(new Simulator(lunchbox::URI(uri)));
 }
 
 void export_Simulator()
 {
-    class_< Simulator, boost::noncopyable >( "Simulator", no_init )
-        .def( "__init__", make_constructor( Simulator_init ))
-        .def( "injectStimulus", Simulator_injectStimulus, arg( "json" ))
-        .def( "injectMultipleStimuli",
-              Simulator_injectMultipleStimuli, arg( "json" ))
-        .def( "play", &Simulator::play )
-        .def( "pause", &Simulator::pause )
-    ;
+    class_<Simulator, boost::noncopyable>("Simulator", no_init)
+        .def("__init__", make_constructor(Simulator_init))
+        .def("injectStimulus", Simulator_injectStimulus, arg("json"))
+        .def("injectMultipleStimuli", Simulator_injectMultipleStimuli,
+             arg("json"))
+        .def("play", &Simulator::play)
+        .def("pause", &Simulator::pause);
 }

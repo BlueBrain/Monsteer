@@ -18,17 +18,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <monsteer/qt/SteeringWidget.h>
 #include <monsteer/qt/GeneratorModel.h>
 #include <monsteer/qt/GeneratorPropertiesModel.h>
 #include <monsteer/qt/PropertyEditDelegate.h>
+#include <monsteer/qt/SteeringWidget.h>
 #include <monsteer/qt/nestData.h>
 
-#include <monsteer/steering/simulator.h>
 #include <monsteer/qt/ui_SteeringWidget.h>
+#include <monsteer/steering/simulator.h>
 
-#include <zeroeq/subscriber.h>
 #include <lexis/lexis.h>
+#include <zeroeq/subscriber.h>
 
 #include <QTimer>
 
@@ -37,32 +37,31 @@
 
 namespace
 {
-const monsteer::URI pluginURI( MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME + "://" );
+const monsteer::URI pluginURI(MONSTEER_NEST_SIMULATOR_PLUGIN_SCHEME + "://");
 }
 
 namespace monsteer
 {
 namespace qt
 {
-
 struct SteeringWidget::Impl
 {
-    Impl( SteeringWidget* steeringWidget )
-        : _simulator( 0 )
-        , _selectionSubscriber( new zeroeq::Subscriber( ))
-        , _playing( true )
-        , _steeringWidget( steeringWidget )
+    Impl(SteeringWidget* steeringWidget)
+        : _simulator(0)
+        , _selectionSubscriber(new zeroeq::Subscriber())
+        , _playing(true)
+        , _steeringWidget(steeringWidget)
     {
-        _ui.setupUi( steeringWidget );
+        _ui.setupUi(steeringWidget);
         _ui.tblGeneratorProperties->horizontalHeader()->setSectionResizeMode(
-                    QHeaderView::Stretch );
+            QHeaderView::Stretch);
 
         connectHBP();
         connectISC();
 
-        _receiveTimer.connect( &_receiveTimer, &QTimer::timeout,
-                               [this](){ _selectionSubscriber->receive( 0 ); });
-        _receiveTimer.start( 100 );
+        _receiveTimer.connect(&_receiveTimer, &QTimer::timeout,
+                              [this]() { _selectionSubscriber->receive(0); });
+        _receiveTimer.start(100);
     }
 
     ~Impl()
@@ -74,119 +73,116 @@ struct SteeringWidget::Impl
 
     void injectStimuli()
     {
-        if( !_simulator )
+        if (!_simulator)
             return;
 
-        if( _selectedIds.empty( ))
+        if (_selectedIds.empty())
             return;
 
-        GeneratorPropertiesModel *model =
-                static_cast< GeneratorPropertiesModel * >(
-                    _ui.tblGeneratorProperties->model( ));
+        GeneratorPropertiesModel* model =
+            static_cast<GeneratorPropertiesModel*>(
+                _ui.tblGeneratorProperties->model());
 
         const int generatorIndex = _ui.generatorsComboBox->currentIndex();
-        if( generatorIndex < 0 )
+        if (generatorIndex < 0)
             return;
 
         const Strings& generators = getGenerators();
-        const std::string& generator = generators[ generatorIndex ];
+        const std::string& generator = generators[generatorIndex];
 
-        PropertyList properties = model->getProperties( );
+        PropertyList properties = model->getProperties();
         QVariantList _list;
-        _list.push_back( QVariant(QString(generator.c_str( ))));
-        properties.push_back( std::make_pair("model", _list ));
+        _list.push_back(QVariant(QString(generator.c_str())));
+        properties.push_back(std::make_pair("model", _list));
 
-        const std::string& json = getJSON( properties );
-        if( json.empty( ))
+        const std::string& json = getJSON(properties);
+        if (json.empty())
             return;
 
-        _simulator->injectStimulus( json, _selectedIds );
+        _simulator->injectStimulus(json, _selectedIds);
     }
 
     void playPauseSimulation()
     {
-        if( !_simulator )
+        if (!_simulator)
             return;
 
-        if( _playing )
+        if (_playing)
         {
             _simulator->pause();
-            _ui.btnPlayPauseSimulation->setText( "Resume simulation" );
+            _ui.btnPlayPauseSimulation->setText("Resume simulation");
         }
         else
         {
             _simulator->play();
-            _ui.btnPlayPauseSimulation->setText( "Pause simulation" );
+            _ui.btnPlayPauseSimulation->setText("Pause simulation");
         }
         _playing = !_playing;
     }
 
-    void generatorSelected( const int generatorIndex )
+    void generatorSelected(const int generatorIndex)
     {
-        if( generatorIndex < 0 )
+        if (generatorIndex < 0)
             return;
 
         const Strings& generators = getGenerators();
-        const PropertyList& prop = getGeneratorProperties( generators[ generatorIndex ] );
+        const PropertyList& prop =
+            getGeneratorProperties(generators[generatorIndex]);
         GeneratorPropertiesModel* model =
-                static_cast< GeneratorPropertiesModel* >( _ui.tblGeneratorProperties->model( ));
+            static_cast<GeneratorPropertiesModel*>(
+                _ui.tblGeneratorProperties->model());
 
-        model->setProperties( prop );
+        model->setProperties(prop);
     }
 
     void connectISC()
     {
         try
         {
-            _simulator = new monsteer::Simulator( pluginURI );
-            _ui.btnPlayPauseSimulation->setEnabled( true );
+            _simulator = new monsteer::Simulator(pluginURI);
+            _ui.btnPlayPauseSimulation->setEnabled(true);
         }
-        catch( const std::exception& error )
+        catch (const std::exception& error)
         {
-            _ui.btnInjectStimulus->setEnabled( false );
-            _ui.btnPlayPauseSimulation->setEnabled( false );
+            _ui.btnInjectStimulus->setEnabled(false);
+            _ui.btnPlayPauseSimulation->setEnabled(false);
             LBERROR << "Error:" << error.what() << std::endl;
         }
     }
 
-    void disconnectISC()
+    void disconnectISC() { delete _simulator; }
+    void onSelection(::lexis::data::ConstSelectedIDsPtr event)
     {
-        delete _simulator;
+        emit _steeringWidget->updateCellIdsTextBox(event->getIdsVector());
     }
 
-    void onSelection( ::lexis::data::ConstSelectedIDsPtr event )
-    {
-        emit _steeringWidget->updateCellIdsTextBox( event->getIdsVector( ));
-    }
-
-    void updateCellIdsTextBox( const std::vector<uint32_t>& cellIds )
+    void updateCellIdsTextBox(const std::vector<uint32_t>& cellIds)
     {
         _selectedIds = cellIds;
 
         const int generatorIndex = _ui.generatorsComboBox->currentIndex();
 
-        _ui.btnInjectStimulus->setEnabled( _simulator &&
-                                           !_selectedIds.empty( ) &&
-                                           generatorIndex >= 0 );
+        _ui.btnInjectStimulus->setEnabled(_simulator && !_selectedIds.empty() &&
+                                          generatorIndex >= 0);
 
         std::stringstream str;
-        BOOST_FOREACH( const uint32_t gid, _selectedIds )
-                str << gid << " ";
+        BOOST_FOREACH (const uint32_t gid, _selectedIds)
+            str << gid << " ";
 
-        _ui.txtCellIds->setText( str.str().c_str( ));
+        _ui.txtCellIds->setText(str.str().c_str());
     }
 
     void connectHBP()
     {
         try
         {
-            _selectionSubscriber->subscribe( ::lexis::data::SelectedIDs::ZEROBUF_TYPE_IDENTIFIER(),
-                [&]( const void* data, const size_t size )
-                {
-                    onSelection( ::lexis::data::SelectedIDs::create( data, size ));
-                } );
+            _selectionSubscriber->subscribe(
+                ::lexis::data::SelectedIDs::ZEROBUF_TYPE_IDENTIFIER(),
+                [&](const void* data, const size_t size) {
+                    onSelection(::lexis::data::SelectedIDs::create(data, size));
+                });
         }
-        catch( const std::exception& error )
+        catch (const std::exception& error)
         {
             LBERROR << "Error:" << error.what() << std::endl;
         }
@@ -194,18 +190,22 @@ struct SteeringWidget::Impl
 
     void disconnectHBP()
     {
-        _selectionSubscriber->unsubscribe( ::lexis::data::SelectedIDs::ZEROBUF_TYPE_IDENTIFIER( ));
+        _selectionSubscriber->unsubscribe(
+            ::lexis::data::SelectedIDs::ZEROBUF_TYPE_IDENTIFIER());
     }
 
     void propertiesChanged()
     {
         GeneratorPropertiesModel* model =
-                static_cast< GeneratorPropertiesModel* >(_ui.tblGeneratorProperties->model());
+            static_cast<GeneratorPropertiesModel*>(
+                _ui.tblGeneratorProperties->model());
 
-        for( int i = 0; i < model->rowCount(); ++i )
+        for (int i = 0; i < model->rowCount(); ++i)
         {
-            _ui.tblGeneratorProperties->closePersistentEditor( model->index( i, 1 ));
-            _ui.tblGeneratorProperties->openPersistentEditor( model->index( i, 1 ));
+            _ui.tblGeneratorProperties->closePersistentEditor(
+                model->index(i, 1));
+            _ui.tblGeneratorProperties->openPersistentEditor(
+                model->index(i, 1));
         }
     }
 
@@ -220,55 +220,54 @@ public:
     std::vector<uint32_t> _selectedIds;
 };
 
-SteeringWidget::SteeringWidget( QWidget* parentWgt )
-    : QWidget( parentWgt )
-    , _impl( new SteeringWidget::Impl( this ))
+SteeringWidget::SteeringWidget(QWidget* parentWgt)
+    : QWidget(parentWgt)
+    , _impl(new SteeringWidget::Impl(this))
 {
-    qRegisterMetaType< std::vector<uint32_t> >( "std::vector<uint32_t>" );
+    qRegisterMetaType<std::vector<uint32_t>>("std::vector<uint32_t>");
 
-    _impl->_ui.txtCellIds->setReadOnly( true );
+    _impl->_ui.txtCellIds->setReadOnly(true);
     GeneratorModel* generatorModel =
-            new GeneratorModel( _impl->_ui.generatorsComboBox );
-    _impl->_ui.generatorsComboBox->setModel( generatorModel );
+        new GeneratorModel(_impl->_ui.generatorsComboBox);
+    _impl->_ui.generatorsComboBox->setModel(generatorModel);
 
     PropertyEditDelegate* editorDelegate =
-            new PropertyEditDelegate( _impl->_ui.tblGeneratorProperties );
-    _impl->_ui.tblGeneratorProperties->setItemDelegate( editorDelegate );
+        new PropertyEditDelegate(_impl->_ui.tblGeneratorProperties);
+    _impl->_ui.tblGeneratorProperties->setItemDelegate(editorDelegate);
 
-    GeneratorPropertiesModel *model =
-            new GeneratorPropertiesModel( _impl->_ui.tblGeneratorProperties );
+    GeneratorPropertiesModel* model =
+        new GeneratorPropertiesModel(_impl->_ui.tblGeneratorProperties);
 
-    _impl->_ui.tblGeneratorProperties->setModel( model );
-    _impl->_ui.tblGeneratorProperties->setColumnWidth( 0, 150 );
-    _impl->_ui.tblGeneratorProperties->setColumnWidth( 1, 150 );
-    _impl->_ui.tblGeneratorProperties->setMinimumWidth( 310 );
+    _impl->_ui.tblGeneratorProperties->setModel(model);
+    _impl->_ui.tblGeneratorProperties->setColumnWidth(0, 150);
+    _impl->_ui.tblGeneratorProperties->setColumnWidth(1, 150);
+    _impl->_ui.tblGeneratorProperties->setMinimumWidth(310);
 
-    _impl->_ui.btnInjectStimulus->setEnabled( false );
+    _impl->_ui.btnInjectStimulus->setEnabled(false);
 
-    setWindowFlags(( windowFlags() ^ Qt::Dialog) | Qt::Window );
+    setWindowFlags((windowFlags() ^ Qt::Dialog) | Qt::Window);
 
-    connect( _impl->_ui.btnPlayPauseSimulation, SIGNAL(clicked()),
-             this, SLOT(_playPauseSimulation()));
+    connect(_impl->_ui.btnPlayPauseSimulation, SIGNAL(clicked()), this,
+            SLOT(_playPauseSimulation()));
 
-    connect( _impl->_ui.btnInjectStimulus, SIGNAL(clicked()),
-             this, SLOT(_injectStimuli()));
+    connect(_impl->_ui.btnInjectStimulus, SIGNAL(clicked()), this,
+            SLOT(_injectStimuli()));
 
-    connect( _impl->_ui.generatorsComboBox, SIGNAL( currentIndexChanged( int )),
-             this, SLOT( _generatorSelected( int )));
+    connect(_impl->_ui.generatorsComboBox, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(_generatorSelected(int)));
 
-    connect( model, SIGNAL( layoutChanged( )),
-             this, SLOT( _propertiesChanged( )));
+    connect(model, SIGNAL(layoutChanged()), this, SLOT(_propertiesChanged()));
 
-    connect( this, SIGNAL( updateCellIdsTextBox( std::vector<uint32_t> )),
-             this, SLOT( _updateCellIdsTextBox( std::vector<uint32_t> )),
-             Qt::QueuedConnection );
+    connect(this, SIGNAL(updateCellIdsTextBox(std::vector<uint32_t>)), this,
+            SLOT(_updateCellIdsTextBox(std::vector<uint32_t>)),
+            Qt::QueuedConnection);
 
-    _impl->_ui.generatorsComboBox->setCurrentIndex( 0 );
+    _impl->_ui.generatorsComboBox->setCurrentIndex(0);
     // Emulate currentIndexChanged() signal as qApp has not been created yet
-    _impl->generatorSelected( 0 );
+    _impl->generatorSelected(0);
 }
 
-SteeringWidget::~SteeringWidget( )
+SteeringWidget::~SteeringWidget()
 {
     delete _impl;
 }
@@ -283,20 +282,19 @@ void SteeringWidget::_playPauseSimulation()
     _impl->playPauseSimulation();
 }
 
-void SteeringWidget::_generatorSelected( const int index )
+void SteeringWidget::_generatorSelected(const int index)
 {
-    _impl->generatorSelected( index );
+    _impl->generatorSelected(index);
 }
 
-void SteeringWidget::_updateCellIdsTextBox( std::vector<uint32_t> cellIds )
+void SteeringWidget::_updateCellIdsTextBox(std::vector<uint32_t> cellIds)
 {
-    _impl->updateCellIdsTextBox( cellIds );
+    _impl->updateCellIdsTextBox(cellIds);
 }
 
 void SteeringWidget::_propertiesChanged()
 {
     _impl->propertiesChanged();
 }
-
 }
 }

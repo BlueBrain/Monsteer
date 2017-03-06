@@ -25,16 +25,16 @@
 
 namespace monsteer
 {
-
 /** Init data for SimulatorPlugin
  * @version 0.4
  */
 class SimulatorPluginInitData
 {
 public:
-    explicit SimulatorPluginInitData( const URI& subscriber_ )
-        : subscriber( subscriber_ )
-    {}
+    explicit SimulatorPluginInitData(const URI& subscriber_)
+        : subscriber(subscriber_)
+    {
+    }
 
     const URI subscriber;
 };
@@ -53,14 +53,13 @@ public:
     typedef SimulatorPluginInitData InitDataT;
 
     virtual ~SimulatorPlugin() {}
-
     /** @copydoc Simulator::injectStimulus */
-    virtual void injectStimulus( const std::string& jsonParameters,
-                                 const brion::uint32_ts& cells ) = 0;
+    virtual void injectStimulus(const std::string& jsonParameters,
+                                const brion::uint32_ts& cells) = 0;
 
     /** @copydoc Simulator::injectMultipleStimuli */
-    virtual void injectMultipleStimuli( const std::string& jsonParameters,
-                                        const brion::uint32_ts& cells ) = 0;
+    virtual void injectMultipleStimuli(const std::string& jsonParameters,
+                                       const brion::uint32_ts& cells) = 0;
 
     /** @copydoc Simulator::play */
     virtual void play() = 0;
@@ -68,14 +67,13 @@ public:
     /** @copydoc Simulator::pause */
     virtual void pause() = 0;
 };
-
 }
 
 namespace std
 {
-inline string to_string( const monsteer::SimulatorPluginInitData& data )
+inline string to_string(const monsteer::SimulatorPluginInitData& data)
 {
-    return to_string( data.subscriber );
+    return to_string(data.subscriber);
 }
 }
 

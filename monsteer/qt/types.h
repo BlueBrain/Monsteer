@@ -26,11 +26,9 @@ namespace monsteer
 {
 namespace qt
 {
-
-typedef std::pair< std::string, QVariant > Property;
-typedef std::vector< Property > PropertyList;
-typedef std::map< std::string, PropertyList > GeneratorPropertyMap;
-
+typedef std::pair<std::string, QVariant> Property;
+typedef std::vector<Property> PropertyList;
+typedef std::map<std::string, PropertyList> GeneratorPropertyMap;
 }
 }
 #endif

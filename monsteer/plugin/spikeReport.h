@@ -40,30 +40,29 @@ class SpikeReport : public brion::SpikeReportPlugin
 {
 public:
     /** Create a new streaming NEST report. */
-    explicit SpikeReport( const SpikeReportInitData &initData );
+    explicit SpikeReport(const SpikeReportInitData &initData);
 
     /** Check if this plugin can handle the given plugin data. */
-    static bool handles( const SpikeReportInitData &initData );
+    static bool handles(const SpikeReportInitData &initData);
     static std::string getDescription();
 
     void close() final;
-    brion::Spikes read( float min ) final;
-    brion::Spikes readUntil( float max ) final;
-    void readSeek( float toTimeStamp ) final;
-    void writeSeek( float toTimeStamp ) final;
-    void write( const brion::Spikes &spikes ) final;
+    brion::Spikes read(float min) final;
+    brion::Spikes readUntil(float max) final;
+    void readSeek(float toTimeStamp) final;
+    void writeSeek(float toTimeStamp) final;
+    void write(const brion::Spikes &spikes) final;
     bool supportsBackwardSeek() const final { return false; }
-
 private:
-    void _onSpikes( ConstSpikesEventPtr event );
-    void _onSeekForward( ConstSeekForwardEventPtr event );
+    void _onSpikes(ConstSpikesEventPtr event);
+    void _onSeekForward(ConstSeekForwardEventPtr event);
     void _onEOS();
     void _receiveBufferedMessages();
 
     brion::Spikes _spikes;
-    std::unique_ptr< zeroeq::Subscriber > _subscriber;
-    std::unique_ptr< zeroeq::Publisher > _publisher;
-    float _publisherTimeStamp = -std::numeric_limits< float >::infinity();
+    std::unique_ptr<zeroeq::Subscriber> _subscriber;
+    std::unique_ptr<zeroeq::Publisher> _publisher;
+    float _publisherTimeStamp = -std::numeric_limits<float>::infinity();
     bool _publisherFinished = false;
 };
 }

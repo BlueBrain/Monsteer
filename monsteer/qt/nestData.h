@@ -20,14 +20,13 @@
 #ifndef MONSTEER_QT_NESTDATA_H
 #define MONSTEER_QT_NESTDATA_H
 
-#include <monsteer/types.h>
 #include <monsteer/qt/types.h>
+#include <monsteer/types.h>
 
 namespace monsteer
 {
 namespace qt
 {
-
 /**
  * @return Returns list of NEST generators
  */
@@ -37,14 +36,13 @@ const Strings& getGenerators();
  * @param generator NEST generator
  * @return Returns the properties for the given NEST generator
  */
-const PropertyList& getGeneratorProperties( const std::string& generator );
+const PropertyList& getGeneratorProperties(const std::string& generator);
 
 /**
  * @param list NEST generator properties
  * @return JSON text for given properties
  */
-std::string getJSON( const PropertyList& list );
-
+std::string getJSON(const PropertyList& list);
 }
 }
 

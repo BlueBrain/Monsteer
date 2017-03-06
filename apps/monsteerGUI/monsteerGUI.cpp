@@ -24,11 +24,11 @@
 
 #include <QApplication>
 
-int main( int argc, char *argv[] )
+int main(int argc, char *argv[])
 {
-    QApplication app( argc, argv );
+    QApplication app(argc, argv);
 
-    std::unique_ptr< QWidget > widget( new monsteer::qt::SteeringWidget( ));
+    std::unique_ptr<QWidget> widget(new monsteer::qt::SteeringWidget());
     widget->show();
 
     return app.exec();

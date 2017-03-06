@@ -84,19 +84,19 @@ class Nesteer:
     spikes and message ports for steering input.
     """
     def __init__(self, spike_port_name, steering_port_name, neurons, gids):
-       self._spike_port_name = spike_port_name
-       self._steering_port_name = steering_port_name
-       self._apply_generators_to_neurons_function = _apply_generators_to_neurons
-       self._generator_dict = {}
-       self._gid_to_neuron_map = {}
-       self._event_function_dict = {}
+        self._spike_port_name = spike_port_name
+        self._steering_port_name = steering_port_name
+        self._apply_generators_to_neurons_function = _apply_generators_to_neurons
+        self._generator_dict = {}
+        self._gid_to_neuron_map = {}
+        self._event_function_dict = {}
 
-       for (neuron, gid) in zip(neurons, gids):
+        for (neuron, gid) in zip(neurons, gids):
             status = _nest.GetStatus([neuron])
             global_id = status[0]['global_id']
             self._gid_to_neuron_map[gid] = global_id
 
-       self._setup_music()
+        self._setup_music()
 
     def process_events(self):
         """
@@ -174,12 +174,6 @@ class Nesteer:
         for gid, neuron in self._gid_to_neuron_map.items():
             _nest.Connect([neuron], self._music_spike_output, 'one_to_one',
                           {'music_channel': gid})
-
-        # Connecting the last music channel (value specified in the
-        # configuration file) to a dummy neuron
-        dummy = _nest.Create('iaf_neuron', 1)
-        _nest.Connect(dummy, self._music_spike_output, 'one_to_one',
-                      {'music_channel': 10000000})
 
         # Setup music steering input.
         self._music_steering_input = _nest.Create('music_message_in_proxy', 1)

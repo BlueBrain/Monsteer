@@ -28,7 +28,6 @@ namespace monsteer
 {
 namespace qt
 {
-
 /**
  * Simulation controller widget that receives the cell ids through ZeroEQ
  * and can apply nest stimulation generators on selected cells using ZeroEQ.
@@ -38,34 +37,31 @@ class SteeringWidget : public QWidget
     Q_OBJECT
 
 public:
-
     /**
      * Constructor
      * @param parentWgt Parent widget.
      */
-    SteeringWidget( QWidget *parentWgt = 0 );
+    SteeringWidget(QWidget *parentWgt = 0);
     ~SteeringWidget();
 
 signals:
 
-    void updateCellIdsTextBox( std::vector<uint32_t> cellIds );
+    void updateCellIdsTextBox(std::vector<uint32_t> cellIds);
 
 private Q_SLOTS:
 
     void _playPauseSimulation();
     void _injectStimuli();
-    void _generatorSelected( int index );
+    void _generatorSelected(int index);
 
-    void _updateCellIdsTextBox( std::vector<uint32_t> cellIds );
+    void _updateCellIdsTextBox(std::vector<uint32_t> cellIds);
 
     void _propertiesChanged();
 
 private:
-
     struct Impl;
     Impl *_impl;
 };
-
 }
 }
 #endif

@@ -26,7 +26,6 @@ namespace monsteer
 {
 namespace qt
 {
-
 /**
  * TableView widgets are delegated to this class in order to generate the
  * right widget for the table data.
@@ -36,25 +35,20 @@ class PropertyEditDelegate : public QItemDelegate
     Q_OBJECT
 
 public:
-
     /**
      * @param parentWidget Parent widget
      */
-    explicit PropertyEditDelegate( QObject *parentWidget = 0 );
+    explicit PropertyEditDelegate(QObject* parentWidget = 0);
 
-    QWidget* createEditor( QWidget* parent,
-                           const QStyleOptionViewItem& option,
-                           const QModelIndex& index) const final;
-    void setEditorData( QWidget* editor,
-                        const QModelIndex& index ) const final;
-    void setModelData( QWidget* editor,
-                       QAbstractItemModel* model,
-                       const QModelIndex& index ) const final;
-    void updateEditorGeometry( QWidget *editor,
-                               const QStyleOptionViewItem& option,
-                               const QModelIndex& index) const final;
+    QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+                          const QModelIndex& index) const final;
+    void setEditorData(QWidget* editor, const QModelIndex& index) const final;
+    void setModelData(QWidget* editor, QAbstractItemModel* model,
+                      const QModelIndex& index) const final;
+    void updateEditorGeometry(QWidget* editor,
+                              const QStyleOptionViewItem& option,
+                              const QModelIndex& index) const final;
 };
-
 }
 }
 #endif

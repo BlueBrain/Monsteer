@@ -17,12 +17,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <monsteer/types.h>
 #include <boost/noncopyable.hpp>
+#include <monsteer/types.h>
 
 namespace monsteer
 {
-
 /** Steering interface to the simulator of an experiment.
  *
  * This class provides access to the simulator engine for computational
@@ -46,7 +45,7 @@ public:
      *        registered simulator steering plugin
      * @version 0.2
      */
-    explicit Simulator( const URI& uri );
+    explicit Simulator(const URI& uri);
 
     ~Simulator();
 
@@ -63,9 +62,8 @@ public:
      * parameters
      * @version 0.2
      */
-    void injectStimulus( const std::string& jsonParameters,
-                         const brion::uint32_ts& cells );
-
+    void injectStimulus(const std::string& jsonParameters,
+                        const brion::uint32_ts& cells);
 
     /**
      * Attach multiple stimulus generators to a list of cells.
@@ -81,8 +79,8 @@ public:
      * parameters
      * @version 0.2
      */
-    void injectMultipleStimuli( const std::string& jsonParameters,
-                                const brion::uint32_ts& cells );
+    void injectMultipleStimuli(const std::string& jsonParameters,
+                               const brion::uint32_ts& cells);
 
     /**
      * Resumes/plays the simulation.
@@ -114,5 +112,4 @@ private:
     class Impl;
     Impl* _impl;
 };
-
 }

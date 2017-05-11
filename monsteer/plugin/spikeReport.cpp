@@ -242,23 +242,21 @@ void SpikeReport::writeSeek(float toTimeStamp)
     _currentTime = toTimeStamp;
 }
 
-void SpikeReport::write(const brion::Spikes& spikes)
+void SpikeReport::write(const brion::Spike* spikes, const size_t size)
 {
-    if (!spikes.size())
+    if (size == 0)
         return;
 
     SpikesEvent event;
 
     SpikesEvent::Spikes& data = event.getSpikes();
-    for (const auto& spike : spikes)
-    {
-        data.push_back({spike.first, spike.second});
-    }
+    for (size_t i = 0; i != size; ++i)
+        data.push_back({spikes[i].first, spikes[i].second});
 
     _publisher->publish(event);
 
     _currentTime =
-        spikes.rbegin()->first + std::numeric_limits<float>::epsilon();
+        spikes[size - 1].first + std::numeric_limits<float>::epsilon();
 }
 
 void SpikeReport::_onEOS()

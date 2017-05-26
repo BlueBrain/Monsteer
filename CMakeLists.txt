@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2011-2015, Daniel.Nachbaur@epfl.ch
+# Copyright (c) 2011-2017, Daniel.Nachbaur@epfl.ch
 #
 # This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
 #
@@ -10,8 +10,9 @@ set(Monsteer_VERSION_ABI 7)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
                               ${CMAKE_SOURCE_DIR}/CMake/common)
-
-include(GitExternal)
+if(NOT EXISTS ${CMAKE_SOURCE_DIR}/CMake/common/Common.cmake)
+  message(FATAL_ERROR "CMake/common missing, run: git submodule update --init")
+endif()
 
 set(MONSTEER_ISSUES_URL "https://github.com/BlueBrain/Monsteer/issues")
 set(MONSTEER_DESCRIPTION

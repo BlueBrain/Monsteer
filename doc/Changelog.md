@@ -1,5 +1,8 @@
 # Changelog {#Changelog}
-# git master
+
+# Release 0.7.0 (1-06-2017)
+
+* No major changes, adapted to latest versions of dependencies.
 
 # Release 0.6.0 (09-12-2016)
 

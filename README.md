@@ -49,10 +49,10 @@ build environments are tested:
 
 Building from source is as simple as:
 
-    git clone https://github.com/BlueBrain/Monsteer.git
+    git clone --recursive https://github.com/BlueBrain/Monsteer.git
     mkdir Monsteer/build
     cd Monsteer/build
-    cmake -GNinja ..
+    cmake -GNinja -DCLONE_SUBPROJECTS=ON ..
     ninja
 
 This work has been partially funded by the European Union Seventh Framework Program (FP7/2007­2013) under grant agreement no. 604102 (HBP).

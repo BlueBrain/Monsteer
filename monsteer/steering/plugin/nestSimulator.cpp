@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2015, Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2006-2017, Juan Hernando <jhernando@fi.upm.es>
  *
  * This file is part of Monsteer <https://github.com/BlueBrain/Monsteer>
  *
@@ -36,12 +36,19 @@ namespace steering
 namespace
 {
 lunchbox::PluginRegisterer<NESTSimulator> registerer;
+
+using SubscriberPtr = std::unique_ptr<zeroeq::Subscriber>;
+SubscriberPtr _createSubscriber(const SimulatorPluginInitData& pluginData)
+{
+    const zeroeq::URI uri(pluginData.subscriber);
+    if (uri.getHost().empty() || uri.getPort() == 0)
+        return SubscriberPtr(new zeroeq::Subscriber);
+    return SubscriberPtr(new zeroeq::Subscriber(uri));
+}
 }
 
 NESTSimulator::NESTSimulator(const SimulatorPluginInitData& pluginData)
-    : _replySubscriber(
-          new zeroeq::Subscriber(zeroeq::URI(pluginData.subscriber),
-                                 zeroeq::DEFAULT_SESSION))
+    : _replySubscriber(_createSubscriber(pluginData))
     , _requestPublisher(new zeroeq::Publisher())
 {
 }

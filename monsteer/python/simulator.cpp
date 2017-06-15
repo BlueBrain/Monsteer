@@ -21,8 +21,6 @@
 
 #include "monsteer/steering/simulator.h"
 
-#include <lunchbox/uri.h>
-
 #include <boost/python/stl_iterator.hpp>
 
 using namespace monsteer;
@@ -52,7 +50,7 @@ void Simulator_injectMultipleStimuli(monsteer::Simulator& simulator,
 
 SimulatorPtr Simulator_init(const std::string& uri)
 {
-    return SimulatorPtr(new Simulator(lunchbox::URI(uri)));
+    return SimulatorPtr(new Simulator(servus::URI(uri)));
 }
 
 void export_Simulator()

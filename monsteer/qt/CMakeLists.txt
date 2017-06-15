@@ -30,7 +30,10 @@ set(MONSTEERQT_SOURCES
   SteeringWidget.ui
 )
 
-set(MONSTEERQT_LINK_LIBRARIES Lexis Monsteer Qt5::Widgets ZeroEQ)
+set(MONSTEERQT_LINK_LIBRARIES
+  PUBLIC Monsteer Qt5::Widgets
+  PRIVATE Lexis Lunchbox ZeroEQ
+)
 set(MONSTEERQT_INCLUDE_NAME monsteer/qt)
 set(MONSTEERQT_NAMESPACE monsteerqt)
 

@@ -45,9 +45,9 @@ namespace monsteer
 {
 namespace plugin
 {
-URI toHostAndPort(const URI& uri)
+zeroeq::URI toHostAndPort(const URI& uri)
 {
-    URI out;
+    zeroeq::URI out;
     out.setHost(uri.getHost());
     out.setPort(uri.getPort());
     return out;
@@ -61,8 +61,10 @@ SpikeReport::SpikeReport(const SpikeReportInitData& initData)
     {
     case brion::MODE_READ:
     {
-        _subscriber.reset(
-            new zeroeq::Subscriber(zeroeq::URI(uri), zeroeq::DEFAULT_SESSION));
+        if (uri.getHost().empty() || uri.getPort() == 0)
+            _subscriber.reset(new zeroeq::Subscriber);
+        else
+            _subscriber.reset(new zeroeq::Subscriber(uri));
 
         _subscriber->subscribe(SpikesEvent::ZEROBUF_TYPE_IDENTIFIER(),
                                [&](const void* data, const size_t size) {
@@ -81,7 +83,7 @@ SpikeReport::SpikeReport(const SpikeReportInitData& initData)
     }
     case brion::MODE_WRITE:
     {
-        _publisher.reset(new zeroeq::Publisher(zeroeq::URI(uri)));
+        _publisher.reset(new zeroeq::Publisher(uri));
         _uri = _publisher->getURI().toServusURI();
         _uri.setScheme(MONSTEER_BRION_SPIKES_PLUGIN_SCHEME);
         break;

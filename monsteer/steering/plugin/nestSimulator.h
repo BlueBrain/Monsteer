@@ -20,7 +20,6 @@
 #ifndef MONSTEER_PLUGIN_NESTSIMULATOR_H
 #define MONSTEER_PLUGIN_NESTSIMULATOR_H
 
-#include <boost/scoped_ptr.hpp>
 #include <monsteer/steering/simulatorPlugin.h>
 #include <zeroeq/types.h>
 
@@ -53,8 +52,8 @@ public:
     void pause() final;
 
 private:
-    boost::scoped_ptr<zeroeq::Subscriber> _replySubscriber;
-    boost::scoped_ptr<zeroeq::Publisher> _requestPublisher;
+    std::unique_ptr<zeroeq::Subscriber> _replySubscriber;
+    std::unique_ptr<zeroeq::Publisher> _requestPublisher;
 };
 }
 }

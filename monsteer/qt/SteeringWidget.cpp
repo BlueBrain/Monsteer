@@ -28,12 +28,10 @@
 #include <monsteer/steering/simulator.h>
 
 #include <lexis/lexis.h>
+#include <lunchbox/log.h>
 #include <zeroeq/subscriber.h>
 
 #include <QTimer>
-
-#include <boost/foreach.hpp>
-#include <lunchbox/log.h>
 
 namespace
 {
@@ -166,7 +164,7 @@ struct SteeringWidget::Impl
                                           generatorIndex >= 0);
 
         std::stringstream str;
-        BOOST_FOREACH (const uint32_t gid, _selectedIds)
+        for (const uint32_t gid : _selectedIds)
             str << gid << " ";
 
         _ui.txtCellIds->setText(str.str().c_str());

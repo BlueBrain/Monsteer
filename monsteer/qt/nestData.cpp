@@ -19,8 +19,6 @@
 
 #include <monsteer/qt/nestData.h>
 
-#include <boost/foreach.hpp>
-
 namespace monsteer
 {
 namespace qt
@@ -54,7 +52,7 @@ const PropertyList& getGeneratorProperties(const std::string& generator)
     static PropertyList emptyMap;
     if (generatorProperties.empty())
     {
-        BOOST_FOREACH (const std::string& gen, getGenerators())
+        for (const std::string& gen : getGenerators())
         {
             generatorProperties[gen] = PropertyList();
 
@@ -160,7 +158,7 @@ std::string getJSON(const PropertyList& list)
 
     jsonStr << "{";
 
-    BOOST_FOREACH (const Property& property, list)
+    for (const Property& property : list)
     {
         const std::string name = property.first;
         const QVariant& var = property.second;
@@ -190,7 +188,7 @@ std::string getJSON(const PropertyList& list)
                 break;
 
             jsonStr << " [ ";
-            BOOST_FOREACH (const QVariant& v, varList)
+            for (const QVariant& v : varList)
             {
                 if (v.type() == QVariant::Double)
                 {

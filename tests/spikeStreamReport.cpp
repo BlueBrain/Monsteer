@@ -125,8 +125,10 @@ BOOST_AUTO_TEST_CASE(write_read_until)
     brion::SpikeReport receiver{emitter.getURI()};
     lunchbox::sleep(STARTUP_DELAY);
 
-    std::thread writeThread{[&emitter] {
-        for (const brion::Spike& spike : getTestSpikes())
+    const auto& spikes = getTestSpikes();
+
+    std::thread writeThread{[&emitter, &spikes] {
+        for (const brion::Spike& spike : spikes)
         {
             std::this_thread::sleep_for(INTER_SPIKE_INTERVAL);
             emitter.write({spike});
@@ -136,15 +138,23 @@ BOOST_AUTO_TEST_CASE(write_read_until)
 
     brion::Spikes readSpikes;
 
-    for (size_t i = 1; i < getTestSpikes().size(); ++i)
+    for (size_t i = 1; i < spikes.size(); ++i)
     {
-        auto tmpSpikes = receiver.readUntil(getTestSpikes()[i].first).get();
+        auto tmpSpikes = receiver.readUntil(spikes[i].first).get();
+        BOOST_CHECK(tmpSpikes.empty() ||
+                    tmpSpikes.back().first < receiver.getCurrentTime());
+        BOOST_CHECK(receiver.getCurrentTime() >= spikes[i].first);
+        readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
+    }
+    if (readSpikes.size() < spikes.size())
+    {
+        auto tmpSpikes = receiver.read(spikes.back().first).get();
+        ;
         readSpikes.insert(readSpikes.end(), tmpSpikes.begin(), tmpSpikes.end());
     }
 
-    BOOST_CHECK_EQUAL_COLLECTIONS(getTestSpikes().begin(),
-                                  getTestSpikes().end(), readSpikes.begin(),
-                                  readSpikes.end());
+    BOOST_CHECK_EQUAL_COLLECTIONS(spikes.begin(), spikes.end(),
+                                  readSpikes.begin(), readSpikes.end());
 
     writeThread.join();
 }

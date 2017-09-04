@@ -24,8 +24,6 @@
 #include <QLineEdit>
 #include <QSpinBox>
 
-#include <boost/foreach.hpp>
-
 namespace monsteer
 {
 namespace qt
@@ -106,7 +104,7 @@ void PropertyEditDelegate::setEditorData(QWidget* editor_,
     {
         QLineEdit* editor = static_cast<QLineEdit*>(editor_);
         QString str;
-        BOOST_FOREACH (const QVariant& var, data.toList())
+        for (const QVariant& var : data.toList())
             str += QString::number(var.toDouble()) + ",";
         editor->setText(str);
         break;
@@ -154,7 +152,7 @@ void PropertyEditDelegate::setModelData(QWidget* editor_,
         QStringList list = editor->text().split(",");
         QVariantList varList;
         QDoubleValidator validator;
-        BOOST_FOREACH (QString& str, list)
+        for (QString& str : list)
         {
             if (str == "")
                 continue;

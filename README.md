@@ -55,4 +55,10 @@ Building from source is as simple as:
     cmake -GNinja -DCLONE_SUBPROJECTS=ON ..
     ninja
 
+# Funding & Acknowledgment
+ 
+The development of this software was supported by funding to the Blue Brain Project,
+a research center of the École polytechnique fédérale de Lausanne (EPFL), from the
+Swiss government’s ETH Board of the Swiss Federal Institutes of Technology.
+ 
 This work has been partially funded by the European Union Seventh Framework Program (FP7/2007­2013) under grant agreement no. 604102 (HBP).

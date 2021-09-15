@@ -62,3 +62,5 @@ a research center of the École polytechnique fédérale de Lausanne (EPFL), fro
 Swiss government’s ETH Board of the Swiss Federal Institutes of Technology.
  
 This work has been partially funded by the European Union Seventh Framework Program (FP7/2007­2013) under grant agreement no. 604102 (HBP).
+
+Copyright (c) 2021 Blue Brain Project/EPFL

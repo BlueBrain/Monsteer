@@ -66,7 +66,7 @@ This work has been partially funded by the European Union Seventh Framework Prog
 # License
 
 Monsteer is licensed under the LGPL, unless noted otherwise, e.g., for external dependencies.
-See file LGPL.txt for the full license. 
+See file LICENSE.txt for the full license. 
 
 Copyright (c) 2015-2021 Blue Brain Project/EPFL, King Abdullah University of Science and
 Technology and contributors.

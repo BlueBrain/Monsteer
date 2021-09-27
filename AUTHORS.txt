@@ -1,8 +1,10 @@
-Juan Hernando
-Grigori Chevtchenko
 Ahmet Bilgili
-Stefan Eilemann
-Jafet Villafranca
-Daniel Nachbaur
 Raphael Dumusc
-Mohamed-Ghaith Kaabi
+Stefan Eilemann
+Juan Bautista Hernando Vieites
+Daniel Nachbaur
+Jafet Villafranca Diaz
+
+Grigori Chevtchenko (contributor)
+Mohamed-Ghaith Kaabi (contributor)
+Judit Planas Carbonell (contributor)

@@ -76,7 +76,7 @@ and Technology (KAUST) Office of Sponsored Research (OSR) under Award No. OSR-20
 Monsteer is licensed under the LGPL, unless noted otherwise, e.g., for external dependencies.
 See file LICENSE.txt for the full license. 
 
-Copyright (c) 2015-2021 Blue Brain Project/EPFL, King Abdullah University of Science and
+Copyright (c) 2015-2022 Blue Brain Project/EPFL, King Abdullah University of Science and
 Technology and contributors.
 
 This library is free software; you can redistribute it and/or modify it under the terms of the
